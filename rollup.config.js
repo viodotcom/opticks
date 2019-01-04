@@ -17,7 +17,7 @@ const plugins = outputDir => [
 ]
 
 const generateConfig = integration => ({
-  input: `src/index.${integration}.js`,
+  input: `src/${integration}.js`,
   output: {
     file: `lib/${integration}.js`,
     format: 'esm'
