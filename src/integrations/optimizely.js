@@ -12,15 +12,18 @@ type UserAttributesType = {
   [string]: string
 }
 
+type ToggleValueType = string | boolean
+
 export type OptimizelyDatafileType = any // $FlowFixMe
 
 export { NOTIFICATION_TYPES }
 
-let Optimizely: OptimizelyLibType // reference to injected Optimizely
+let Optimizely: OptimizelyLibType // reference to injected Optimizely library
 let optimizelyClient // reference to active Optimizely instance
 let userId: UserIdType
 let userAttributes: UserAttributesType
 let featureEnabledCache = {}
+let experimentCache = {}
 
 export const registerLibrary = (lib: OptimizelyLibType) => {
   // TODO: Double-check if this works with server environments
@@ -30,12 +33,14 @@ export const registerLibrary = (lib: OptimizelyLibType) => {
 }
 
 const clearFeatureEnabledCache = () => (featureEnabledCache = {})
+const clearExperimentCache = () => (experimentCache = {})
 
 export const setUserAttributes = (
   id: UserIdType,
-  attributes: UserAttributesType
+  attributes: UserAttributesType = {}
 ) => {
   clearFeatureEnabledCache()
+  clearExperimentCache()
   userId = id
   userAttributes = attributes
 }
@@ -58,14 +63,19 @@ export const initialize = (
     eventDispatcher: eventDispatcher
   })
 
-  optimizelyClient.notificationCenter.addNotificationListener(
-    NOTIFICATION_TYPES.ACTIVATE,
-    onExperimentDecision
-  )
+  addActivateListener(onExperimentDecision)
 }
 
-const getFeatureEnabled = toggleId => {
-  if (featureEnabledCache.hasOwnProperty(toggleId)) {
+export const addActivateListener = listener =>
+  optimizelyClient.notificationCenter.addNotificationListener(
+    NOTIFICATION_TYPES.ACTIVATE,
+    listener
+  )
+
+const isCached = (toggleId, cache) => cache.hasOwnProperty(toggleId)
+
+const getOrSetCachedFeatureEnabled = toggleId => {
+  if (isCached(toggleId, featureEnabledCache)) {
     return featureEnabledCache[toggleId]
   }
 
@@ -76,14 +86,17 @@ const getFeatureEnabled = toggleId => {
   ))
 }
 
-const getBooleanToggle = getFeatureEnabled
+const getBooleanToggle = getOrSetCachedFeatureEnabled
 
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
-const getMultiToggle = (toggleId: ToggleIdType) => {
-  const isEnabled = getFeatureEnabled(toggleId)
+const getMultiToggle = (toggleId: ToggleIdType): string => {
+  if (isCached(toggleId, experimentCache)) return experimentCache[toggleId]
+
+  const isEnabled = getOrSetCachedFeatureEnabled(toggleId)
 
   // Abusing the feature flags to store variations: 'a,' 'b,' 'c etc'.
+  // TODO: Decide if we want to cache experiment values as well
   return (
     (isEnabled &&
       optimizelyClient.getFeatureVariableString(
@@ -97,3 +110,20 @@ const getMultiToggle = (toggleId: ToggleIdType) => {
 }
 
 export const multiToggle = baseMultiToggle(getMultiToggle)
+
+export const forceToggles = (toggleKeyValues: {
+  [ToggleIdType]: ?ToggleValueType
+}) => {
+  Object.keys(toggleKeyValues).forEach(toggleId => {
+    const value = toggleKeyValues[toggleId]
+
+    if (value === null) {
+      delete featureEnabledCache[toggleId]
+      delete experimentCache[toggleId]
+    } else {
+      const cache =
+        typeof value === 'boolean' ? featureEnabledCache : experimentCache
+      cache[toggleId] = value
+    }
+  })
+}

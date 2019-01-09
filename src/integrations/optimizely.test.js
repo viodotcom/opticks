@@ -6,12 +6,15 @@ import {
   registerLibrary,
   setUserAttributes,
   booleanToggle,
-  multiToggle
+  multiToggle,
+  forceToggles
 } from './optimizely'
 
+// During the tests:
+// for booleanToggle 'foo' yields true and 'bar' yields false, unless forced
+// for multiToggle 'foo' yields 'b' and 'bar' yields 'a', unless forced
 import datafile from './__fixtures__/dataFile.js'
 
-// Mocked Optimizely Library
 import Optimizely, {
   addNotificationListenerMock,
   createInstanceMock,
@@ -175,6 +178,41 @@ describe('Optimizely Integration', () => {
           foo: 'baz'
         })
         expect(isFeatureEnabledMock).toHaveBeenCalledTimes(2)
+      })
+    })
+
+    describe('Forcing toggles', () => {
+      beforeEach(() => {
+        forceToggles({ foo: 'a', bar: false, bax: 'c', baz: true })
+      })
+
+      it('Respects the overridden values', () => {
+        expect(multiToggle('foo')).toEqual('a')
+        expect(booleanToggle('bar')).toEqual(false)
+      })
+
+      it('Allows you to invent non-existing experiments', () => {
+        expect(multiToggle('bax')).toEqual('c')
+        expect(booleanToggle('baz')).toEqual(true)
+      })
+
+      describe('Clearing forced toggles', () => {
+        beforeEach(() => {
+          forceToggles({ foo: null, bar: null })
+        })
+
+        it('should yield real values for cleared toggles', () => {
+          expect(multiToggle('foo')).toEqual('b')
+          expect(multiToggle('bar')).toEqual('a')
+          expect(booleanToggle('foo')).toEqual(true)
+          expect(booleanToggle('bar')).toEqual(false)
+        })
+        it('should keep the non-cleared forced toggles and other defaults', () => {
+          expect(multiToggle('bax')).toEqual('c')
+          expect(booleanToggle('baz')).toEqual(true)
+          expect(multiToggle('nonexistent')).toEqual('a')
+          expect(booleanToggle('nonexistent')).toEqual(false)
+        })
       })
     })
   })
