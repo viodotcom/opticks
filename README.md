@@ -12,9 +12,6 @@ The library consists of two related concepts:
 
 # Toggle Library
 
-We use React at FindHotel and some of the code examples use JSX, but the code
-and concept is compatible with any front-end framework or architecture.
-
 At the heart of our experimentation framework is the `toggle` function.
 
 There are two types of toggles:
@@ -28,6 +25,9 @@ It can be used in a variety of ways:
 1.  Execute code when a boolean toggle is on
 1.  Execute code or for a variant of a multi toggle
 
+We use React at FindHotel and some of the code examples use JSX, but the code
+and concept is compatible with any front-end framework or architecture.
+
 ### Opticks vs other experimentation frameworks
 
 The main reason for using the `toggle` library is to be able to clean your code
@@ -36,17 +36,6 @@ afterwards by providing a predictable experimentation API.
 We don't intend to reinvent the wheel and aim to keep it easy to integrate
 existing frameworks and services such as Optimizely, LaunchDarkly and
 Conductrics behind a simple facade.
-
-## Setting Boolean Toggles
-
-Before the toggles can be read, we need to set them. This library doesn't
-concern itself with generating a list of toggles or experiments, as there are
-many libraries and services out there doing it well already. It should be easy
-to write an adapter for whichever experimentation service or tool you're using.
-
-```
-setToggles({ foo: true, bar: false })
-```
 
 ## Toggle Clean Up
 
@@ -68,6 +57,45 @@ For the losing boolean toggles and losing multi toggle variants:
 The codemods are designed to prune toggles that are null, allowing you to
 execute code only for one variant of an multi toggle experiment.
 
+## Usage and Integrations
+
+Currently Opticks has two 'integrations' or adapters, a simple one based on a
+local key/value store, and one wrapping the Optimizely Full Stack SDK. Once
+initialized, using/consuming the toggle decisions is the same.
+
+In the future the integrations will be packaged separately so you can include
+the one you need, for now the "simple" is the default and the Optimizely adapter
+can be included directly via:
+`import Opticks from 'opticks/lib/optimizely'`
+
+## Initialization
+
+TODO: This section describes both integrations, split when converting to
+monorepo.
+
+### Simple
+
+Before the toggles can be read, we need to set them. This library doesn't
+concern itself with generating a list of toggles or experiments, as there are
+many libraries and services out there doing it well already. It should be easy
+to write an adapter for whichever experimentation service or tool you're using.
+
+### Setting Toggles
+
+```
+setBooleanToggles({ foo: true, bar: false })
+```
+
+### Setting Toggles
+
+```
+setMultiToggles({ foo: { variant: a }, bar: { variant: 'b' } })
+```
+
+### Optimizely
+
+TODO: Document, for now see the unit tests on usage.
+
 ## Boolean Toggles: Reading values
 
 Let's take a look at boolean toggles first, as the name suggest, they are either
@@ -77,7 +105,10 @@ on or off.
 booleanToggle('shouldShowSomething') // true or false
 ```
 
-While these are simple to implement, using them directly tends to create code that's hard to clean up fully. Consider the following toggle implementation:
+While these are simple to implement, using them directly tends to create code
+that's hard to clean up fully.
+
+Consider the following toggle implementation:
 
 ```
 // before
@@ -194,6 +225,12 @@ multiToggle('foo', 'black', 'green', 'red')
 On of our goals is to make it easy to introduce _and_ remove experiment code.
 We've written codemods to automatically prune 'losing' sides of our experiments,
 and this works well if we organize our experiment code in a standardized way.
+
+### Running the codemods
+
+TODO: Document
+
+### Examples
 
 Simple variable substitution:
 
