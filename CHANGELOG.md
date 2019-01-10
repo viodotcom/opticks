@@ -10,6 +10,10 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v1.1.0
+
+:rocket: Optimizely Integration: Add capability to force toggles
+
 # v1.0.1
 
 :bug: Missing Flow Type exports
