@@ -8,8 +8,8 @@ import { NOTIFICATION_TYPES } from '@optimizely/optimizely-sdk/lib/utils/enums'
 import type OptimizelyLibType from '@optimizely/optimizely-sdk'
 
 type UserIdType = string
-type UserAttributesType = {
-  [string]: string
+type AudienceSegmentationAttributesType = {
+  [string]: string | boolean
 }
 
 type ToggleValueType = string | boolean
@@ -21,7 +21,7 @@ export { NOTIFICATION_TYPES }
 let Optimizely: OptimizelyLibType // reference to injected Optimizely library
 let optimizelyClient // reference to active Optimizely instance
 let userId: UserIdType
-let userAttributes: UserAttributesType
+let audienceSegmentationAttributes: AudienceSegmentationAttributesType
 let featureEnabledCache = {}
 let experimentCache = {}
 
@@ -35,14 +35,14 @@ export const registerLibrary = (lib: OptimizelyLibType) => {
 const clearFeatureEnabledCache = () => (featureEnabledCache = {})
 const clearExperimentCache = () => (experimentCache = {})
 
-export const setUserAttributes = (
+export const setAudienceSegmentationAttributes = (
   id: UserIdType,
-  attributes: UserAttributesType = {}
+  attributes: AudienceSegmentationAttributesType = {}
 ) => {
   clearFeatureEnabledCache()
   clearExperimentCache()
   userId = id
-  userAttributes = attributes
+  audienceSegmentationAttributes = attributes
 }
 
 type ActivateEventHandlerType = Function
@@ -82,7 +82,7 @@ const getOrSetCachedFeatureEnabled = toggleId => {
   return (featureEnabledCache[toggleId] = optimizelyClient.isFeatureEnabled(
     toggleId,
     userId,
-    userAttributes
+    audienceSegmentationAttributes
   ))
 }
 
@@ -95,7 +95,7 @@ const getMultiToggle = (toggleId: ToggleIdType): string => {
 
   const isEnabled = getOrSetCachedFeatureEnabled(toggleId)
 
-  // Abusing the feature flags to store variations: 'a,' 'b,' 'c etc'.
+  // Abusing the feature flags to store variations: 'a', 'b', 'c' etc.
   // TODO: Decide if we want to cache experiment values as well
   return (
     (isEnabled &&
@@ -103,7 +103,7 @@ const getMultiToggle = (toggleId: ToggleIdType): string => {
         toggleId,
         'variation',
         userId,
-        userAttributes
+        audienceSegmentationAttributes
       )) ||
     'a'
   )

@@ -13,7 +13,7 @@ export default {
       layerId: 'layerFoo',
       variations: [
         {
-          featureEnabled: true,
+          featureEnabled: false,
           id: '1',
           key: 'control',
           variables: [
@@ -48,14 +48,16 @@ export default {
           entityId: '2',
           endOfRange: 10000
         }
-      ]
+      ],
+      audienceIds: ['foo-default-dates'],
+      forcedVariations: []
     }
   ],
   featureFlags: [
     {
       experimentIds: ['foo'],
-      id: 'a-a-feature',
-      key: 'a-a-feature',
+      id: 'foo',
+      key: 'foo',
       variables: [
         {
           defaultValue: 'a',
@@ -66,8 +68,16 @@ export default {
       ]
     }
   ],
-  audiences: [],
-  attributes: [],
+  events: [],
+  audiences: [
+    {
+      id: 'foo-default-dates',
+      name: 'Foo Traffic',
+      conditions:
+        '[ "and", { "name": "trafficSource", "value": "foo", "type": "custom_attribute" }, { "name": "hasDefaultDates", "value": true, "type": "custom_attribute" }, ["not", { "name": "deviceType", "value": "mobile", "type": "custom_attribute" } ] ]'
+    }
+  ],
+  attributes: [{ id: 'trafficSource', key: 'trafficSource' }],
   groups: [],
   rollouts: [],
   variables: []

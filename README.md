@@ -37,6 +37,17 @@ We don't intend to reinvent the wheel and aim to keep it easy to integrate
 existing frameworks and services such as Optimizely, LaunchDarkly and
 Conductrics behind a simple facade.
 
+## Usage and Integrations
+
+Currently Opticks has two 'integrations' or adapters, a simple one based on a
+local key/value store, and one wrapping the Optimizely Full Stack SDK. Once
+initialized, using/consuming the toggle decisions is the same.
+
+In the future the integrations will be packaged separately so you can include
+the one you need, for now the "simple" is the default and the Optimizely adapter
+can be included directly via:
+`import Opticks from 'opticks/lib/optimizely'`
+
 ## Toggle Clean Up
 
 Let's look at concrete examples on how to introduce and (automatically) remove
@@ -56,17 +67,6 @@ For the losing boolean toggles and losing multi toggle variants:
 
 The codemods are designed to prune toggles that are null, allowing you to
 execute code only for one variant of an multi toggle experiment.
-
-## Usage and Integrations
-
-Currently Opticks has two 'integrations' or adapters, a simple one based on a
-local key/value store, and one wrapping the Optimizely Full Stack SDK. Once
-initialized, using/consuming the toggle decisions is the same.
-
-In the future the integrations will be packaged separately so you can include
-the one you need, for now the "simple" is the default and the Optimizely adapter
-can be included directly via:
-`import Opticks from 'opticks/lib/optimizely'`
 
 ## Initialization
 

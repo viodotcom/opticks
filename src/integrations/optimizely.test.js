@@ -4,7 +4,7 @@ import {
   NOTIFICATION_TYPES,
   initialize,
   registerLibrary,
-  setUserAttributes,
+  setAudienceSegmentationAttributes,
   booleanToggle,
   multiToggle,
   forceToggles
@@ -81,11 +81,11 @@ describe('Optimizely Integration', () => {
 
     describe('Boolean Toggles', () => {
       beforeEach(() => {
-        setUserAttributes('fooUser', { deviceType: 'mobile' })
+        setAudienceSegmentationAttributes('fooUser', { deviceType: 'mobile' })
         booleanToggle('foo')
       })
 
-      it('Forwards toggle reading and userAttributes to Optimizely', () => {
+      it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
         expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooUser', {
           deviceType: 'mobile'
         })
@@ -96,7 +96,7 @@ describe('Optimizely Integration', () => {
         expect(booleanToggle('bar')).toBeFalsy()
       })
 
-      it('Caches isFeatureEnabled results until setUserAttributes is called', () => {
+      it('Caches isFeatureEnabled results until setAudienceSegmentationAttributes is called', () => {
         booleanToggle('foo')
         booleanToggle('foo')
         booleanToggle('bax')
@@ -104,7 +104,7 @@ describe('Optimizely Integration', () => {
 
         // Reset user attributes, clearing cache
         isFeatureEnabledMock.mockClear()
-        setUserAttributes('barUser', { foo: 'baz' })
+        setAudienceSegmentationAttributes('barUser', { foo: 'baz' })
 
         booleanToggle('foo')
         expect(isFeatureEnabledMock).toHaveBeenCalledTimes(1)
@@ -123,7 +123,7 @@ describe('Optimizely Integration', () => {
 
     describe('Multi Toggles', () => {
       beforeEach(() => {
-        setUserAttributes('barUser', { deviceType: 'desktop' })
+        setAudienceSegmentationAttributes('barUser', { deviceType: 'desktop' })
         multiToggle('foo')
       })
 
@@ -133,7 +133,7 @@ describe('Optimizely Integration', () => {
         })
       })
 
-      it('Forwards toggle reading and userAttributes to Optimizely', () => {
+      it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
         expect(getFeatureVariableStringMock).toHaveBeenCalledWith(
           'foo',
           'variation',
@@ -156,7 +156,7 @@ describe('Optimizely Integration', () => {
       })
 
       // TODO: DRY
-      it('Caches isFeatureEnabled results until setUserAttributes is called', () => {
+      it('Caches isFeatureEnabled results until setAudienceSegmentationAttributes is called', () => {
         multiToggle('foo')
         multiToggle('foo')
         multiToggle('bax')
@@ -164,7 +164,7 @@ describe('Optimizely Integration', () => {
 
         // Reset user attributes, clearing cache
         isFeatureEnabledMock.mockClear()
-        setUserAttributes('barUser', { foo: 'baz' })
+        setAudienceSegmentationAttributes('barUser', { foo: 'baz' })
 
         multiToggle('foo')
         expect(isFeatureEnabledMock).toHaveBeenCalledTimes(1)
