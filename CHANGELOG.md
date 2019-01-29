@@ -10,6 +10,11 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v1.2.0
+
+:memo: Optimizely Integration: Example datafile for audience segmentation
+:boom: Optimizely Integration: Rename setUserAttributes -> setAudienceSegmentationAttributes
+
 # v1.1.0
 
 :rocket: Optimizely Integration: Add capability to force toggles
