@@ -1,8 +1,27 @@
 # Removal of dead code
 
 On of our goals is to make it easy to introduce _and_ remove experiment code.
+
 We've written codemods to automatically prune 'losing' sides of our experiments,
 and this works well if we organize our experiment code in a standardized way.
+
+Let's look at concrete examples on how to introduce and (automatically) remove
+and clean toggle code.
+
+The codemods use different strategies to clean losing toggles and keep the
+winners:
+
+- winning values are kept
+- for functions, the function body is kept
+
+For the losing boolean toggles and losing multi toggle variants:
+
+- losing toggles are pruned
+- if the losing side is an JSXExpression, we clean it up including the variables
+  that are referenced from there
+
+The codemods are designed to prune toggles that are null, allowing you to
+execute code only for one variant of an multi toggle experiment.
 
 ## Running the codemods
 
