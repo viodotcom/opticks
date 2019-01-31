@@ -48,26 +48,6 @@ the one you need, for now the "simple" is the default and the Optimizely adapter
 can be included directly via:
 `import Opticks from 'opticks/lib/optimizely'`
 
-## Toggle Clean Up
-
-Let's look at concrete examples on how to introduce and (automatically) remove
-and clean toggle code.
-
-The codemods use different strategies to clean losing toggles and keep the
-winners:
-
-- winning values are kept
-- for functions, the function body is kept
-
-For the losing boolean toggles and losing multi toggle variants:
-
-- losing toggles are pruned
-- if the losing side is an JSXExpression, we clean it up including the variables
-  that are referenced from there
-
-The codemods are designed to prune toggles that are null, allowing you to
-execute code only for one variant of an multi toggle experiment.
-
 ## Integrations
 
 ### Simple
@@ -163,10 +143,9 @@ always()
 ## Multi Toggles
 
 Multi toggles can be used to implement a/b/c style testing, instead of on/off
-values, we assume variants that are labeled a (the default), b, c etc, of which
-one is active at any time.
+values, we specify multiple variants of which one is active at any time.
 
-## Reading Multi Toggle values
+## Multi Toggles: Reading values
 
 ```
 // reading the toggle value
@@ -194,6 +173,31 @@ multiToggle('foo', false, true)
 
 // 'black' is the default, red and green are variants to experiment with
 multiToggle('foo', 'black', 'green', 'red')
+```
+
+## Multi Toggles: Executing code
+
+As with Boolean Toggles, an approach that allows you to clean the code easier would be to encapsulate variations by executing code from the toggle:
+
+```
+const price = 100
+const savings = 20
+
+const CTA = multiToggle(
+  'CTAWording',
+  () => `Buy now for just ${price}` // variant a (default)
+  () => `Buy now for ${price} and save ${savings}`, // variant b
+  () => `From ${price + savings} to ${price}` // variant c
+)
+```
+
+Then after running the cleaning codemods when b wins:
+
+```
+const price = 100
+const savings = 20
+
+const CTA = `Buy now for ${price} and save ${savings}`
 ```
 
 ## Removal of dead code
