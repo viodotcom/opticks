@@ -17,11 +17,11 @@ winners:
 For the losing boolean toggles and losing multi toggle variants:
 
 - losing toggles are pruned
-- if the losing side is an JSXExpression, we clean it up including the variables
+- if the losing side is a JSXExpression, we clean it up including the variables
   that are referenced from there
 
 The codemods are designed to prune toggles that are null, allowing you to
-execute code only for one variant of an multi toggle experiment.
+execute code only for one variant of a multi toggle experiment.
 
 ## Running the codemods
 
