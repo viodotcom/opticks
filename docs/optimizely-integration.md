@@ -14,7 +14,7 @@ https://docs.developers.optimizely.com/full-stack/docs.
 
 ## Basic architecture
 
-[ Basic Architecture ](./diagrams/opticks-optimizely.png)!
+![ Basic Architecture ](./diagrams/opticks-optimizely.png)
 
 ## Initialization
 
