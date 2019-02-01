@@ -51,16 +51,26 @@ setAudienceSegmentationAttributes('userId', {
 ```
 
 The `userId` is a deterministic factor for the bucketing algorithm. The second
-argument is an object with any extra information you'd like to use to include /
-exclude users from a particular Experiment or Feature Flag (called Audiences in
-Optimizely terms).
+optional argument is an object with any extra information you'd like to use to
+include / exclude users from a particular Experiment or Feature Flag (called
+Audiences in Optimizely terms).
 
-Once set, these `userId` and attributes are automatically forwarded to
-Optimizely with each call.
+Attributes can be strings or booleans, and Audiences are set up by defining
+restrictions on them. For instance you can create an audience for visitors with
+a mobile device, another for logged in users. It's also possible to use boolean
+logic to combine multiple attributes, for instance people that are logged in but
+are _not_ using a mobile device.
+
+The decoupling of the Audiences from the Toggle consumption allows you to keep
+the consumers of the test agnostic of which they are targeted, allowing for
+easy clean up.
 
 Please refer to the
 [example DataFile](../src/integrations/__fixtures__/dataFile.js)
 for more information on how to set up audiences.
+
+Once set, these `userId` and attributes are automatically forwarded to
+Optimizely with each call.
 
 ### The DataFile
 
