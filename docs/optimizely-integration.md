@@ -12,7 +12,7 @@ toggles and clean up with the codemods. Please refer to the main README for
 details. For more information about the Optimizely SDK, see
 https://docs.developers.optimizely.com/full-stack/docs.
 
-## Basic architecture
+## Overview
 
 ![ Basic Architecture ](./diagrams/opticks-optimizely.png)
 
