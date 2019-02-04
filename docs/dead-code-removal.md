@@ -25,6 +25,43 @@ execute code only for one variant of a multi toggle experiment.
 
 ## Running the codemods
 
+There two codemods supplied with Opticks, one for Boolean Toggles, one for Multi Toggles, they can be found in the `src/transform` directory.
+
+In order to clean all "losing" branches of the code, the codemods need to know which toggle you're modifying, whether the toggle (for Boolean Toggles) or which variation (for Multi Toggles) "won".
+
+Assuming you're running the codemods directly from the Opticks directory in your `node_modules`, to declare the `b` side of the `foo` Multi Toggle the winner and prune all losing code in the `src` directory, run the script as follows:
+
+```
+npm run clean:multiToggle -- --toggle=foo --winner=b
+```
+
+Most likely you'd want to run the script your own project which consumes Opticks, you can add the following to your npm scripts (in your package.json) for convenience:
+
+```
+"scripts": {
+  "clean:multiToggle": "npm explore opticks -- npm run clean:multiToggle `pwd`/src --dry -- ",
+}
+```
+
+This will forward any parameters you pass towards the `clean:multiToggle` script in the Opticks package with your project's src directory.
+
+Then you can run it right from your project:
+
+```
+npm run clean:multiToggle -- --toggle=foo --winner=b
+```
+
+### Boolean Toggles
+
+Boolean Toggle clean up works in a similar way, noting the winner accepts a string value `'true'` or `'false'`:
+
+```
+npm run clean:booleanToggle -- --toggle=foo --winner='true'
+```
+
+### Overriding the library import settings
+
+By default the codemods make assumptions on the name of the imports to override
 TODO: Document
 
 ### Examples
@@ -212,3 +249,7 @@ base relatively clean while running multiple experiments.
 
 All functions in the toggles should be double arrow functions, to preserve the
 scope while executing winning toggles.
+
+### Request For Comments
+
+The codemods are in active development as it gains more in-the-wild usage, please report your usage and/or issues so we can improve them alongside your real world requirements.
