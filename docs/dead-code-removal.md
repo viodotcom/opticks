@@ -269,7 +269,18 @@ base relatively clean while running multiple experiments.
 All functions in the toggles should be double arrow functions, to preserve the
 scope while executing winning toggles.
 
-### Request For Comments
+## Coding Conventions
+
+When the codemods rewrite your code, the resulting output might not match your
+coding conventions such as the use of semicolons. This project doesn't attempt
+to apply any pretty printing itself as your needs might vary from others. It is
+recommended to run ESLint with the `--fix` option, Prettier, or another pretty
+print tool after running the codemods to ensure uniformity in your codebase.
+
+See https://github.com/benjamn/recast/issues/140#issuecomment-69794531 for more
+details.
+
+## Request For Comments
 
 The codemods are in active development as it gains more in-the-wild usage,
 please report your usage and/or issues so we can improve them alongside your

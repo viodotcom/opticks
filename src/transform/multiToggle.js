@@ -92,7 +92,13 @@ export default function transformer (file, api, options) {
 
             // remove import if no toggles are left
             if (allTogglesRemoved) {
-              j(importDef).remove()
+              if (importDef.value.specifiers.length > 1) {
+                // imports left, only remove multiToggle import specifiers
+                j(importSpecifier).remove()
+              } else {
+                // no more imports left, remove the full import definition
+                j(importDef).remove()
+              }
             }
           })
       })
