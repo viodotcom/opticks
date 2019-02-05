@@ -10,6 +10,11 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v1.2.1
+
+:memo: Codemod documentation
+:bug: Codemods now only remove imports for toggles being removed
+
 # v1.2.0
 
 :memo: Optimizely Integration: Example datafile for audience segmentation
