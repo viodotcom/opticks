@@ -106,7 +106,7 @@ const implementBooleanToggle = (j, isWinner: boolean, root, callExpression) => {
   }
 }
 
-const findmultiToggleCalls = (j, context, localName) =>
+const findBooleanToggleCalls = (j, context, localName) =>
   context.closestScope().find(j.CallExpression, { callee: { name: localName } })
 
 // $FlowFixMe: mixed ES6 and CommonJS exports due to flow parser type
@@ -139,7 +139,7 @@ export default function transformer (file, api, options) {
           .forEach(importSpecifier => {
             const localName = importSpecifier.value.local.name
 
-            const findToggleCallsByLocalImportName = findmultiToggleCalls.bind(
+            const findToggleCallsByLocalImportName = findBooleanToggleCalls.bind(
               null,
               j,
               j(importSpecifier),
@@ -165,7 +165,13 @@ export default function transformer (file, api, options) {
 
             // remove import if no toggle are left in the file
             if (allTogglesRemoved) {
-              j(importDef).remove()
+              if (importDef.value.specifiers.length > 1) {
+                // imports left, only remove multiToggle import specifiers
+                j(importSpecifier).remove()
+              } else {
+                // no more imports left, remove the full import definition
+                j(importDef).remove()
+              }
             }
           })
       })

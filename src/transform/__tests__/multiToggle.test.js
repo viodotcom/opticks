@@ -61,6 +61,21 @@ const nonRelevantResult = multiToggle('bar', 'a', 'b', 'c')
     )
   })
 
+  describe('Keeps Opticks imports other than multiToggle', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { multiToggle, foo } from '${packageName}'
+const result = multiToggle('foo', 'a', 'b', 'c')
+`,
+      `
+import { foo } from '${packageName}';
+const result = 'b'
+  `
+    )
+  })
+
   describe('Inline function body replacement', () => {
     defineInlineTest(
       transform,

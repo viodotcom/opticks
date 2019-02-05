@@ -135,6 +135,21 @@ const nonRelevantResult = booleanToggle('bar', 'a', 'b')
     )
   })
 
+  describe('Keeps Opticks imports other than booleanToggle', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerOptions,
+      `
+import { booleanToggle, foo } from '${packageName}'
+const result = booleanToggle('foo')
+`,
+      `
+import { foo } from '${packageName}';
+const result = true
+  `
+    )
+  })
+
   describe('Inline function body replacement', () => {
     defineInlineTest(
       transform,
