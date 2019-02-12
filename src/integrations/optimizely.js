@@ -8,8 +8,11 @@ import { NOTIFICATION_TYPES } from '@optimizely/optimizely-sdk/lib/utils/enums'
 import type OptimizelyLibType from '@optimizely/optimizely-sdk'
 
 type UserIdType = string
+type AudienceSegmentationAttributeKeyType = string
+type AudienceSegmentationAttributeValueType = string | boolean
+
 type AudienceSegmentationAttributesType = {
-  [string]: string | boolean
+  [AudienceSegmentationAttributeKeyType]: AudienceSegmentationAttributeValueType
 }
 
 type ToggleValueType = string | boolean
@@ -43,6 +46,15 @@ export const setAudienceSegmentationAttributes = (
   clearExperimentCache()
   userId = id
   audienceSegmentationAttributes = attributes
+}
+
+export const setAudienceSegmentationAttribute = (
+  key: AudienceSegmentationAttributeKeyType,
+  value: AudienceSegmentationAttributeValueType
+) => {
+  clearFeatureEnabledCache()
+  clearExperimentCache()
+  audienceSegmentationAttributes[key] = value
 }
 
 type ActivateEventHandlerType = Function
