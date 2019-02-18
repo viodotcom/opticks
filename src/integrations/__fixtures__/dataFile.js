@@ -77,7 +77,11 @@ export default {
         '[ "and", { "name": "trafficSource", "value": "foo", "type": "custom_attribute" }, { "name": "hasDefaultDates", "value": true, "type": "custom_attribute" }, ["not", { "name": "deviceType", "value": "mobile", "type": "custom_attribute" } ] ]'
     }
   ],
-  attributes: [{ id: 'trafficSource', key: 'trafficSource' }],
+  attributes: [
+    { id: 'trafficSource', key: 'trafficSource' },
+    { id: 'hasDefaultDates', key: 'hasDefaultDates' },
+    { id: 'deviceType', key: 'deviceType' }
+  ],
   groups: [],
   rollouts: [],
   variables: []

@@ -69,24 +69,137 @@ The decoupling of the Audiences from the Toggle consumption allows you to keep
 the consumers of the test agnostic of which they are targeted, allowing for
 easy clean up.
 
+#### Setting or overriding individual segmentation attributes
+
+Since it might be the case that not all segmentation attributes are known at the
+same time, or their values might change during the lifetime of the application,
+you can also set or override individual segmentation attributes via
+`setAudienceSegmentationAttribute`:
+
+```
+setAudienceSegmentationAttribute('deviceType', 'mobile')
+setAudienceSegmentationAttribute('isLoggedIn', false)
+```
+
 Please refer to the
-[example DataFile](../src/integrations/__fixtures__/dataFile.js)
-for more information on how to set up audiences.
+[DataFile section](#datafile)
+for more information on how to set up Feature Flags, Experiments and Audiences.
 
 Once set, these `userId` and attributes are automatically forwarded to
 Optimizely with each call.
 
-### The DataFile
+### The DataFile (#datafile)
 
 The Opticks Optimizely integration makes some assumptions on how the experiments
 are set up. Optimizely supports two types of flags, "Feature Flags" (Boolean
 Toggles in Opticks) and Experiments (Multi Toggles in Opticks).
-The Opticks library uses certain conventions to wrap concepts in a predictable
-API, where experiment variations are in the `a`, `b`, `c` format.
+The Opticks library uses certain conventions to wrap both concepts in a
+predictable API, where experiment variations are in the `a`, `b`, `c` format and
+Boolean Toggles return only `true` or `false`.
+
+The following is subject to change, but right now Opticks uses both Feature Flags
+and the Experiments concepts of the Optimizely SDK which means you'll need to
+add both to the DataFile to avoid confusion in the consuming API.
 
 Please refer to the
 [example DataFile](../src/integrations/__fixtures__/dataFile.js) used in the
 unit tests on how to set up Feature Flags and Experiments.
+
+#### Anatomy of an Experiment
+
+NOTE: Subject to change in the future.
+
+```
+experiments: [
+  {
+    id: 'foo', // used in the featureFlags section
+    key: 'foo',
+    status: 'Running',
+    layerId: 'layerFoo', // not used at the moment
+    variations: [
+      {
+        featureEnabled: true,
+        id: '1', // referred to from the trafficAllocation configuration
+        key: 'control',
+        variables: [
+          // convention used to get the value a, b, c in a predictable way
+          {
+            id: 'variation',
+            key: 'variation',
+            type: 'string',
+            value: 'a'
+          }
+        ]
+      },
+      {
+        featureEnabled: true,
+        id: '2',
+        key: 'treatment',
+        variables: [
+          {
+            id: 'variation',
+            key: 'variation',
+            type: 'string',
+            value: 'b'
+          }
+        ]
+      }
+    ],
+    trafficAllocation: [
+      // example of a 50/50 split
+      {
+        entityId: '1',
+        endOfRange: 5000
+      },
+      {
+        entityId: '2',
+        endOfRange: 10000
+      }
+    ],
+    // see audiences
+    audienceIds: ['foo-default-dates'],
+    forcedVariations: []
+  }
+]
+```
+
+#### Anatomy of a Feature Flag
+
+```
+featureFlags: [
+  {
+    // see experiments
+    experimentIds: ['foo'],
+    id: 'foo',
+    key: 'foo',
+    variables: [
+      // default used in case the trafficAllocation doesn't return a variation
+      // shouldn't be necessary but a good fallback in case of configuration
+      // mistakes not breaking the User Experience
+      {
+        defaultValue: 'a',
+        id: 'variation',
+        key: 'variation',
+        type: 'string'
+      }
+    ]
+  }
+]
+```
+
+#### Anatomy of an Audience
+
+```
+audiences: [
+  {
+    id: 'foo-default-dates', // used in experiment
+    name: 'Foo Traffic',
+    // all attributes are custom_attributes
+    conditions:
+      '[ "and", { "name": "trafficSource", "value": "foo", "type": "custom_attribute" }, { "name": "hasDefaultDates", "value": true, "type": "custom_attribute" } ]'
+  }
+],
+```
 
 ### Activation Event Handlers (#activationEvent)
 

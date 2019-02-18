@@ -266,10 +266,17 @@ base relatively clean while running multiple experiments.
 
 ## Improvement points
 
-All functions in the toggles should be double arrow functions, to preserve the
-scope while executing winning toggles.
+### When using functions for variations
 
-## Coding Conventions
+All functions in the toggles should be double arrow or bound functions, to
+preserve the scope while executing winning toggles.
+
+Since the winner implementation only and fully preserves the _body_ of the
+winning function (it is statically analyzed, not executed), it's not advised to
+return a value when using a function, as it can result in unexpected behavior
+returning early.
+
+## Coding Style Conventions
 
 When the codemods rewrite your code, the resulting output might not match your
 coding conventions such as the use of semicolons. This project doesn't attempt
