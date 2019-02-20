@@ -15,7 +15,9 @@ type AudienceSegmentationAttributesType = {
   [AudienceSegmentationAttributeKeyType]: AudienceSegmentationAttributeValueType
 }
 
-type ToggleValueType = string | boolean
+type BooleanToggleValueType = boolean
+type ExperimentToggleValueType = string
+type ToggleValueType = ExperimentToggleValueType | BooleanToggleValueType
 
 export type OptimizelyDatafileType = any // $FlowFixMe
 
@@ -26,9 +28,13 @@ let optimizelyClient // reference to active Optimizely instance
 let userId: UserIdType
 let audienceSegmentationAttributes: AudienceSegmentationAttributesType
 
-let featureEnabledCache = {}
-let experimentCache = {}
-let forcedToggles = {}
+type FeatureEnabledCacheType = { [ToggleIdType]: BooleanToggleValueType }
+type ExperimentCacheType = { [ToggleIdType]: ExperimentToggleValueType }
+type ForcedTogglesType = { [ToggleIdType]: ToggleValueType }
+
+let featureEnabledCache: FeatureEnabledCacheType = {}
+let experimentCache: ExperimentCacheType = {}
+let forcedToggles: ForcedTogglesType = {}
 
 export const registerLibrary = (lib: OptimizelyLibType) => {
   // TODO: Double-check if this works with server environments
@@ -98,8 +104,11 @@ const getForcedOrCached = (toggleId, cache) => {
 }
 
 const getOrSetCachedFeatureEnabled = toggleId => {
+  const DEFAULT = false
+
   if (isForcedOrCached(toggleId, featureEnabledCache)) {
-    return getForcedOrCached(toggleId, featureEnabledCache)
+    const value = getForcedOrCached(toggleId, featureEnabledCache)
+    return typeof value === 'boolean' ? value : DEFAULT
   }
 
   return (featureEnabledCache[toggleId] = optimizelyClient.isFeatureEnabled(
@@ -114,8 +123,11 @@ const getBooleanToggle = getOrSetCachedFeatureEnabled
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
 const getMultiToggle = (toggleId: ToggleIdType): string => {
+  const DEFAULT = 'a'
+
   if (isForcedOrCached(toggleId, experimentCache)) {
-    return getForcedOrCached(toggleId, experimentCache)
+    const value = getForcedOrCached(toggleId, experimentCache)
+    return typeof value === 'string' ? value : DEFAULT
   }
 
   const isEnabled = getOrSetCachedFeatureEnabled(toggleId)
@@ -130,14 +142,14 @@ const getMultiToggle = (toggleId: ToggleIdType): string => {
         userId,
         audienceSegmentationAttributes
       )) ||
-    'a'
+    DEFAULT
   )
 }
 
 export const multiToggle = baseMultiToggle(getMultiToggle)
 
 export const forceToggles = (toggleKeyValues: {
-  [ToggleIdType]: ?ToggleValueType
+  [ToggleIdType]: ToggleValueType | null
 }) => {
   Object.keys(toggleKeyValues).forEach(toggleId => {
     const value = toggleKeyValues[toggleId]

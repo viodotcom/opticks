@@ -261,6 +261,11 @@ describe('Optimizely Integration', () => {
         expect(booleanToggle('baz')).toEqual(true)
       })
 
+      it("doesnt mess with the toggle values if it's the wrong type", () => {
+        expect(multiToggle('baz')).toEqual('a')
+        expect(booleanToggle('bax')).toEqual(false)
+      })
+
       describe('Clearing forced toggles', () => {
         beforeEach(() => {
           forceToggles({ foo: null, bar: null })
