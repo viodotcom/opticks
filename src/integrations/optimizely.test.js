@@ -234,13 +234,30 @@ describe('Optimizely Integration', () => {
         forceToggles({ foo: 'a', bar: false, bax: 'c', baz: true })
       })
 
-      it('Respects the overridden values', () => {
+      it('respects the overridden values', () => {
         expect(multiToggle('foo')).toEqual('a')
         expect(booleanToggle('bar')).toEqual(false)
       })
 
-      it('Allows you to invent non-existing experiments', () => {
+      it('allows you to invent non-existing experiments', () => {
         expect(multiToggle('bax')).toEqual('c')
+        expect(booleanToggle('baz')).toEqual(true)
+      })
+
+      it('persists after setAudienceSegmentationAttributes is called', () => {
+        expect(multiToggle('bax')).toEqual('c')
+        setAudienceSegmentationAttributes('newUserId', { foo: 'bar' })
+        expect(multiToggle('foo')).toEqual('a')
+        expect(multiToggle('bax')).toEqual('c')
+        expect(booleanToggle('bar')).toEqual(false)
+        expect(booleanToggle('baz')).toEqual(true)
+      })
+
+      it('persists after setAudienceSegmentationAttribute is called', () => {
+        setAudienceSegmentationAttribute('foo', 'bar')
+        expect(multiToggle('foo')).toEqual('a')
+        expect(multiToggle('bax')).toEqual('c')
+        expect(booleanToggle('bar')).toEqual(false)
         expect(booleanToggle('baz')).toEqual(true)
       })
 

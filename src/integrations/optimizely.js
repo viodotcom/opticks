@@ -25,8 +25,10 @@ let Optimizely: OptimizelyLibType // reference to injected Optimizely library
 let optimizelyClient // reference to active Optimizely instance
 let userId: UserIdType
 let audienceSegmentationAttributes: AudienceSegmentationAttributesType
+
 let featureEnabledCache = {}
 let experimentCache = {}
+let forcedToggles = {}
 
 export const registerLibrary = (lib: OptimizelyLibType) => {
   // TODO: Double-check if this works with server environments
@@ -84,11 +86,20 @@ export const addActivateListener = listener =>
     listener
   )
 
-const isCached = (toggleId, cache) => cache.hasOwnProperty(toggleId)
+const isForcedOrCached = (toggleId, cache) =>
+  forcedToggles.hasOwnProperty(toggleId) || cache.hasOwnProperty(toggleId)
+
+const getForcedOrCached = (toggleId, cache) => {
+  const register = forcedToggles.hasOwnProperty(toggleId)
+    ? forcedToggles
+    : cache
+
+  return register[toggleId]
+}
 
 const getOrSetCachedFeatureEnabled = toggleId => {
-  if (isCached(toggleId, featureEnabledCache)) {
-    return featureEnabledCache[toggleId]
+  if (isForcedOrCached(toggleId, featureEnabledCache)) {
+    return getForcedOrCached(toggleId, featureEnabledCache)
   }
 
   return (featureEnabledCache[toggleId] = optimizelyClient.isFeatureEnabled(
@@ -103,7 +114,9 @@ const getBooleanToggle = getOrSetCachedFeatureEnabled
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
 const getMultiToggle = (toggleId: ToggleIdType): string => {
-  if (isCached(toggleId, experimentCache)) return experimentCache[toggleId]
+  if (isForcedOrCached(toggleId, experimentCache)) {
+    return getForcedOrCached(toggleId, experimentCache)
+  }
 
   const isEnabled = getOrSetCachedFeatureEnabled(toggleId)
 
@@ -130,12 +143,9 @@ export const forceToggles = (toggleKeyValues: {
     const value = toggleKeyValues[toggleId]
 
     if (value === null) {
-      delete featureEnabledCache[toggleId]
-      delete experimentCache[toggleId]
+      delete forcedToggles[toggleId]
     } else {
-      const cache =
-        typeof value === 'boolean' ? featureEnabledCache : experimentCache
-      cache[toggleId] = value
+      forcedToggles[toggleId] = value
     }
   })
 }
