@@ -46,6 +46,21 @@ export const registerLibrary = (lib: OptimizelyLibType) => {
 const clearFeatureEnabledCache = () => (featureEnabledCache = {})
 const clearExperimentCache = () => (experimentCache = {})
 
+// Adds / removes Toggles to force from the forcedToggles list
+export const forceToggles = (toggleKeyValues: {
+  [ToggleIdType]: ToggleValueType | null
+}) => {
+  Object.keys(toggleKeyValues).forEach(toggleId => {
+    const value = toggleKeyValues[toggleId]
+
+    if (value === null) {
+      delete forcedToggles[toggleId]
+    } else {
+      forcedToggles[toggleId] = value
+    }
+  })
+}
+
 export const setAudienceSegmentationAttributes = (
   id: UserIdType,
   attributes: AudienceSegmentationAttributesType = {}
@@ -92,10 +107,10 @@ export const addActivateListener = listener =>
     listener
   )
 
-const isForcedOrCached = (toggleId, cache) =>
+const isForcedOrCached = (toggleId, cache): boolean =>
   forcedToggles.hasOwnProperty(toggleId) || cache.hasOwnProperty(toggleId)
 
-const getForcedOrCached = (toggleId, cache) => {
+const getForcedOrCached = (toggleId, cache): ToggleValueType => {
   const register = forcedToggles.hasOwnProperty(toggleId)
     ? forcedToggles
     : cache
@@ -103,7 +118,7 @@ const getForcedOrCached = (toggleId, cache) => {
   return register[toggleId]
 }
 
-const getOrSetCachedFeatureEnabled = toggleId => {
+const getOrSetCachedFeatureEnabled = (toggleId): BooleanToggleValueType => {
   const DEFAULT = false
 
   if (isForcedOrCached(toggleId, featureEnabledCache)) {
@@ -122,7 +137,7 @@ const getBooleanToggle = getOrSetCachedFeatureEnabled
 
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
-const getMultiToggle = (toggleId: ToggleIdType): string => {
+const getMultiToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
   const DEFAULT = 'a'
 
   if (isForcedOrCached(toggleId, experimentCache)) {
@@ -147,17 +162,3 @@ const getMultiToggle = (toggleId: ToggleIdType): string => {
 }
 
 export const multiToggle = baseMultiToggle(getMultiToggle)
-
-export const forceToggles = (toggleKeyValues: {
-  [ToggleIdType]: ToggleValueType | null
-}) => {
-  Object.keys(toggleKeyValues).forEach(toggleId => {
-    const value = toggleKeyValues[toggleId]
-
-    if (value === null) {
-      delete forcedToggles[toggleId]
-    } else {
-      forcedToggles[toggleId] = value
-    }
-  })
-}
