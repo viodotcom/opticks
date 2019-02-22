@@ -10,6 +10,10 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v1.5.0
+
+- :boom: Bundle as a CommonJS module instead of ES6 for Node JS support #16
+
 # v1.4.0
 
 - :boom: (:bug: ?) Optimizely Integration: Forced toggles are now retained after setting audience segmentation attributes #14
