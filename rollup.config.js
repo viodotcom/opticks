@@ -20,7 +20,7 @@ const generateConfig = integration => ({
   input: `src/${integration}.js`,
   output: {
     file: `lib/${integration}.js`,
-    format: 'esm'
+    format: 'cjs'
   },
   plugins: plugins('lib')
 })
