@@ -3,7 +3,7 @@
 import type { ToggleIdType, TogglerGetterType } from '../types'
 import { handleToggleVariant } from '../variantUtils'
 
-export const multiToggle = (getToggle: TogglerGetterType) => <T>(
+export const toggle = (getToggle: TogglerGetterType) => <T>(
   toggleId: ToggleIdType,
   ...variants: Array<T>
 ): ?T => {

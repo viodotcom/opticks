@@ -2,7 +2,7 @@
 
 import type { ToggleIdType } from '../types'
 import { booleanToggle as baseBooleanToggle } from '../core/booleanToggle'
-import { multiToggle as baseMultiToggle } from '../core/multiToggle'
+import { toggle as baseToggle } from '../core/toggle'
 import { NOTIFICATION_TYPES } from '@optimizely/optimizely-sdk/lib/utils/enums'
 
 import type OptimizelyLibType from '@optimizely/optimizely-sdk'
@@ -137,7 +137,7 @@ const getBooleanToggle = getOrSetCachedFeatureEnabled
 
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
-const getMultiToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
+const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
   const DEFAULT = 'a'
 
   if (isForcedOrCached(toggleId, experimentCache)) {
@@ -161,4 +161,4 @@ const getMultiToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
   )
 }
 
-export const multiToggle = baseMultiToggle(getMultiToggle)
+export const toggle = baseToggle(getToggle)

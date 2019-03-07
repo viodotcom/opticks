@@ -2,7 +2,7 @@
 
 import type { BooleanToggleType, ToggleIdType, VariantType } from '../types'
 import { booleanToggle as baseBooleanToggle } from '../core/booleanToggle'
-import { multiToggle as baseMultiToggle } from '../core/multiToggle'
+import { toggle as baseToggle } from '../core/toggle'
 
 // This implementation expects you to populate a list of boolean toggles in
 // advance, in the following format:
@@ -12,18 +12,18 @@ export type BooleanToggleListType = { [ToggleIdType]: BooleanToggleType }
 // This implementation expects you to populate a list of multi toggle objects in
 // advance, in the following format:
 // { fooExperiment: {variant: 'a'}, barExperiment: {variant: 'b'} }
-export type MultiToggleListType = { [ToggleIdType]: { variant: VariantType } }
+export type toggleListType = { [ToggleIdType]: { variant: VariantType } }
 
 let booleanToggleList: BooleanToggleListType = {}
-let multiToggleList: MultiToggleListType = {}
+let toggleList: toggleListType = {}
 
 export const setBooleanToggles = (toggles: BooleanToggleListType) => {
   booleanToggleList = toggles
 }
 
 // FIXME: FlowType
-export const setMultiToggles = (toggles: any) => {
-  multiToggleList = toggles
+export const setToggles = (toggles: any) => {
+  toggleList = toggles
 }
 
 export const getBooleanToggle = (toggleId: ToggleIdType) => {
@@ -35,21 +35,21 @@ export const getBooleanToggle = (toggleId: ToggleIdType) => {
 
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
-export const getMultiToggle = (toggleId: ToggleIdType): VariantType => {
-  const toggle = multiToggleList[toggleId && toggleId.toLowerCase()]
+export const getToggle = (toggleId: ToggleIdType): VariantType => {
+  const toggle = toggleList[toggleId && toggleId.toLowerCase()]
 
   return (toggle && toggle.variant) || 'a'
 }
 
-export const multiToggle = baseMultiToggle(getMultiToggle)
+export const toggle = baseToggle(getToggle)
 
 export const initialize = ({
   booleanToggles,
-  multiToggles
+  toggles
 }: {
   booleanToggles?: BooleanToggleListType,
-  multiToggles?: MultiToggleListType
+  toggles?: toggleListType
 }) => {
   booleanToggles && setBooleanToggles(booleanToggles)
-  multiToggles && setMultiToggles(multiToggles)
+  toggles && setToggles(toggles)
 }

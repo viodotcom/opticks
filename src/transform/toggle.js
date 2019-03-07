@@ -3,12 +3,12 @@
 module.exports.parser = 'flow'
 
 const PACKAGE_NAME = 'opticks'
-const FUNCTION_NAME = 'multiToggle'
+const FUNCTION_NAME = 'toggle'
 
 const isCurrentToggle = (currentToggleCallName, wantedToggleName) =>
   currentToggleCallName.toLowerCase() === wantedToggleName
 
-const implementWinningMultiToggle = (
+const implementWinningtoggle = (
   j,
   toggleName,
   winnerArgumentIndex,
@@ -36,7 +36,7 @@ const implementWinningMultiToggle = (
   }
 }
 
-const findMultiToggleCalls = (j, context, localName) =>
+const findtoggleCalls = (j, context, localName) =>
   context.closestScope().find(j.CallExpression, { callee: { name: localName } })
 
 // 0 based index, a = 0, b = 1, c = 2 etc...
@@ -62,7 +62,7 @@ export default function transformer (file, api, options) {
       // find imports to packageName
       .find(j.ImportDeclaration, { source: { value: packageName } })
       .forEach(importDef => {
-        // find local imported names of the multiToggle calls
+        // find local imported names of the toggle calls
         j(importDef)
           .find(j.ImportSpecifier, {
             imported: { name: functionName }
@@ -70,21 +70,21 @@ export default function transformer (file, api, options) {
           .forEach(importSpecifier => {
             const localName = importSpecifier.value.local.name
 
-            const findToggleCallsByLocalImportName = findMultiToggleCalls.bind(
+            const findToggleCallsByLocalImportName = findtoggleCalls.bind(
               null,
               j,
               j(importSpecifier),
               localName
             )
 
-            const toggleCallModifier = implementWinningMultiToggle.bind(
+            const toggleCallModifier = implementWinningtoggle.bind(
               null,
               j,
               toggleName,
               winnerArgumentIndex
             )
 
-            // implement winners for multiToggle calls based on local scoped name
+            // implement winners for toggle calls based on local scoped name
             findToggleCallsByLocalImportName().forEach(toggleCallModifier)
 
             const allTogglesRemoved =
@@ -93,7 +93,7 @@ export default function transformer (file, api, options) {
             // remove import if no toggles are left
             if (allTogglesRemoved) {
               if (importDef.value.specifiers.length > 1) {
-                // imports left, only remove multiToggle import specifiers
+                // imports left, only remove toggle import specifiers
                 j(importSpecifier).remove()
               } else {
                 // no more imports left, remove the full import definition

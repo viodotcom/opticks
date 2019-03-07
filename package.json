@@ -9,7 +9,7 @@
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "clean:booleanToggle": "jscodeshift --parser flow --transform lib/transform/booleanToggle.js",
-    "clean:multiToggle": "jscodeshift --parser flow --transform lib/transform/multiToggle.js",
+    "clean:toggle": "jscodeshift --parser flow --transform lib/transform/toggle.js",
     "flow": "flow",
     "flow-typed": "flow-typed",
     "jscodeshift": "jscodeshift",

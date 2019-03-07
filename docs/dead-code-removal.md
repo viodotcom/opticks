@@ -37,7 +37,7 @@ Assuming you're running the codemods directly from the Opticks directory in your
 prune all losing code in the `src` directory, run the script as follows:
 
 ```
-npm run clean:multiToggle -- --toggle=foo --winner=b
+npm run clean:toggle -- --toggle=foo --winner=b
 ```
 
 Most likely you'd want to run the script your own project which consumes
@@ -46,17 +46,17 @@ for convenience:
 
 ```
 "scripts": {
-  "clean:multiToggle": "npm explore opticks -- npm run clean:multiToggle `pwd`/src --dry -- ",
+  "clean:toggle": "npm explore opticks -- npm run clean:toggle `pwd`/src --dry -- ",
 }
 ```
 
-This will forward any parameters you pass towards the `clean:multiToggle` script
+This will forward any parameters you pass towards the `clean:toggle` script
 in the Opticks package with your project's src directory.
 
 Then you can run it right from your project:
 
 ```
-npm run clean:multiToggle -- --toggle=foo --winner=b
+npm run clean:toggle -- --toggle=foo --winner=b
 ```
 
 ### Boolean Toggles
@@ -76,7 +76,7 @@ namely:
 ```
 import { booleanToggle } from 'opticks'
 // or
-import { multiToggle } from 'opticks'
+import { toggle } from 'opticks'
 ```
 
 You can override these values via:
@@ -89,7 +89,7 @@ Simple variable substitution:
 
 ```
 // during experiment:
-const CTAColor = multiToggle('CTAColor', 'black', 'green', 'red')
+const CTAColor = toggle('CTAColor', 'black', 'green', 'red')
 
 // after 'b' was declared winner:
 const CTAColor = 'red'
@@ -101,7 +101,7 @@ Conditional component rendering:
 // simplified, somewhat naive example as it doesn't account for
 // layout changes or conditional loading of the component
 
-const SearchBox = multiToggle(
+const SearchBox = toggle(
   'SearchBoxComponent',
   HorizontalSearchBox,
   VerticalSearchBox
@@ -110,14 +110,14 @@ const SearchBox = multiToggle(
 // .. in render method: <SearchBox />
 ```
 
-To get the multi toggle variant
+To get the toggle variant
 
 ```
-const result = multiToggle('multiToggleFoo') // 'b'
+const result = toggle('toggleFoo') // 'b'
 ```
 
 A more interesting experiment would execute conditional code based on a multi
-toggle. The trick here is that like Boolean Toggles, Multi Toggles accepts
+toggle. The trick here is that like Boolean Toggles, toggles accepts
 functions that will be executed only for a particular experiment branch.
 
 For example:
@@ -130,7 +130,7 @@ const doSomethingElse = (msg) => console.log('b', msg)
 
 const handleOnClick = () => {
   alwaysDoSomething()
-  multiToggle(
+  toggle(
     'DoSomethingOnClick',
     () => doSomething('foo'), // default
     () => doSomethingElseForB('bar') // for b
@@ -166,7 +166,7 @@ const alwaysDoSomething = () => console.log('always')
 
 const handleOnClick = () => {
   alwaysDoSomething()
-  multiToggle(
+  toggle(
     'DoSomethingOnClick',
     () => console.log('default', 'foo'), // a / default
     () => console.log('b', 'bar') // for b
@@ -188,7 +188,7 @@ code only for one side of a test:
 
 ```
 // before
-multiToggle(
+toggle(
   'ShowConfirmationDialogBeforeDoingSomething',
   null,
   () => showConfirmationDialog()
@@ -207,16 +207,16 @@ As you can imagine, this also can be used to _not_ execute code as an
 experiment. We sometimes use this to re-evaluate an existing component or piece
 of business logic.
 
-## Cleaning Multi Toggling Examples
+## Cleaning Toggles Examples
 
 ### Conditional rendering
 
 The simplest way to render something conditionally is to assign a boolean to a
 variable. Though this is probably better done with a boolean toggle, it's
-possible with a multiToggle as well:
+possible with a toggle as well:
 
 ```
-const shouldRenderIcon = multiToggle('SomethingWithIcon', false, true)
+const shouldRenderIcon = toggle('SomethingWithIcon', false, true)
 
 // in render:
 
@@ -227,7 +227,7 @@ This would leave a shouldRenderIcon after the experiment concluded. If this
 bothers you, you can opt for an inline solution:
 
 ```
-<div>Foo {multiToggle('SomethingWithIcon', null, <Icon/>)}</div>
+<div>Foo {toggle('SomethingWithIcon', null, <Icon/>)}</div>
 ```
 
 Or make the icon configurable in a separate component:
@@ -236,7 +236,7 @@ Or make the icon configurable in a separate component:
 ```
 <Component
   foo="bar"
-  {multiToggle('ComponentWithIcon', null, () => ...{withIcon: true}}
+  {toggle('ComponentWithIcon', null, () => ...{withIcon: true}}
 />
 ```
 
@@ -253,7 +253,7 @@ functions or components, such as with a Higher Order Component:
 ```
 const withSomethingGreat = (Component) => // ... do something with the SearchBox
 
-export default multiToggle(
+export default toggle(
     'GreaterSearchBox',
     SearchBox,
     () => withSomethingGreat(SearchBox)

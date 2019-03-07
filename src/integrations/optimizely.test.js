@@ -7,13 +7,13 @@ import {
   setAudienceSegmentationAttribute,
   setAudienceSegmentationAttributes,
   booleanToggle,
-  multiToggle,
+  toggle,
   forceToggles
 } from './optimizely'
 
 // During the tests:
 // for booleanToggle 'foo' yields true and 'bar' yields false, unless forced
-// for multiToggle 'foo' yields 'b' and 'bar' yields 'a', unless forced
+// for toggle 'foo' yields 'b' and 'bar' yields 'a', unless forced
 import datafile from './__fixtures__/dataFile.js'
 
 import Optimizely, {
@@ -179,7 +179,7 @@ describe('Optimizely Integration', () => {
     describe('Multi Toggles', () => {
       beforeEach(() => {
         setAudienceSegmentationAttributes('fooUser', { deviceType: 'mobile' })
-        multiToggle('foo')
+        toggle('foo')
       })
 
       it('Calls isFeatureEnabled to force experiment activation', () => {
@@ -199,7 +199,7 @@ describe('Optimizely Integration', () => {
         )
       })
 
-      testAudienceSegmentationCacheBusting(multiToggle)
+      testAudienceSegmentationCacheBusting(toggle)
 
       describe('Setting Audience Segmentation Attributes individually', () => {
         beforeEach(() => {
@@ -219,13 +219,13 @@ describe('Optimizely Integration', () => {
 
       it("Returns Optimizely's value when no arguments supplied", () => {
         // maps to a, b, c
-        expect(multiToggle('foo')).toEqual('b')
-        expect(multiToggle('bar')).toEqual('a')
+        expect(toggle('foo')).toEqual('b')
+        expect(toggle('bar')).toEqual('a')
       })
 
       it('Maps Optimizely value to a, b, c indexed arguments', () => {
-        expect(multiToggle('foo', 'first', 'second', 'third')).toEqual('second')
-        expect(multiToggle('bar', 'first', 'second')).toEqual('first')
+        expect(toggle('foo', 'first', 'second', 'third')).toEqual('second')
+        expect(toggle('bar', 'first', 'second')).toEqual('first')
       })
     })
 
@@ -238,34 +238,34 @@ describe('Optimizely Integration', () => {
       })
 
       it('respects the overridden values', () => {
-        expect(multiToggle('foo')).toEqual('a')
+        expect(toggle('foo')).toEqual('a')
         expect(booleanToggle('bar')).toEqual(false)
       })
 
       it('allows you to invent non-existing experiments', () => {
-        expect(multiToggle('bax')).toEqual('c')
+        expect(toggle('bax')).toEqual('c')
         expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('persist after setAudienceSegmentationAttributes is called', () => {
-        expect(multiToggle('bax')).toEqual('c')
+        expect(toggle('bax')).toEqual('c')
         setAudienceSegmentationAttributes('newUserId', { foo: 'bar' })
-        expect(multiToggle('foo')).toEqual('a')
-        expect(multiToggle('bax')).toEqual('c')
+        expect(toggle('foo')).toEqual('a')
+        expect(toggle('bax')).toEqual('c')
         expect(booleanToggle('bar')).toEqual(false)
         expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('persist after setAudienceSegmentationAttribute is called', () => {
         setAudienceSegmentationAttribute('foo', 'bar')
-        expect(multiToggle('foo')).toEqual('a')
-        expect(multiToggle('bax')).toEqual('c')
+        expect(toggle('foo')).toEqual('a')
+        expect(toggle('bax')).toEqual('c')
         expect(booleanToggle('bar')).toEqual(false)
         expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('makes sure Toggles return defaults if forced values are of wrong type', () => {
-        expect(multiToggle('baz')).toEqual('a')
+        expect(toggle('baz')).toEqual('a')
         expect(booleanToggle('bax')).toEqual(false)
       })
 
@@ -275,16 +275,16 @@ describe('Optimizely Integration', () => {
         })
 
         it('should yield real values for cleared toggles', () => {
-          expect(multiToggle('foo')).toEqual('b')
-          expect(multiToggle('bar')).toEqual('a')
+          expect(toggle('foo')).toEqual('b')
+          expect(toggle('bar')).toEqual('a')
           expect(booleanToggle('foo')).toEqual(true)
           expect(booleanToggle('bar')).toEqual(false)
         })
 
         it('should keep the non-cleared forced toggles and other defaults', () => {
-          expect(multiToggle('bax')).toEqual('c')
+          expect(toggle('bax')).toEqual('c')
           expect(booleanToggle('baz')).toEqual(true)
-          expect(multiToggle('nonexistent')).toEqual('a')
+          expect(toggle('nonexistent')).toEqual('a')
           expect(booleanToggle('nonexistent')).toEqual(false)
         })
       })

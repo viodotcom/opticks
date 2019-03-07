@@ -1,6 +1,6 @@
 // @flow
 
-import { initialize, getBooleanToggle, getMultiToggle } from './simple'
+import { initialize, getBooleanToggle, getToggle } from './simple'
 
 describe('Simple Integration', () => {
   describe('Boolean Toggles', () => {
@@ -28,7 +28,7 @@ describe('Simple Integration', () => {
   describe('Multi Toggles', () => {
     beforeEach(() => {
       initialize({
-        multiToggles: {
+        toggles: {
           foo: { variant: 'b' },
           bar: { variant: 'a' }
         }
@@ -36,14 +36,14 @@ describe('Simple Integration', () => {
     })
 
     it('Gets multi toggles by id', () => {
-      expect(getMultiToggle('foo')).toEqual('b')
-      expect(getMultiToggle('bar')).toEqual('a')
+      expect(getToggle('foo')).toEqual('b')
+      expect(getToggle('bar')).toEqual('a')
     })
 
     it('defaults to "a" when toggle cannot be found', () => {
-      expect(getMultiToggle('baz')).toEqual('a')
+      expect(getToggle('baz')).toEqual('a')
       // $FlowFixMe: invalid API call for testing purpose
-      expect(getMultiToggle()).toEqual('a')
+      expect(getToggle()).toEqual('a')
     })
   })
 })
