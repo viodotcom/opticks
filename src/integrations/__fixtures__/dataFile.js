@@ -14,42 +14,56 @@ export default {
       variations: [
         {
           featureEnabled: false,
-          id: '1',
-          key: 'control',
-          variables: [
-            {
-              id: 'variation',
-              key: 'variation',
-              type: 'string',
-              value: 'a'
-            }
-          ]
+          id: 'foo-a',
+          key: 'a'
         },
         {
           featureEnabled: true,
-          id: '2',
-          key: 'treatment',
-          variables: [
-            {
-              id: 'variation',
-              key: 'variation',
-              type: 'string',
-              value: 'b'
-            }
-          ]
+          id: 'foo-b',
+          key: 'b'
         }
       ],
       trafficAllocation: [
         {
-          entityId: '1',
+          entityId: 'foo-a',
           endOfRange: 5000
         },
         {
-          entityId: '2',
+          entityId: 'foo-b',
           endOfRange: 10000
         }
       ],
       audienceIds: ['foo-default-dates'],
+      forcedVariations: []
+    },
+    {
+      id: 'bar',
+      key: 'bar',
+      status: 'Running',
+      layerId: 'layerBar',
+      variations: [
+        {
+          featureEnabled: false,
+          id: 'bar-a',
+          key: 'a'
+        },
+        {
+          featureEnabled: true,
+          id: 'bar-b',
+          key: 'b'
+        }
+      ],
+      trafficAllocation: [
+        {
+          entityId: 'bar-a',
+          endOfRange: 5000
+        },
+        {
+          entityId: 'bar-b',
+          endOfRange: 10000
+        }
+      ],
+      audienceIds: [],
       forcedVariations: []
     }
   ],
@@ -57,15 +71,12 @@ export default {
     {
       experimentIds: ['foo'],
       id: 'foo',
-      key: 'foo',
-      variables: [
-        {
-          defaultValue: 'a',
-          id: 'variation',
-          key: 'variation',
-          type: 'string'
-        }
-      ]
+      key: 'foo'
+    },
+    {
+      experimentIds: ['bar'],
+      id: 'bar',
+      key: 'bar'
     }
   ],
   events: [],

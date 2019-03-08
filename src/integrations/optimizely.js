@@ -145,20 +145,14 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
     return typeof value === 'string' ? value : DEFAULT
   }
 
-  const isEnabled = getOrSetCachedFeatureEnabled(toggleId)
-
-  // Abusing the feature flags to store variations: 'a', 'b', 'c' etc.
-  // TODO: Decide if we want to cache experiment values as well
-  return (
-    (isEnabled &&
-      optimizelyClient.getFeatureVariableString(
-        toggleId,
-        'variation',
-        userId,
-        audienceSegmentationAttributes
-      )) ||
-    DEFAULT
-  )
+  // Assuming the variation keys follow a, b, c, etc. convention
+  // TODO: Enforce ^ ?
+  return (experimentCache[toggleId] =
+    optimizelyClient.activate(
+      toggleId,
+      userId,
+      audienceSegmentationAttributes
+    ) || DEFAULT)
 }
 
 export const toggle = baseToggle(getToggle)

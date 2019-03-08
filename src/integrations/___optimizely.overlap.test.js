@@ -32,8 +32,8 @@ optimizelyClientInstance.notificationCenter.addNotificationListener(
 )
 */
 
-const userIdFalse = 'zhhhh' // control
-const userIdTrue = 'barbazhhhaaah' // variation
+const fooUserIdFalse = 'zhhhh' // control
+const fooUserIdTrue = 'barbazhhhaaah' // variation
 
 const attributes = {
   trafficSource: 'foo',
@@ -41,70 +41,44 @@ const attributes = {
   hasDefaultDates: true
 }
 
-it('returns the correct result', () => {
+it('returns the correct result with experiment / variables combination', () => {
   expect(
-    optimizelyClientInstance.isFeatureEnabled('foo', userIdTrue, attributes)
+    optimizelyClientInstance.isFeatureEnabled('foo', fooUserIdTrue, attributes)
   ).toEqual(true)
   expect(
-    optimizelyClientInstance.isFeatureEnabled('foo', userIdFalse, attributes)
+    optimizelyClientInstance.isFeatureEnabled('foo', fooUserIdFalse, attributes)
   ).toEqual(false)
 
   expect(
-    optimizelyClientInstance.getFeatureVariableString(
-      'foo',
-      'variation',
-      userIdTrue,
-      attributes
-    )
+    optimizelyClientInstance.activate('foo', fooUserIdTrue, attributes)
   ).toEqual('b')
 
   expect(
-    optimizelyClientInstance.getFeatureVariableString(
-      'foo',
-      'variation',
-      userIdFalse,
-      attributes
-    )
+    optimizelyClientInstance.activate('foo', fooUserIdFalse, attributes)
   ).toEqual('a')
-
-  expect(
-    optimizelyClientInstance.getFeatureVariableString(
-      'nonexistent',
-      'variation',
-      userIdFalse,
-      attributes
-    )
-  ).toEqual(null)
-
-  expect(
-    optimizelyClientInstance.activate(
-      'foo',
-      'variation',
-      userIdFalse,
-      attributes
-    )
-  ).toEqual(null)
 
   mockEventListener.mockClear()
+})
 
-  // Broken on purpose, treatment vs a or b
-  expect(
-    optimizelyClientInstance.activate('foo', userIdTrue, attributes)
-  ).toEqual('treatment')
-
-  expect(
-    optimizelyClientInstance.activate('foo', userIdTrue, attributes)
-  ).toEqual('treatment')
-
-  expect(mockEventListener).toHaveBeenCalledTimes(2)
+it('returns the correct result experiments / activate', () => {
+  const barUserIdTrue = '2987010978kjhkjhd82'
+  const barUserIdFalse = 'w=zkhkjz'
 
   /*
-  expect(
-    optimizelyClientInstance.activate('bar', userIdTrue, attributes)
-  ).toEqual('b')
+  mockEventListener.mockClear()
 
   expect(
-    optimizelyClientInstance.activate('bar', userIdTrue, attributes)
-  ).toEqual('a')
+    optimizelyClientInstance.isFeatureEnabled('bar', barUserIdFalse)
+  ).toBeFalsy()
+
+  expect(
+    optimizelyClientInstance.isFeatureEnabled('bar', barUserIdTrue)
+  ).toBeTruthy()
+  expect(mockEventListener).toHaveBeenCalledTimes(2)
   */
+
+  mockEventListener.mockClear()
+  expect(optimizelyClientInstance.activate('bar', barUserIdFalse)).toEqual('a')
+  expect(optimizelyClientInstance.activate('bar', barUserIdTrue)).toEqual('b')
+  expect(mockEventListener).toHaveBeenCalledTimes(2)
 })
