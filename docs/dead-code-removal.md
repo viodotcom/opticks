@@ -23,9 +23,20 @@ For the losing boolean toggles and losing multi toggle variants:
 The codemods are designed to prune toggles that are null, allowing you to
 execute code only for one variant of a multi toggle experiment.
 
+### What are codemods?
+
+Codemods are AST -> AST transformers that we use to find toggles and remove
+losing variants and keep the winning variants of your toggles.
+
+We use JSCodeShift to do this, and Opticks ships with the codemods that you can
+run from your project.
+
+See [the JSCodeShift project](https://github.com/facebook/jscodeshift) for more
+information.
+
 ## Running the codemods
 
-There two codemods supplied with Opticks, one for Boolean Toggles, one for Multi
+There two codemods supplied with Opticks, one for Boolean Toggles, one for
 Toggles, they can be found in the `src/transform` directory.
 
 In order to clean all "losing" branches of the code, the codemods need to know
@@ -83,7 +94,7 @@ You can override these values via:
 `--functionName=myLocalNameForMultiOrBooleanToggle` and
 `--packageName=myNameForOpticks`
 
-### Cleaning Examples and Recipes
+## Cleaning Examples and Recipes
 
 Simple variable substitution:
 

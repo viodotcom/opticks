@@ -26,10 +26,11 @@ It can be used in a variety of ways:
 We use React at FindHotel and some of the code examples use JSX, but the code
 and concept is compatible with any front-end framework or architecture.
 
-The `booleanToggle` is the simplest toggle to use for feature flagging, but
-it's also less flexible. To keep things simple we'll focus on the `toggle`
-for both a/b/c experiments and feature flags. If you're only interested in
-feature flags, read more about [Boolean Toggles](docs/booleanToggles.md).
+The `booleanToggle` is the simplest toggle type to use for feature flagging, but
+it's also the least flexible. As of version 2.0 `toggle` is the default and
+recommended for both a/b/c experiments and feature flags. If you're only ever
+interested in feature flags, read more about [Boolean
+Toggles](docs/booleanToggles.md).
 
 ### Opticks vs other experimentation frameworks
 
@@ -76,7 +77,7 @@ the variant executing and code clean up works under the hood.
 The simplest signature is as follows, to read the toggle value directly:
 
 ```
-toggle(experimentId: string) => {variant: 'a' | 'b' | 'c' | 'd' | ... }
+toggle(experimentId: string) => { variant: 'a' | 'b' | 'c' | 'd' | ... }
 ```
 
 For example when the user is assigned to the `b` side:
@@ -95,7 +96,8 @@ const fooResult = 'b'
 if (fooResult === 'b') console.log('b variant of the foo experiment')
 ```
 
-This would leave your code more messy than necessary. You could skip the intermediate value but it will still result in awkward leftover code:
+This would leave your code more messy than necessary. You could skip the
+intermediate value but it will still result in awkward leftover code:
 
 ```
 if (toggle('foo') === 'b') ...
@@ -167,8 +169,8 @@ if (shouldShowWarning) showWarning()
 if (toggle('shouldShowWarning', false, true)) showWarning()
 ```
 
-This would end up with a strange orphaned conditional after the codemods did
-their cleaning:
+This would end up with an orphaned conditional after the codemods did their
+cleaning:
 
 ```
 const shouldShowWarning = true
@@ -235,5 +237,6 @@ alwaysDoSomething()
 
 ## Removal of dead code
 
-For more instructions and recipes, see
+Above are just a few examples of how the codemods operate on the code.
+For instructions and more recipes, see
 [Removal of dead code](docs/dead-code-removal.md).
