@@ -10,6 +10,17 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# Unreleased
+
+## Optimizely Integration
+
+- :boom: Rename multiToggle -> toggle and promote it as default toggle
+- :rocket: Add resetAudienceSegmentationAttributes
+- :boom: Add setUserId (now separate from setAudienceSegmentationAttributes) and toggles throw error if userId is not set before using
+- :boom: setAudienceSegmentationAttributes now merges attributes with existing ones (used to overwrite)
+- :boom: Remove setAudienceSegmentationAttribute, since setAudienceSegmentationAttributes doesn't overwrite existing segmentation attributes anymore
+- :boom: Use `activate`, with a convention of using keys with value `a`, `b`, `c` etc - instead of using `getFeatureVariableString`. This is not a breaking change for the `toggle` API but simplifies the dataFile, check the supplied example on how to set up your experiments.
+
 # v1.5.0
 
 - :boom: Bundle as a CommonJS module instead of ES6 for Node JS support #16
