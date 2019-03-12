@@ -26,7 +26,7 @@ export { NOTIFICATION_TYPES }
 let Optimizely: OptimizelyLibType // reference to injected Optimizely library
 let optimizelyClient // reference to active Optimizely instance
 let userId: UserIdType
-let audienceSegmentationAttributes: AudienceSegmentationAttributesType
+let audienceSegmentationAttributes: AudienceSegmentationAttributesType = {}
 
 type FeatureEnabledCacheType = { [ToggleIdType]: BooleanToggleValueType }
 type ExperimentCacheType = { [ToggleIdType]: ExperimentToggleValueType }
@@ -61,23 +61,29 @@ export const forceToggles = (toggleKeyValues: {
   })
 }
 
-export const setAudienceSegmentationAttributes = (
-  id: UserIdType,
-  attributes: AudienceSegmentationAttributesType = {}
-) => {
+const invalidateCaches = () => {
   clearFeatureEnabledCache()
   clearExperimentCache()
-  userId = id
-  audienceSegmentationAttributes = attributes
 }
 
-export const setAudienceSegmentationAttribute = (
-  key: AudienceSegmentationAttributeKeyType,
-  value: AudienceSegmentationAttributeValueType
+export const setUserId = (id: UserIdType) => {
+  invalidateCaches()
+  userId = id
+}
+
+export const setAudienceSegmentationAttributes = (
+  attributes: AudienceSegmentationAttributesType = {}
 ) => {
-  clearFeatureEnabledCache()
-  clearExperimentCache()
-  audienceSegmentationAttributes[key] = value
+  invalidateCaches()
+  audienceSegmentationAttributes = {
+    ...audienceSegmentationAttributes,
+    ...attributes
+  }
+}
+
+export const resetAudienceSegmentationAttributes = () => {
+  invalidateCaches()
+  audienceSegmentationAttributes = {}
 }
 
 type ActivateEventHandlerType = Function
@@ -118,7 +124,13 @@ const getForcedOrCached = (toggleId, cache): ToggleValueType => {
   return register[toggleId]
 }
 
+const validateUserId = id => {
+  if (!id) throw new Error('Opticks: Fatal error: user id is not set')
+}
+
 const getOrSetCachedFeatureEnabled = (toggleId): BooleanToggleValueType => {
+  validateUserId(userId)
+
   const DEFAULT = false
 
   if (isForcedOrCached(toggleId, featureEnabledCache)) {
@@ -138,6 +150,8 @@ const getBooleanToggle = getOrSetCachedFeatureEnabled
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
 const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
+  validateUserId(userId)
+
   const DEFAULT = 'a'
 
   if (isForcedOrCached(toggleId, experimentCache)) {
