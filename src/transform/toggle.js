@@ -8,7 +8,7 @@ const FUNCTION_NAME = 'toggle'
 const isCurrentToggle = (currentToggleCallName, wantedToggleName) =>
   currentToggleCallName.toLowerCase() === wantedToggleName
 
-const implementWinningtoggle = (
+const implementWinningToggle = (
   j,
   toggleName,
   winnerArgumentIndex,
@@ -36,7 +36,7 @@ const implementWinningtoggle = (
   }
 }
 
-const findtoggleCalls = (j, context, localName) =>
+const findToggleCalls = (j, context, localName) =>
   context.closestScope().find(j.CallExpression, { callee: { name: localName } })
 
 // 0 based index, a = 0, b = 1, c = 2 etc...
@@ -70,14 +70,14 @@ export default function transformer (file, api, options) {
           .forEach(importSpecifier => {
             const localName = importSpecifier.value.local.name
 
-            const findToggleCallsByLocalImportName = findtoggleCalls.bind(
+            const findToggleCallsByLocalImportName = findToggleCalls.bind(
               null,
               j,
               j(importSpecifier),
               localName
             )
 
-            const toggleCallModifier = implementWinningtoggle.bind(
+            const toggleCallModifier = implementWinningToggle.bind(
               null,
               j,
               toggleName,
