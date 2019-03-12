@@ -71,8 +71,8 @@ any time. By convention the variants are named `a` (control), `b`, `c` etc.
 ### Reading values
 
 While it's recommended to use the strategy described in
-[executing code for variants](#ExecutingCodeVariants), the following shows how
-the variant executing and code clean up works under the hood.
+[executing code for variants](#executing-code-for-variants), the following shows
+how the variant executing and code clean up works under the hood.
 
 The simplest signature is as follows, to read the toggle value directly:
 
@@ -183,7 +183,7 @@ if (true) showWarning()
 The next section explains a more useful concept for this type of conditional
 branching.
 
-### Executing code for variants (#ExecutingCodeVariants)
+### Executing code for variants
 
 A better approach that allows you to clean the code easier would be to
 encapsulate variant logic by executing code from the toggle:

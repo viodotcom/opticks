@@ -38,26 +38,28 @@ const datafile = {} // see: https://docs.developers.optimizely.com/full-stack/do
 initialize(datafile)
 ```
 
-### User Id and Audience Segmentation Attributes (#segmentation)
+### User Id and Audience Segmentation Attributes
 
 To be able to generate experiment decisions, the Optimizely SDK needs a user id,
 and optionally a set of attributes to set up audiences to decide whether a user
 is eligible for certain experiments.
 
-The Opticks exposes this functionality via the
+The Opticks library exposes this functionality via `setUserId` and
 `setAudienceSegmentationAttributes`:
 
 ```
-setAudienceSegmentationAttributes('userId', {
+setUserId('foo')
+setAudienceSegmentationAttributes({
   deviceType: 'mobile',
   isLoggedIn: true
 })
 ```
 
-The `userId` is a deterministic factor for the bucketing algorithm. The second
-optional argument is an object with any extra information you'd like to use to
-include / exclude users from a particular Experiment or Feature Flag (called
-Audiences in Optimizely terms).
+The `userId` is a deterministic factor for the bucketing algorithm and is
+mandatory. The audience segmentation attributes are optional and is expected to
+be an object with any extra information you'd like to use to include / exclude
+users from a particular Experiment or Feature Flag (called Audiences in
+Optimizely terms).
 
 Attributes can be strings or booleans, and Audiences are set up by defining
 restrictions on them. For instance you can create an audience for visitors with
@@ -82,13 +84,13 @@ setAudienceSegmentationAttribute('isLoggedIn', false)
 ```
 
 Please refer to the
-[DataFile section](#datafile)
+[DataFile section](#the-datafile)
 for more information on how to set up Feature Flags, Experiments and Audiences.
 
-Once set, these `userId` and attributes are automatically forwarded to
-Optimizely with each call.
+Once set, these `userId` and audience segmentation attributes are automatically
+forwarded to Optimizely with each call.
 
-### The DataFile (#datafile)
+### The DataFile
 
 The Opticks Optimizely integration makes some assumptions on how the experiments
 are set up. Optimizely supports two types of flags, "Feature Flags" (Boolean
@@ -97,9 +99,9 @@ The Opticks library uses certain conventions to wrap both concepts in a
 predictable API, where experiment variations are in the `a`, `b`, `c` format and
 Boolean Toggles return only `true` or `false`.
 
-The following is subject to change, but right now Opticks uses both Feature Flags
-and the Experiments concepts of the Optimizely SDK which means you'll need to
-add both to the DataFile to avoid confusion in the consuming API.
+The following is subject to change, but right now Opticks uses both Feature
+Flags and the Experiments concepts of the Optimizely SDK which means you'll need
+to add both to the DataFile to avoid confusion in the consuming API.
 
 Please refer to the
 [example DataFile](../src/integrations/__fixtures__/dataFile.js) used in the
@@ -118,31 +120,14 @@ experiments: [
     layerId: 'layerFoo', // not used at the moment
     variations: [
       {
-        featureEnabled: true,
+        featureEnabled: false,
         id: '1', // referred to from the trafficAllocation configuration
-        key: 'control',
-        variables: [
-          // convention used to get the value a, b, c in a predictable way
-          {
-            id: 'variation',
-            key: 'variation',
-            type: 'string',
-            value: 'a'
-          }
-        ]
+        key: 'a'
       },
       {
         featureEnabled: true,
         id: '2',
-        key: 'treatment',
-        variables: [
-          {
-            id: 'variation',
-            key: 'variation',
-            type: 'string',
-            value: 'b'
-          }
-        ]
+        key: 'b'
       }
     ],
     trafficAllocation: [
@@ -171,18 +156,7 @@ featureFlags: [
     // see experiments
     experimentIds: ['foo'],
     id: 'foo',
-    key: 'foo',
-    variables: [
-      // default used in case the trafficAllocation doesn't return a variation
-      // shouldn't be necessary but a good fallback in case of configuration
-      // mistakes not breaking the User Experience
-      {
-        defaultValue: 'a',
-        id: 'variation',
-        key: 'variation',
-        type: 'string'
-      }
-    ]
+    key: 'foo'
   }
 ]
 ```
@@ -201,7 +175,7 @@ audiences: [
 ],
 ```
 
-### Activation Event Handlers (#activationEvent)
+### Activation Event Handlers
 
 The Optimizely library supports events and hooks, some of which are exposed
 through Opticks. For instance, you can use the "Activation" event to track when
@@ -217,9 +191,11 @@ initialize(datafile, (activationEvent) => console.log(activationEvent))
 
 ## Cached Decisions
 
-Since the [Audience Segmentation Attributes](#segmentation) are deterministic
-for the bucketing algorithm, Opticks caches the decisions until you call
-`audienceSegmentationAttributes` with new values.
+Since the
+[Audience Segmentation Attributes](#user-id-and-audience-segmentation-attributes)
+are deterministic for the bucketing algorithm, Opticks caches the decisions
+until you call `audienceSegmentationAttributes` with new values.
 This means you're free to request the same Feature Flag or Experiment decision
-in multiple places, but the experiment [activation event](#activationEvent) is
-only called once per experiment.
+in multiple places, but the experiment
+[activation event](#activation-event-handlers) is only called once per
+experiment.
