@@ -10,7 +10,7 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
-# Unreleased
+# v2.0.0 Alpha
 
 ## Optimizely Integration
 
