@@ -20,7 +20,7 @@ setBooleanToggles({ foo: true, bar: false })
 ### Setting Toggles
 
 ```
-setMultiToggles({ foo: { variant: a }, bar: { variant: 'b' } })
+setToggles({ foo: { variant: a }, bar: { variant: 'b' } })
 ```
 
 ## Caching

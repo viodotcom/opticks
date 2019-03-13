@@ -8,17 +8,20 @@ export const addNotificationListenerMock = jest.fn()
 
 export const createInstanceMock = jest.fn(() => ({
   isFeatureEnabled: isFeatureEnabledMock,
-  getFeatureVariableString: getFeatureVariableStringMock,
   notificationCenter: {
     addNotificationListener: addNotificationListenerMock
-  }
+  },
+  activate: activateMock
 }))
 
 export const isFeatureEnabledMock = jest.fn(toggleId => toggleId === 'foo')
 
-export const getFeatureVariableStringMock = jest.fn(toggleId => {
-  if (toggleId === 'foo') return 'b'
-  return null
+export const activateMock = jest.fn((toggleId, userId) => {
+  const shouldReturnB =
+    (toggleId === 'foo' && userId === 'fooBSide') ||
+    (toggleId === 'bar' && userId === 'barBSide')
+
+  return shouldReturnB && 'b'
 })
 
 const mock = {

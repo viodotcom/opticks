@@ -3,7 +3,7 @@
 jest.autoMockOff()
 
 const defineInlineTest = require('jscodeshift/dist/testUtils').defineInlineTest
-const transform = require('../multiToggle')
+const transform = require('../toggle')
 
 const packageName = 'opticks'
 const fooWinnerAConfig = {
@@ -21,8 +21,8 @@ describe('Multi Toggle', () => {
       transform,
       fooWinnerAConfig,
       `
-import { multiToggle } from '${packageName}'
-const result = multiToggle('foo', 'a', 'b', 'c')
+import { toggle } from '${packageName}'
+const result = toggle('foo', 'a', 'b', 'c')
 `,
       `
 const result = 'a'
@@ -35,8 +35,8 @@ const result = 'a'
       transform,
       fooWinnerBConfig,
       `
-import { multiToggle } from '${packageName}'
-const result = multiToggle('foo', 'a', 'b', 'c')
+import { toggle } from '${packageName}'
+const result = toggle('foo', 'a', 'b', 'c')
 `,
       `
 const result = 'b'
@@ -44,30 +44,30 @@ const result = 'b'
     )
   })
 
-  describe('Keeps the import for non-relevant multiToggle calls', () => {
+  describe('Keeps the import for non-relevant toggle calls', () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
       `
-import { multiToggle } from '${packageName}'
-const result = multiToggle('foo', 'a', 'b', 'c')
-const nonRelevantResult = multiToggle('bar', 'a', 'b', 'c')
+import { toggle } from '${packageName}'
+const result = toggle('foo', 'a', 'b', 'c')
+const nonRelevantResult = toggle('bar', 'a', 'b', 'c')
 `,
       `
-import { multiToggle } from '${packageName}'
+import { toggle } from '${packageName}'
 const result = 'b'
-const nonRelevantResult = multiToggle('bar', 'a', 'b', 'c')
+const nonRelevantResult = toggle('bar', 'a', 'b', 'c')
   `
     )
   })
 
-  describe('Keeps Opticks imports other than multiToggle', () => {
+  describe('Keeps Opticks imports other than toggle', () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
       `
-import { multiToggle, foo } from '${packageName}'
-const result = multiToggle('foo', 'a', 'b', 'c')
+import { toggle, foo } from '${packageName}'
+const result = toggle('foo', 'a', 'b', 'c')
 `,
       `
 import { foo } from '${packageName}';
@@ -81,8 +81,8 @@ const result = 'b'
       transform,
       fooWinnerBConfig,
       `
-import { multiToggle } from '${packageName}'
-const result = multiToggle('foo', 'a', () => foo(), 'c')
+import { toggle } from '${packageName}'
+const result = toggle('foo', 'a', () => foo(), 'c')
 `,
       `
 const result = foo()
@@ -95,8 +95,8 @@ const result = foo()
       transform,
       fooWinnerBConfig,
       `
-import { multiToggle } from '${packageName}'
-const result = multiToggle('foo', 'a', () => {foo(); bar()}, 'c')
+import { toggle } from '${packageName}'
+const result = toggle('foo', 'a', () => {foo(); bar()}, 'c')
 `,
       `
 const result = {foo(); bar()}
@@ -109,9 +109,9 @@ const result = {foo(); bar()}
       transform,
       fooWinnerBConfig,
       `
-import { multiToggle } from '${packageName}'
+import { toggle } from '${packageName}'
 const foo = 'bar'
-multiToggle('foo', 'a', null, 'c')
+toggle('foo', 'a', null, 'c')
 `,
       `
 const foo = 'bar'
@@ -121,8 +121,8 @@ const foo = 'bar'
 
   describe('Deals with missing options', () => {
     const code = `
-import { multiToggle } from '${packageName}'
-const result = multiToggle('foo', 'a', () => {foo(); bar()}, 'c')
+import { toggle } from '${packageName}'
+const result = toggle('foo', 'a', () => {foo(); bar()}, 'c')
 `
 
     defineInlineTest(transform, {}, code, code)

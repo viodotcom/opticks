@@ -131,7 +131,7 @@ export default function transformer (file, api, options) {
       // find imports to packageName
       .find(j.ImportDeclaration, { source: { value: packageName } })
       .forEach(importDef => {
-        // find local imported names of the multiToggle calls
+        // find local imported names of the toggle calls
         j(importDef)
           .find(j.ImportSpecifier, {
             imported: { name: functionName }
@@ -166,7 +166,7 @@ export default function transformer (file, api, options) {
             // remove import if no toggle are left in the file
             if (allTogglesRemoved) {
               if (importDef.value.specifiers.length > 1) {
-                // imports left, only remove multiToggle import specifiers
+                // imports left, only remove toggle import specifiers
                 j(importSpecifier).remove()
               } else {
                 // no more imports left, remove the full import definition

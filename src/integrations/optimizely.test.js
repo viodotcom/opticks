@@ -4,75 +4,52 @@ import {
   NOTIFICATION_TYPES,
   initialize,
   registerLibrary,
-  setAudienceSegmentationAttribute,
+  setUserId,
   setAudienceSegmentationAttributes,
+  resetAudienceSegmentationAttributes,
   booleanToggle,
-  multiToggle,
+  toggle,
   forceToggles
 } from './optimizely'
 
 // During the tests:
 // for booleanToggle 'foo' yields true and 'bar' yields false, unless forced
-// for multiToggle 'foo' yields 'b' and 'bar' yields 'a', unless forced
+// for toggle 'foo' yields 'b' and 'bar' yields 'a', unless forced
 import datafile from './__fixtures__/dataFile.js'
 
 import Optimizely, {
   addNotificationListenerMock,
   createInstanceMock,
   isFeatureEnabledMock,
-  getFeatureVariableStringMock
+  activateMock
 } from '@optimizely/optimizely-sdk'
 
 // Re-used between toggle test suites
-const testAudienceSegmentationCacheBusting = toggle => {
-  it('Caches isFeatureEnabled results until setAudienceSegmentationAttributes is called', () => {
-    toggle('foo') // call isFeatureEnabled for the first time
-    toggle('foo') // cached, don't call isFeatureEnabled
-    toggle('bax') // call isFeatureEnabled for the second time
-    expect(isFeatureEnabledMock).toHaveBeenCalledTimes(2)
+const testAudienceSegmentationCacheBusting = (toggleFn, fn) => {
+  it('Caches results until setAudienceSegmentationAttributes is called', () => {
+    resetAudienceSegmentationAttributes()
+    fn.mockClear()
+    toggleFn('foo') // call activate for the first time
+    toggleFn('foo') // cached, don't call activate
+    toggleFn('bax') // call activate for the second time
+    expect(fn).toHaveBeenCalledTimes(2)
 
     // Reset user attributes, clearing cache
-    isFeatureEnabledMock.mockClear()
-    setAudienceSegmentationAttributes('barUser', { foo: 'baz' })
+    fn.mockClear()
+    setAudienceSegmentationAttributes({ foo: 'baz' })
 
-    toggle('foo') // call 1
-    expect(isFeatureEnabledMock).toHaveBeenCalledTimes(1)
-    expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'barUser', {
+    toggleFn('foo') // call 1
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('foo', 'fooBSide', {
       foo: 'baz'
     })
-    toggle('foo') // cached
-    toggle('bar') // call 2
-    toggle('bar') // cached
-    expect(isFeatureEnabledMock).toHaveBeenCalledTimes(2)
-    expect(isFeatureEnabledMock).toHaveBeenCalledWith('bar', 'barUser', {
+    toggleFn('foo') // cached
+    toggleFn('bar') // call 2
+    toggleFn('bar') // cached
+    expect(fn).toHaveBeenCalledTimes(2)
+    expect(fn).toHaveBeenCalledWith('bar', 'fooBSide', {
       foo: 'baz'
     })
-  })
-
-  it('Caches isFeatureEnabled results until setAudienceSegmentationAttribute is called', () => {
-    toggle('foo') // call isFeatureEnabled for the first time
-    toggle('foo') // cached, don't call isFeatureEnabled
-    toggle('bax') // call isFeatureEnabled for the second time
-    expect(isFeatureEnabledMock).toHaveBeenCalledTimes(2)
-
-    // Reset user attributes, clearing cache
-    isFeatureEnabledMock.mockClear()
-    setAudienceSegmentationAttribute('bax', 'buzz')
-
-    toggle('foo') // call 1
-    expect(isFeatureEnabledMock).toHaveBeenCalledTimes(1)
-    expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooUser', {
-      deviceType: 'mobile',
-      bax: 'buzz'
-    })
-    toggle('foo') // cached
-    toggle('bar') // call 2
-    toggle('bar') // cached
-    expect(isFeatureEnabledMock).toHaveBeenCalledWith('bar', 'fooUser', {
-      deviceType: 'mobile',
-      bax: 'buzz'
-    })
-    expect(isFeatureEnabledMock).toHaveBeenCalledTimes(2)
   })
 }
 
@@ -134,103 +111,99 @@ describe('Optimizely Integration', () => {
       initialize(datafile, activateHandler)
     })
 
-    describe('Boolean Toggles', () => {
-      describe('Setting Audience Segmentation Attributes in bulk', () => {
+    describe('Toggles', () => {
+      describe('Calls without userId are invalid', () => {
+        it('Throws an error when userId is not set', () => {
+          expect(() => toggle('foo')).toThrow(
+            'Opticks: Fatal error: user id is not set'
+          )
+          expect(() => booleanToggle('foo')).toThrow(
+            'Opticks: Fatal error: user id is not set'
+          )
+        })
+      })
+
+      describe('Setting user id', () => {
         beforeEach(() => {
-          setAudienceSegmentationAttributes('fooUser', { deviceType: 'mobile' })
-          booleanToggle('foo')
+          setUserId('fooBSide')
         })
 
         it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
-          expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooUser', {
-            deviceType: 'mobile'
-          })
-        })
-
-        testAudienceSegmentationCacheBusting(booleanToggle)
-
-        describe('Setting Audience Segmentation Attributes individually', () => {
-          beforeEach(() => {
-            setAudienceSegmentationAttribute('bazz', 'bax')
-            setAudienceSegmentationAttribute('foo', 'bar')
-            booleanToggle('foo')
-          })
-
-          it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
-            expect(isFeatureEnabledMock).toHaveBeenCalledWith(
-              'foo',
-              'fooUser',
-              {
-                bazz: 'bax',
-                foo: 'bar',
-                deviceType: 'mobile'
-              }
-            )
-          })
-        })
-      })
-
-      it('Returns the value as supplied by Optimizely', () => {
-        expect(booleanToggle('foo')).toBeTruthy()
-        expect(booleanToggle('bar')).toBeFalsy()
-      })
-    })
-
-    describe('Multi Toggles', () => {
-      beforeEach(() => {
-        setAudienceSegmentationAttributes('fooUser', { deviceType: 'mobile' })
-        multiToggle('foo')
-      })
-
-      it('Calls isFeatureEnabled to force experiment activation', () => {
-        expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooUser', {
-          deviceType: 'mobile'
-        })
-      })
-
-      it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
-        expect(getFeatureVariableStringMock).toHaveBeenCalledWith(
-          'foo',
-          'variation',
-          'fooUser',
-          {
-            deviceType: 'mobile'
-          }
-        )
-      })
-
-      testAudienceSegmentationCacheBusting(multiToggle)
-
-      describe('Setting Audience Segmentation Attributes individually', () => {
-        beforeEach(() => {
-          setAudienceSegmentationAttribute('bazz', 'bax')
-          setAudienceSegmentationAttribute('foo', 'bar')
+          toggle('foo')
+          expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {})
           booleanToggle('foo')
+          expect(isFeatureEnabledMock).toHaveBeenCalledWith(
+            'foo',
+            'fooBSide',
+            {}
+          )
+        })
+      })
+
+      describe('Setting Audience Segmentation Attributes', () => {
+        beforeEach(() => {
+          // setAudienceSegmentationAttributes doesn't overwrite already existing attributes
+          setAudienceSegmentationAttributes({ thisWillNotBeOverwritten: 'foo' })
+          setAudienceSegmentationAttributes({
+            deviceType: 'mobile',
+            isLoggedIn: false
+          })
         })
 
         it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
-          expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooUser', {
-            bazz: 'bax',
-            foo: 'bar',
-            deviceType: 'mobile'
+          toggle('foo')
+          expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {
+            thisWillNotBeOverwritten: 'foo',
+            deviceType: 'mobile',
+            isLoggedIn: false
+          })
+
+          booleanToggle('foo')
+          expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {
+            thisWillNotBeOverwritten: 'foo',
+            deviceType: 'mobile',
+            isLoggedIn: false
           })
         })
       })
+
+      describe('Resetting Audience Segmentation Attributes', () => {
+        beforeEach(() => {
+          setAudienceSegmentationAttributes({ thisWillBeReset: false })
+          resetAudienceSegmentationAttributes()
+          setAudienceSegmentationAttributes({ valueAfterReset: true })
+        })
+
+        it('Forwards correct audience segmentation attributes', () => {
+          toggle('foo', 'a', 'b')
+          expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {
+            valueAfterReset: true
+          })
+        })
+      })
+
+      testAudienceSegmentationCacheBusting(toggle, activateMock)
+      testAudienceSegmentationCacheBusting(booleanToggle, isFeatureEnabledMock)
 
       it("Returns Optimizely's value when no arguments supplied", () => {
         // maps to a, b, c
-        expect(multiToggle('foo')).toEqual('b')
-        expect(multiToggle('bar')).toEqual('a')
+        expect(toggle('foo')).toEqual('b')
+        expect(toggle('bar')).toEqual('a')
+        expect(booleanToggle('foo')).toBeTruthy()
+        expect(booleanToggle('bar')).toBeFalsy()
       })
 
       it('Maps Optimizely value to a, b, c indexed arguments', () => {
-        expect(multiToggle('foo', 'first', 'second', 'third')).toEqual('second')
-        expect(multiToggle('bar', 'first', 'second')).toEqual('first')
+        expect(toggle('foo', 'first', 'second', 'third')).toEqual('second')
+        expect(toggle('bar', 'first', 'second')).toEqual('first')
       })
     })
 
     describe('Forcing toggles', () => {
       beforeEach(() => {
+        setAudienceSegmentationAttributes({
+          deviceType: 'mobile'
+        })
         forceToggles({ foo: 'a', bar: false })
         // calling forceToggles multiple times should retain previously
         // forced toggles
@@ -238,34 +211,28 @@ describe('Optimizely Integration', () => {
       })
 
       it('respects the overridden values', () => {
-        expect(multiToggle('foo')).toEqual('a')
+        expect(toggle('foo')).toEqual('a')
+        expect(toggle('bax')).toEqual('c')
         expect(booleanToggle('bar')).toEqual(false)
+        expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('allows you to invent non-existing experiments', () => {
-        expect(multiToggle('bax')).toEqual('c')
+        expect(toggle('bax')).toEqual('c')
         expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('persist after setAudienceSegmentationAttributes is called', () => {
-        expect(multiToggle('bax')).toEqual('c')
-        setAudienceSegmentationAttributes('newUserId', { foo: 'bar' })
-        expect(multiToggle('foo')).toEqual('a')
-        expect(multiToggle('bax')).toEqual('c')
-        expect(booleanToggle('bar')).toEqual(false)
-        expect(booleanToggle('baz')).toEqual(true)
-      })
-
-      it('persist after setAudienceSegmentationAttribute is called', () => {
-        setAudienceSegmentationAttribute('foo', 'bar')
-        expect(multiToggle('foo')).toEqual('a')
-        expect(multiToggle('bax')).toEqual('c')
+        expect(toggle('bax')).toEqual('c')
+        setAudienceSegmentationAttributes({ foo: 'bar' })
+        expect(toggle('foo')).toEqual('a')
+        expect(toggle('bax')).toEqual('c')
         expect(booleanToggle('bar')).toEqual(false)
         expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('makes sure Toggles return defaults if forced values are of wrong type', () => {
-        expect(multiToggle('baz')).toEqual('a')
+        expect(toggle('baz')).toEqual('a')
         expect(booleanToggle('bax')).toEqual(false)
       })
 
@@ -275,16 +242,16 @@ describe('Optimizely Integration', () => {
         })
 
         it('should yield real values for cleared toggles', () => {
-          expect(multiToggle('foo')).toEqual('b')
-          expect(multiToggle('bar')).toEqual('a')
+          expect(toggle('foo')).toEqual('b')
+          expect(toggle('bar')).toEqual('a')
           expect(booleanToggle('foo')).toEqual(true)
           expect(booleanToggle('bar')).toEqual(false)
         })
 
         it('should keep the non-cleared forced toggles and other defaults', () => {
-          expect(multiToggle('bax')).toEqual('c')
+          expect(toggle('bax')).toEqual('c')
           expect(booleanToggle('baz')).toEqual(true)
-          expect(multiToggle('nonexistent')).toEqual('a')
+          expect(toggle('nonexistent')).toEqual('a')
           expect(booleanToggle('nonexistent')).toEqual(false)
         })
       })

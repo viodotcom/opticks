@@ -1,9 +1,9 @@
 // @flow
 
-import { multiToggle as baseMultiToggle } from './multiToggle'
+import { toggle as baseToggle } from './toggle'
 
 describe('Multi Toggle', () => {
-  let multiToggle
+  let toggle
 
   beforeEach(() => {
     const dummyGetToggle = jest.fn(
@@ -11,7 +11,7 @@ describe('Multi Toggle', () => {
       toggleId => (toggleId === 'foo' ? 'b' : 'a')
     )
 
-    multiToggle = baseMultiToggle(dummyGetToggle)
+    toggle = baseToggle(dummyGetToggle)
   })
 
   xdescribe('Getting active variant', () => {
@@ -26,19 +26,19 @@ describe('Multi Toggle', () => {
 
   describe('Experiment Variant', () => {
     it('returns the correct variant based on argument index', () => {
-      expect(multiToggle('foo', 'a', 'b', 'c')).toEqual('b')
+      expect(toggle('foo', 'a', 'b', 'c')).toEqual('b')
     })
 
     it('executes variant and forwards return value if it is a function', () => {
       const spy = jest.fn().mockImplementation(() => 'bar')
-      const result = multiToggle('foo', 'a', spy, 'c')
+      const result = toggle('foo', 'a', spy, 'c')
 
       expect(spy).toBeCalled()
       expect(result).toEqual('bar')
     })
 
     it("defaults to 'a' when experiment cannot be found", () => {
-      expect(multiToggle('nonexistentId', 'a', 'b', 'c')).toEqual('a')
+      expect(toggle('nonexistentId', 'a', 'b', 'c')).toEqual('a')
     })
   })
 })

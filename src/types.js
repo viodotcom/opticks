@@ -5,7 +5,7 @@ export type ToggleIdType = string
 export type VariantType = 'a' | 'b' | 'c' | 'd' | 'e' | 'f'
 
 // Value Toggle
-export type MultiToggleType = {|
+export type ToggleType = {|
   variant: VariantType
 |}
 

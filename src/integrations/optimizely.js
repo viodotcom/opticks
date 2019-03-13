@@ -2,7 +2,7 @@
 
 import type { ToggleIdType } from '../types'
 import { booleanToggle as baseBooleanToggle } from '../core/booleanToggle'
-import { multiToggle as baseMultiToggle } from '../core/multiToggle'
+import { toggle as baseToggle } from '../core/toggle'
 import { NOTIFICATION_TYPES } from '@optimizely/optimizely-sdk/lib/utils/enums'
 
 import type OptimizelyLibType from '@optimizely/optimizely-sdk'
@@ -26,7 +26,7 @@ export { NOTIFICATION_TYPES }
 let Optimizely: OptimizelyLibType // reference to injected Optimizely library
 let optimizelyClient // reference to active Optimizely instance
 let userId: UserIdType
-let audienceSegmentationAttributes: AudienceSegmentationAttributesType
+let audienceSegmentationAttributes: AudienceSegmentationAttributesType = {}
 
 type FeatureEnabledCacheType = { [ToggleIdType]: BooleanToggleValueType }
 type ExperimentCacheType = { [ToggleIdType]: ExperimentToggleValueType }
@@ -61,23 +61,29 @@ export const forceToggles = (toggleKeyValues: {
   })
 }
 
-export const setAudienceSegmentationAttributes = (
-  id: UserIdType,
-  attributes: AudienceSegmentationAttributesType = {}
-) => {
+const invalidateCaches = () => {
   clearFeatureEnabledCache()
   clearExperimentCache()
-  userId = id
-  audienceSegmentationAttributes = attributes
 }
 
-export const setAudienceSegmentationAttribute = (
-  key: AudienceSegmentationAttributeKeyType,
-  value: AudienceSegmentationAttributeValueType
+export const setUserId = (id: UserIdType) => {
+  invalidateCaches()
+  userId = id
+}
+
+export const setAudienceSegmentationAttributes = (
+  attributes: AudienceSegmentationAttributesType = {}
 ) => {
-  clearFeatureEnabledCache()
-  clearExperimentCache()
-  audienceSegmentationAttributes[key] = value
+  invalidateCaches()
+  audienceSegmentationAttributes = {
+    ...audienceSegmentationAttributes,
+    ...attributes
+  }
+}
+
+export const resetAudienceSegmentationAttributes = () => {
+  invalidateCaches()
+  audienceSegmentationAttributes = {}
 }
 
 type ActivateEventHandlerType = Function
@@ -118,7 +124,13 @@ const getForcedOrCached = (toggleId, cache): ToggleValueType => {
   return register[toggleId]
 }
 
+const validateUserId = id => {
+  if (!id) throw new Error('Opticks: Fatal error: user id is not set')
+}
+
 const getOrSetCachedFeatureEnabled = (toggleId): BooleanToggleValueType => {
+  validateUserId(userId)
+
   const DEFAULT = false
 
   if (isForcedOrCached(toggleId, featureEnabledCache)) {
@@ -137,7 +149,9 @@ const getBooleanToggle = getOrSetCachedFeatureEnabled
 
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
-const getMultiToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
+const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
+  validateUserId(userId)
+
   const DEFAULT = 'a'
 
   if (isForcedOrCached(toggleId, experimentCache)) {
@@ -145,20 +159,14 @@ const getMultiToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
     return typeof value === 'string' ? value : DEFAULT
   }
 
-  const isEnabled = getOrSetCachedFeatureEnabled(toggleId)
-
-  // Abusing the feature flags to store variations: 'a', 'b', 'c' etc.
-  // TODO: Decide if we want to cache experiment values as well
-  return (
-    (isEnabled &&
-      optimizelyClient.getFeatureVariableString(
-        toggleId,
-        'variation',
-        userId,
-        audienceSegmentationAttributes
-      )) ||
-    DEFAULT
-  )
+  // Assuming the variation keys follow a, b, c, etc. convention
+  // TODO: Enforce ^ ?
+  return (experimentCache[toggleId] =
+    optimizelyClient.activate(
+      toggleId,
+      userId,
+      audienceSegmentationAttributes
+    ) || DEFAULT)
 }
 
-export const multiToggle = baseMultiToggle(getMultiToggle)
+export const toggle = baseToggle(getToggle)

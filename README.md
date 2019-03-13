@@ -14,23 +14,27 @@ The library consists of two related concepts:
 
 At the heart of our experimentation framework is the `toggle` function.
 
-There are two types of toggles:
-
+- `toggle` toggles that switch between multiple experiment variants (a/b/c/...)
 - `booleanToggle` toggles that turn functionality on or off (feature flags)
-- `multiToggle` toggles that switch between multiple experiment variants (a/b/c/...)
 
 It can be used in a variety of ways:
 
 1.  Reading the value of the toggle (boolean, or a/b/c for multi toggles )
-1.  Execute code when a boolean toggle is on
 1.  Execute code or for a variant of a multi toggle
+1.  Execute code when a boolean toggle is on
 
 We use React at FindHotel and some of the code examples use JSX, but the code
 and concept is compatible with any front-end framework or architecture.
 
+The `booleanToggle` is the simplest toggle type to use for feature flagging, but
+it's also the least flexible. As of version 2.0 `toggle` is the default and
+recommended for both a/b/c experiments and feature flags. If you're only ever
+interested in feature flags, read more about [Boolean
+Toggles](docs/booleanToggles.md).
+
 ### Opticks vs other experimentation frameworks
 
-The main reason for using the `toggle` library is to be able to clean your code
+The main reason for using the Opticks library is to be able to clean your code
 afterwards by providing a predictable experimentation API.
 
 We don't intend to reinvent the wheel and aim to keep it easy to integrate
@@ -58,132 +62,137 @@ See the [Simple integration documentation](docs/simple-integration.md).
 
 See the [Optimizely integration documentation](docs/optimizely-integration.md).
 
-## Boolean Toggles: Reading values
+## Toggles
 
-Let's take a look at Boolean Toggles first, as the name suggest, they are either
-on or off.
+Toggles can be used to implement a/b/c style testing, instead of on/off values
+as with `booleanToggle`, we specify multiple variants of which one is active at
+any time. By convention the variants are named `a` (control), `b`, `c` etc.
 
-```
-booleanToggle('shouldShowSomething') // true or false
-```
+### Reading values
 
-While these are simple to implement, using them directly tends to create code
-that's hard to clean up fully.
+While it's recommended to use the strategy described in
+[executing code for variants](#executing-code-for-variants), the following shows
+how the variant executing and code clean up works under the hood.
 
-Consider the following toggle implementation:
-
-```
-// before
-if (booleanToggle('foo')) foo()
-if (booleanToggle('bar')) bar()
-```
-
-After the experiments concluded with `foo` winning and `bar` losing:
+The simplest signature is as follows, to read the toggle value directly:
 
 ```
-// after
-if (true) foo()
-if (false) bar() // never needed
+toggle(experimentId: string) => { variant: 'a' | 'b' | 'c' | 'd' | ... }
 ```
 
-While it works functionally, and code optimizers can eliminate any dead code
-when generating a build, it still clutters your source code requiring manual
-clean up efforts.
-
-You could assign a variable to add semantics:
+For example when the user is assigned to the `b` side:
 
 ```
-// before
-const shouldShowWarning = booleanToggle('warningToggle')
-// ...
-shouldShowWarning && renderWarning()
+const fooResult = toggle('foo')
+if (fooResult === 'b') console.log('b side of the foo experiment')
 ```
 
-After toggle is true:
+This works fine, but will result in code that will be hard to clean up
+automatically. Considering the codemods replace the toggle with the 'winning'
+value (`b` in this case):
 
 ```
-// after
-const shouldShowWarning = true
-// ...
-shouldShowWarning && renderWarning()
+const fooResult = 'b'
+if (fooResult === 'b') console.log('b variant of the foo experiment')
 ```
 
-Slightly better, but it would be great if we can prune dead code altogether,
-considering the following would remain if the flag is false:
+This would leave your code more messy than necessary. You could skip the
+intermediate value but it will still result in awkward leftover code:
 
 ```
-// after
-const shouldShowWarning = false
-// ...
-shouldShowWarning && renderWarning()
+if (toggle('foo') === 'b') ...
+
+// becomes
+if ('b' === 'b') ...
+// or
+if ('a' === 'b') ...
 ```
 
-## Boolean Toggles: Executing code
-
-You can pass a function to execute when a `toggle` is true. This can reduce the
-amount of dangling leftover code after cleanup.
-
-```
-// before
-always()
-booleanToggle('warningToggle', () => renderWarning())
-```
-
-```
-// after toggle is true
-always()
-renderWarning()
-```
-
-```
-// after toggle is false
-always()
-```
-
-## Multi Toggles
-
-Multi toggles can be used to implement a/b/c style testing, instead of on/off
-values, we specify multiple variants of which one is active at any time.
-
-## Multi Toggles: Reading values
-
-```
-// reading the toggle value
-multiToggle(experimentId: string) => {variant: string}
-```
+Rather than reading the return value directly, you can map your variant to
+arguments to the toggle function, like so:
 
 ```
 // Defines the result if that toggle or experiment wins, either a function that
 // will be executed, or any other value
 type ToggleResultType = function | any
 
-// do something for a/b/c side:
-multiToggle(
+// do something for a/b/c variant:
+toggle(
   experimentId,
   variantA: ToggleResultType,
   variantB: ToggleResultType,
-  ?variantC,
+  ?variantC: ToggleResultType,
   ...
 )
 ```
 
-```
-// simple boolean switch (you could use a BooleanToggle instead of course)
-multiToggle('foo', false, true)
+The signature might look more complicated, but it allows you to define what the
+results for your variants a, b, c etc map to. The first value is the
+experimentId, then the values for `a`, `b`, etc.
 
+For instance:
+
+```
+// simple boolean switch: (you could use a BooleanToggle as well)
+const shouldDoSomething = toggle('foo', false, true)
+
+// multiple variants as strings
 // 'black' is the default, red and green are variants to experiment with
-multiToggle('foo', 'black', 'green', 'red')
+const buttonColor = toggle('foo', 'black', 'green', 'red')
 ```
 
-## Multi Toggles: Executing code
+The benefit is that after concluding your experiment, you can integrate the
+winning variation's code directly without awkward references to `a` or `b` etc.
 
-As with Boolean Toggles, an approach that allows you to clean the code easier would be to encapsulate variations by executing code from the toggle:
+After you run the codemods to declare `b` the winner, the corresponding raw
+value is kept:
+
+```
+const shouldDoSomething = toggle('foo', false, true)
+const buttonColor = toggle('foo', 'black', 'green', 'red')
+
+// becomes:
+const shouldDoSomething = true
+const buttonColor = 'green'
+```
+
+Much better already, but there is more room for improvement, especially if you
+want to do things conditionally for a variant.
+
+Consider the following set up:
+
+```
+const shouldShowWarning = toggle('shouldShowWarning', false, true)
+if (shouldShowWarning) showWarning()
+
+// or directly:
+if (toggle('shouldShowWarning', false, true)) showWarning()
+```
+
+This would end up with an orphaned conditional after the codemods did their
+cleaning:
+
+```
+const shouldShowWarning = true
+if (shouldShowWarning) showWarning()
+
+// or directly
+if (true) showWarning()
+```
+
+The next section explains a more useful concept for this type of conditional
+branching.
+
+### Executing code for variants
+
+A better approach that allows you to clean the code easier would be to
+encapsulate variant logic by executing code from the toggle:
 
 ```
 const price = 100
 const savings = 20
 
-const CTA = multiToggle(
+const CTA = toggle(
   'CTAWording',
   () => `Buy now for just ${price}` // variant a (default)
   () => `Buy now for ${price} and save ${savings}`, // variant b
@@ -191,7 +200,7 @@ const CTA = multiToggle(
 )
 ```
 
-Then after running the cleaning codemods when b wins:
+Then after running the cleaning codemods when the `b` variant wins:
 
 ```
 const price = 100
@@ -200,6 +209,34 @@ const savings = 20
 const CTA = `Buy now for ${price} and save ${savings}`
 ```
 
+Or for an example of conditionally calling code:
+
+```
+alwaysDoSomething()
+toggle('shouldShowWarning', null, () => shouldShowWarning())
+```
+
+This shows two special concepts of the codemods, passing a `null` and the use of
+arrow functions.
+Passing `null` allows for full clean up when that branch loses.
+For winners, the _body_ of the arrow function is kept as-is.
+
+After running the codemods with the winning `b` variant:
+
+```
+alwaysDoSomething()
+shouldShowWarning() // no trace this was the result of a winning experiment
+```
+
+But if `a` would have won:
+
+```
+alwaysDoSomething()
+// no trace that something was experimented with but lost
+```
+
 ## Removal of dead code
 
-For instructions and recipes, see [Removal of dead code](docs/dead-code-removal.md).
+Above are just a few examples of how the codemods operate on the code.
+For instructions and more recipes, see
+[Removal of dead code](docs/dead-code-removal.md).
