@@ -10,7 +10,7 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
-# v2.0.0 Alpha
+# v2.0.0
 
 ## Optimizely Integration
 
@@ -20,6 +20,7 @@
 - :boom: setAudienceSegmentationAttributes now merges attributes with existing ones (used to overwrite)
 - :boom: Remove setAudienceSegmentationAttribute, since setAudienceSegmentationAttributes doesn't overwrite existing segmentation attributes anymore
 - :boom: Use `activate`, with a convention of using keys with value `a`, `b`, `c` etc - instead of using `getFeatureVariableString`. This is not a breaking change for the `toggle` API but simplifies the dataFile, check the supplied example on how to set up your experiments.
+- :eyeglasses: The supported version of the Optimizely SDK is now 3.0.1
 
 # v1.5.0
 
