@@ -61,7 +61,6 @@
     "flow-copy-source": "^2.0.2",
     "flow-typed": "^2.5.1",
     "jest": "^23.6.0",
-    "jscodeshift": "^0.5.1",
     "prettier-eslint-cli": "^4.7.1",
     "regenerator-runtime": "^0.12.1",
     "rollup": "^0.68.2",
@@ -71,5 +70,8 @@
     "rollup-plugin-flow": "^1.1.1",
     "rollup-plugin-node-resolve": "^4.0.0",
     "rollup-plugin-terser": "^3.0.0"
+  },
+  "dependencies": {
+    "jscodeshift": "^0.5.1"
   }
 }
