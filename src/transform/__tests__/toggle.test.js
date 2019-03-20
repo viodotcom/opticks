@@ -44,6 +44,23 @@ const result = 'b'
     )
   })
 
+  describe('Test Name with dashes', () => {
+    defineInlineTest(
+      transform,
+      {
+        toggle: 'foo-bar-baz-dash-boom',
+        winner: 'a'
+      },
+      `
+import { toggle } from '${packageName}'
+const result = toggle('foo-bar-baz-dash-boom', 'a', 'b', 'c')
+`,
+      `
+const result = 'a'
+  `
+    )
+  })
+
   describe('Keeps the import for non-relevant toggle calls', () => {
     defineInlineTest(
       transform,
