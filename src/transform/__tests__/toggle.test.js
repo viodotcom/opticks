@@ -2,7 +2,9 @@
 
 jest.autoMockOff()
 
-const defineInlineTest = require('jscodeshift/dist/testUtils').defineInlineTest
+const TestUtils = require('jscodeshift/dist/testUtils')
+const defineInlineTest = TestUtils.defineInlineTest
+const defineTest = TestUtils.defineTest
 const transform = require('../toggle')
 
 const packageName = 'opticks'
@@ -152,6 +154,10 @@ const B = 'B'
 const result = B()
   `
     )
+  })
+
+  describe('CSS-in-JS toggle cleanup', () => {
+    defineTest(__dirname, 'toggle', fooWinnerBConfig, 'CSSinJS')
   })
 
   describe('Deals with missing options', () => {
