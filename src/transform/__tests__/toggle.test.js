@@ -89,7 +89,7 @@ import { toggle, foo } from '${packageName}'
 const result = toggle('foo', 'a', 'b', 'c')
 `,
       `
-import { foo } from '${packageName}';
+import { foo } from '${packageName}'
 const result = 'b'
   `
     )

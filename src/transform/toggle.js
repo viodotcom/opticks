@@ -1,4 +1,5 @@
 // @flow
+import { format } from 'prettier'
 
 module.exports.parser = 'flow'
 
@@ -54,6 +55,7 @@ const implementWinningToggle = (
     path.comments = path.comments || []
     path.comments.push(commentBefore)
     path.comments.push(commentAfter)
+    path.loc.indent = 7
     return path
   }
 
@@ -171,7 +173,17 @@ export default function transformer (file, api, options) {
 
   // HACK to remove dangling ${} after clean up
   // TODO: remove CSS calls from AST instead of with comments
-  return newSource
+  const cleanSource = newSource
     .replace(/[\s]+\$\{\/\/TOGGLE_REMOVE[\s]+(css)?`/gm, '')
     .replace(/`\/\*TOGGLE_REMOVE\*\/}[\s]+/gm, '')
+
+  try {
+    return format(cleanSource, {
+      semi: false,
+      singleQuote: true,
+      parser: 'flow'
+    })
+  } catch (e) {
+    return cleanSource
+  }
 }
