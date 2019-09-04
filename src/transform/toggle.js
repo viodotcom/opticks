@@ -47,6 +47,16 @@ const implementWinningToggle = (
       arg.type === 'ArrowFunctionExpression' && index !== winnerArgumentIndex
   )
 
+  // HACK to remove dangling ${} for template literals after clean up
+  const wrapWithToggleRemovalComments = path => {
+    const commentBefore = j.commentLine('TOGGLE_REMOVE', true, false)
+    const commentAfter = j.commentBlock('TOGGLE_REMOVE', false, true)
+    path.comments = path.comments || []
+    path.comments.push(commentBefore)
+    path.comments.push(commentAfter)
+    return path
+  }
+
   losingArgumentFunctions.forEach(losingFunction => {
     j(losingFunction.body)
       .find(j.Identifier)
@@ -63,10 +73,21 @@ const implementWinningToggle = (
       })
   })
 
+  const isInsideTemplateLiteral = path =>
+    path.closest(j.TemplateLiteral).size() !== 0
+
+  const replaceCallPath = (callPath, newPath) => {
+    callPath.replaceWith(
+      isInsideTemplateLiteral(callPath)
+        ? wrapWithToggleRemovalComments(newPath)
+        : newPath
+    )
+  }
+
   // Winner implementation
   // function, use body
   if (winningArgument.type === 'ArrowFunctionExpression') {
-    callPath.replaceWith(winningArgument.body)
+    replaceCallPath(callPath, winningArgument.body)
   } else if (
     // null value, remove
     winningArgument.type === 'Literal' &&
@@ -75,7 +96,7 @@ const implementWinningToggle = (
     callPath.remove()
   } else {
     // use raw value
-    callPath.replaceWith(node.arguments[winnerArgumentIndex])
+    replaceCallPath(callPath, node.arguments[winnerArgumentIndex])
   }
 }
 
@@ -102,51 +123,55 @@ export default function transformer (file, api, options) {
 
   root = source
 
-  return (
-    source
-      // find imports to packageName
-      .find(j.ImportDeclaration, { source: { value: packageName } })
-      .forEach(importDef => {
-        // find local imported names of the toggle calls
-        j(importDef)
-          .find(j.ImportSpecifier, {
-            imported: { name: functionName }
-          })
-          .forEach(importSpecifier => {
-            const localName = importSpecifier.value.local.name
+  const newSource = source
+    // find imports to packageName
+    .find(j.ImportDeclaration, { source: { value: packageName } })
+    .forEach(importDef => {
+      // find local imported names of the toggle calls
+      j(importDef)
+        .find(j.ImportSpecifier, {
+          imported: { name: functionName }
+        })
+        .forEach(importSpecifier => {
+          const localName = importSpecifier.value.local.name
 
-            const findToggleCallsByLocalImportName = findToggleCalls.bind(
-              null,
-              j,
-              j(importSpecifier),
-              localName
-            )
+          const findToggleCallsByLocalImportName = findToggleCalls.bind(
+            null,
+            j,
+            j(importSpecifier),
+            localName
+          )
 
-            const toggleCallModifier = implementWinningToggle.bind(
-              null,
-              j,
-              toggleName,
-              winnerArgumentIndex
-            )
+          const toggleCallModifier = implementWinningToggle.bind(
+            null,
+            j,
+            toggleName,
+            winnerArgumentIndex
+          )
 
-            // implement winners for toggle calls based on local scoped name
-            findToggleCallsByLocalImportName().forEach(toggleCallModifier)
+          // implement winners for toggle calls based on local scoped name
+          findToggleCallsByLocalImportName().forEach(toggleCallModifier)
 
-            const allTogglesRemoved =
-              findToggleCallsByLocalImportName().length === 0
+          const allTogglesRemoved =
+            findToggleCallsByLocalImportName().length === 0
 
-            // remove import if no toggles are left
-            if (allTogglesRemoved) {
-              if (importDef.value.specifiers.length > 1) {
-                // imports left, only remove toggle import specifiers
-                j(importSpecifier).remove()
-              } else {
-                // no more imports left, remove the full import definition
-                j(importDef).remove()
-              }
+          // remove import if no toggles are left
+          if (allTogglesRemoved) {
+            if (importDef.value.specifiers.length > 1) {
+              // imports left, only remove toggle import specifiers
+              j(importSpecifier).remove()
+            } else {
+              // no more imports left, remove the full import definition
+              j(importDef).remove()
             }
-          })
-      })
-      .toSource()
-  )
+          }
+        })
+    })
+    .toSource()
+
+  // HACK to remove dangling ${} after clean up
+  // TODO: remove CSS calls from AST instead of with comments
+  return newSource
+    .replace(/[\s]+\$\{\/\/TOGGLE_REMOVE[\s]+(css)?`/gm, '')
+    .replace(/`\/\*TOGGLE_REMOVE\*\/}[\s]+/gm, '')
 }
