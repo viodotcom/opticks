@@ -52,6 +52,13 @@ the one you need, for now the "simple" is the default and the Optimizely adapter
 can be included directly via:
 `import Opticks from 'opticks/lib/optimizely'`
 
+## CLI Options
+
+- toggle: name of the toggle to clean
+- winner: winning side of the test (a/b/c, etc.)
+- eslintConfigPath: path to .eslintrc for prettier-eslint
+- skipCodeFormatting: skip pretty-printing via prettier-eslint
+
 ## Integrations
 
 ### Simple
