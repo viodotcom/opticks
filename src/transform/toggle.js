@@ -1,10 +1,11 @@
 // @flow
-import { format } from 'prettier'
+import format from 'prettier-eslint'
 
 module.exports.parser = 'flow'
 
 const PACKAGE_NAME = 'opticks'
 const FUNCTION_NAME = 'toggle'
+const ESLINT_CONFIG_PATH = '.eslintrc'
 
 // TODO: Encapsulate
 let root
@@ -112,7 +113,7 @@ const getWinnerArgumentIndex = winnerCode =>
 // $FlowFixMe: mixed ES6 and CommonJS exports due to flow parser type
 export default function transformer (file, api, options) {
   const j = api.jscodeshift
-  const { toggle, winner } = options
+  const { eslintConfigPath, skipCodeFormatting, toggle, winner } = options
   const source = j(file.source)
 
   if (!toggle || !winner) return source.toSource()
@@ -177,11 +178,17 @@ export default function transformer (file, api, options) {
     .replace(/[\s]+\$\{\/\/TOGGLE_REMOVE[\s]+(css)?`/gm, '')
     .replace(/`\/\*TOGGLE_REMOVE\*\/}[\s]+/gm, '')
 
+  if (skipCodeFormatting) {
+    return cleanSource
+  }
+
   try {
-    return format(cleanSource, {
-      semi: false,
-      singleQuote: true,
-      parser: 'flow'
+    return format({
+      text: cleanSource,
+      prettierOptions: {
+        parser: 'flow'
+      },
+      filePath: options.eslintConfigPath || ESLINT_CONFIG_PATH
     })
   } catch (e) {
     return cleanSource
