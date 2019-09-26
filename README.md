@@ -58,6 +58,7 @@ can be included directly via:
 - winner: winning side of the test (a/b/c, etc.)
 - eslintConfigPath: path to .eslintrc for prettier-eslint
 - skipCodeFormatting: skip pretty-printing via prettier-eslint
+- experimentalCSSinJSCleanup: cleanup of CSS in JS constructs (experimental feature)
 
 ## Integrations
 

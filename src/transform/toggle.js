@@ -17,6 +17,7 @@ const implementWinningToggle = (
   j,
   toggleName,
   winnerArgumentIndex,
+  experimentalCSSinJSCleanup,
   callExpression
 ) => {
   const node = callExpression.value
@@ -50,13 +51,13 @@ const implementWinningToggle = (
   )
 
   // HACK to remove dangling ${} for template literals after clean up
+  // TODO: Document why it is needed
   const wrapWithToggleRemovalComments = path => {
     const commentBefore = j.commentLine('TOGGLE_REMOVE', true, false)
     const commentAfter = j.commentBlock('TOGGLE_REMOVE', false, true)
     path.comments = path.comments || []
     path.comments.push(commentBefore)
     path.comments.push(commentAfter)
-    path.loc.indent = 7
     return path
   }
 
@@ -81,7 +82,7 @@ const implementWinningToggle = (
 
   const replaceCallPath = (callPath, newPath) => {
     callPath.replaceWith(
-      isInsideTemplateLiteral(callPath)
+      experimentalCSSinJSCleanup && isInsideTemplateLiteral(callPath)
         ? wrapWithToggleRemovalComments(newPath)
         : newPath
     )
@@ -113,7 +114,13 @@ const getWinnerArgumentIndex = winnerCode =>
 // $FlowFixMe: mixed ES6 and CommonJS exports due to flow parser type
 export default function transformer (file, api, options) {
   const j = api.jscodeshift
-  const { eslintConfigPath, skipCodeFormatting, toggle, winner } = options
+  const {
+    eslintConfigPath,
+    skipCodeFormatting,
+    experimentalCSSinJSCleanup,
+    toggle,
+    winner
+  } = options
   const source = j(file.source)
 
   if (!toggle || !winner) return source.toSource()
@@ -149,7 +156,8 @@ export default function transformer (file, api, options) {
             null,
             j,
             toggleName,
-            winnerArgumentIndex
+            winnerArgumentIndex,
+            experimentalCSSinJSCleanup
           )
 
           // implement winners for toggle calls based on local scoped name
@@ -174,9 +182,10 @@ export default function transformer (file, api, options) {
 
   // HACK to remove dangling ${} after clean up
   // TODO: remove CSS calls from AST instead of with comments
-  const cleanSource = newSource
-    .replace(/[\s]+\$\{\/\/TOGGLE_REMOVE[\s]+(css)?`/gm, '')
-    .replace(/`\/\*TOGGLE_REMOVE\*\/}[\s]+/gm, '')
+  const cleanSource = experimentalCSSinJSCleanup ? newSource
+      .replace(/[\s]+\$\{\/\/TOGGLE_REMOVE[\s]+(css)?`/gm, '')
+      .replace(/`\/\*TOGGLE_REMOVE\*\/}[\s]+/gm, '')
+    : newSource
 
   if (skipCodeFormatting) {
     return cleanSource

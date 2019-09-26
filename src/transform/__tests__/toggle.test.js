@@ -10,11 +10,13 @@ const transform = require('../toggle')
 const packageName = 'opticks'
 const fooWinnerAConfig = {
   toggle: 'foo',
-  winner: 'a'
+  winner: 'a',
+  experimentalCSSinJSCleanup: true
 }
 const fooWinnerBConfig = {
   toggle: 'foo',
-  winner: 'b'
+  winner: 'b',
+  experimentalCSSinJSCleanup: true
 }
 
 describe('Multi Toggle', () => {
@@ -158,6 +160,24 @@ const result = B()
 
   describe('CSS-in-JS toggle cleanup', () => {
     defineTest(__dirname, 'toggle', fooWinnerBConfig, 'CSSinJS')
+  })
+
+  describe('CSS-in-JS toggles cleanup - currently broken patterns', () => {
+    // This test descibes patterns that are not clean up well yet
+    defineTest(__dirname, 'toggle', fooWinnerBConfig, 'CSSinJS-broken-pattern')
+  })
+
+  describe('CSS-in-JS toggles without custom clean up', () => {
+    // This test describes what happens when we don't apply the template clean
+    // up It's quite hacky and we should find a better way to clean these
+    // patterns without relying on custom markers. You can opt-out via the
+    // experimentalCSSinJSCleanup flag
+    defineTest(
+      __dirname,
+      'toggle',
+      { ...fooWinnerBConfig, experimentalCSSinJSCleanup: false },
+      'CSSinJS-without-template-cleanup'
+    )
   })
 
   describe('Deals with missing options', () => {
