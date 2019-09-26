@@ -32,7 +32,8 @@
   "author": "Jop de Klein",
   "license": "ISC",
   "peerDependencies": {
-    "@optimizely/optimizely-sdk": "^3.0.1"
+    "@optimizely/optimizely-sdk": "^3.0.1",
+    "jscodeshift": "^0.5.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

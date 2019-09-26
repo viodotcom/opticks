@@ -5,6 +5,9 @@ module.exports.parser = 'flow'
 const PACKAGE_NAME = 'opticks'
 const FUNCTION_NAME = 'toggle'
 
+// TODO: Encapsulate
+let root
+
 const isCurrentToggle = (currentToggleCallName, wantedToggleName) =>
   currentToggleCallName.toLowerCase() === wantedToggleName
 
@@ -21,6 +24,47 @@ const implementWinningToggle = (
   const callPath = j(callExpression)
   const winningArgument = node.arguments[winnerArgumentIndex]
 
+  const notOfType = (type, node) =>
+    j(node)
+      .closest(type)
+      .size() === 0
+
+  const findUnusedReferencesOfType = (type, name) =>
+    root
+      .find(j.Identifier, { name })
+      .filter(notOfType.bind(null, type))
+      .size() === 0
+
+  const removeUnusedReferences = (type, name, identifiers) =>
+    root
+      .find(type, identifiers)
+      .filter(findUnusedReferencesOfType.bind(null, type, name))
+      .remove()
+
+  // Clean up dangling losing variable references
+  const losingArgumentFunctions = node.arguments.filter(
+    (arg, index) =>
+      arg.type === 'ArrowFunctionExpression' && index !== winnerArgumentIndex
+  )
+
+  losingArgumentFunctions.forEach(losingFunction => {
+    j(losingFunction.body)
+      .find(j.Identifier)
+      .forEach(x => {
+        const name = x.value.name
+        console.log(name)
+
+        // Remove variable declarations
+        removeUnusedReferences(j.VariableDeclarator, name, {
+          id: {
+            type: 'Identifier',
+            name: name
+          }
+        })
+      })
+  })
+
+  // Winner implementation
   // function, use body
   if (winningArgument.type === 'ArrowFunctionExpression') {
     callPath.replaceWith(winningArgument.body)
@@ -56,6 +100,8 @@ export default function transformer (file, api, options) {
 
   const toggleName = toggle.toLowerCase()
   const winnerArgumentIndex = getWinnerArgumentIndex(winner) + 1
+
+  root = source
 
   return (
     source
