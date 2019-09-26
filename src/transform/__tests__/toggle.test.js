@@ -136,6 +136,24 @@ const foo = 'bar'
     )
   })
 
+  describe('Removing unused variables in losing variations', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+const A = 'A'
+const B = 'B'
+const C = 'C'
+const result = toggle('foo', () => A(), () => B(), () => C())
+`,
+      `
+const B = 'B'
+const result = B()
+  `
+    )
+  })
+
   describe('Deals with missing options', () => {
     const code = `
 import { toggle } from '${packageName}'
