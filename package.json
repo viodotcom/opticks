@@ -10,6 +10,7 @@
     "build": "rollup -c rollup.config.js",
     "clean:booleanToggle": "jscodeshift --parser flow --transform lib/transform/booleanToggle.js",
     "clean:toggle": "jscodeshift --parser flow --transform lib/transform/toggle.js",
+    "clean:cssincss": "jscodeshift --parser flow --transform lib/transform/CSSinCSS.js",
     "flow": "flow",
     "flow-typed": "flow-typed",
     "jscodeshift": "jscodeshift",
