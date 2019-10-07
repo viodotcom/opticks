@@ -12,5 +12,10 @@ const progressBarLabelStyles = ({ theme }) => css`
     ${mq.sm(`
   font-size: ${theme.fonts.size.sm};
   `)}
+
+    ${mq.md(css`
+      padding: 0 ${theme.layout.basePadding}px
+        ${theme.layout.basePadding * 1.5}px;
+    `)};
   `};
 `

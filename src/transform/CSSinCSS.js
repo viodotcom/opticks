@@ -31,7 +31,8 @@ export default function transformer (file, api, options) {
 
   const isInsideCSSTemplateLiteral = path =>
     path.closest(j.TemplateLiteral).size() !== 0 &&
-  path.closest(j.TaggedTemplateExpression, { tag: { name: 'css' } }).size() !== 0
+    path.closest(j.CallExpression, { callee: { type: 'MemberExpression', object: { name: 'mq' } } }).size() === 0 &&
+    path.closest(j.TaggedTemplateExpression, { tag: { name: 'css' } }).size() !== 0
 
   root = source
 
