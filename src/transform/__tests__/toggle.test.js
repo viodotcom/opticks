@@ -192,4 +192,37 @@ const result = toggle('foo', 'a', () => {foo(); bar()}, 'c')
   xdescribe('Removes references to unused variables in call expressions upon removal', () => {
     // ... TODO
   })
+
+  describe('Allows to skip formatting via options', () => {
+    defineInlineTest(
+      transform,
+      { ...fooWinnerBConfig, skipCodeFormatting: true },
+      `
+        import { toggle } from '${packageName}'
+            toggle('foo', 'a', 'b')
+          const foo =       "bar"
+      `,
+      `
+      'b'
+        const foo =       "bar"
+      `
+    )
+  })
+
+  describe('Skips formatting when there are no toggles to clean', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+          const foo =       "bar"
+      `,
+      `
+          const foo =       "bar"
+      `
+    )
+  })
+
+  xdescribe('Removes references to unused variables in call expressions upon removal', () => {
+    // ... TODO
+  })
 })

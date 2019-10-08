@@ -9,6 +9,7 @@ const ESLINT_CONFIG_PATH = '.eslintrc'
 
 // TODO: Encapsulate
 let root
+let hasToggles
 
 const isCurrentToggle = (currentToggleCallName, wantedToggleName) =>
   currentToggleCallName.toLowerCase() === wantedToggleName
@@ -132,6 +133,7 @@ export default function transformer (file, api, options) {
   const winnerArgumentIndex = getWinnerArgumentIndex(winner) + 1
 
   root = source
+  hasToggles = false
 
   const newSource = source
     // find imports to packageName
@@ -161,7 +163,10 @@ export default function transformer (file, api, options) {
           )
 
           // implement winners for toggle calls based on local scoped name
-          findToggleCallsByLocalImportName().forEach(toggleCallModifier)
+          const toggleCalls = findToggleCallsByLocalImportName()
+          hasToggles = toggleCalls.length > 0
+
+          toggleCalls.forEach(toggleCallModifier)
 
           const allTogglesRemoved =
             findToggleCallsByLocalImportName().length === 0
@@ -182,12 +187,13 @@ export default function transformer (file, api, options) {
 
   // HACK to remove dangling ${} after clean up
   // TODO: remove CSS calls from AST instead of with comments
-  const cleanSource = experimentalCSSinJSCleanup ? newSource
+  const cleanSource = experimentalCSSinJSCleanup
+    ? newSource
       .replace(/[\s]+\$\{\/\/TOGGLE_REMOVE[\s]+(css)?`/gm, '')
       .replace(/`\/\*TOGGLE_REMOVE\*\/}[\s]+/gm, '')
     : newSource
 
-  if (skipCodeFormatting) {
+  if (skipCodeFormatting || !hasToggles) {
     return cleanSource
   }
 
