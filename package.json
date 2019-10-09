@@ -11,6 +11,7 @@
     "clean:booleanToggle": "jscodeshift --parser flow --transform lib/transform/booleanToggle.js",
     "clean:toggle": "jscodeshift --parser flow --transform lib/transform/toggle.js",
     "clean:cssincss": "jscodeshift --parser flow --transform lib/transform/CSSinCSS.js",
+    "clean:nullprops": "jscodeshift --parser flow --transform lib/transform/NullProps.js",
     "flow": "flow",
     "flow-typed": "flow-typed",
     "jscodeshift": "jscodeshift",
