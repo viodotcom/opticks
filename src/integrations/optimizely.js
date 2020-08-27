@@ -17,6 +17,7 @@ type AudienceSegmentationAttributesType = {
 
 type BooleanToggleValueType = boolean
 type ExperimentToggleValueType = string
+type SdkKeyValueType = string
 type ToggleValueType = ExperimentToggleValueType | BooleanToggleValueType
 
 export type OptimizelyDatafileType = any // $FlowFixMe
@@ -94,22 +95,23 @@ const voidEventDispatcher = {
   dispatchEvent: () => null
 }
 
-export const initialize = (
-  datafile: OptimizelyDatafileType,
+export const initialize = async (
+  sdkKey: SdkKeyValueType,
   onExperimentDecision: ActivateEventHandlerType = voidActivateHandler,
   eventDispatcher: EventDispatcherType = voidEventDispatcher
 ) => {
   optimizelyClient = Optimizely.createInstance({
-    datafile,
+    sdkKey,
     eventDispatcher: eventDispatcher
   })
 
   addActivateListener(onExperimentDecision)
+  await optimizelyClient.onReady()
 }
 
 export const addActivateListener = listener =>
   optimizelyClient.notificationCenter.addNotificationListener(
-    NOTIFICATION_TYPES.ACTIVATE,
+    NOTIFICATION_TYPES.DECISION,
     listener
   )
 
@@ -169,4 +171,16 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
     ) || DEFAULT)
 }
 
-export const toggle = baseToggle(getToggle)
+const convertBooleanToggleToFeatureVariant = (toggleId) => {
+  const isFeatureEnabled = getBooleanToggle(toggleId)
+  return isFeatureEnabled ? 'b' : 'a'
+}
+
+export const toggle = (...args) => {
+  // An A/B/C... test
+  if (args.length > 3) {
+    return baseToggle(getToggle)(...args)
+  } else {
+    return baseToggle(convertBooleanToggleToFeatureVariant)(...args)
+  }
+}
