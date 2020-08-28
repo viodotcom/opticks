@@ -1,4 +1,3 @@
 export const handleToggleVariant = (
-  toggleValue: Function | any
-): any | null | undefined =>
-  typeof toggleValue === 'function' ? toggleValue() : toggleValue
+  toggleValue: unknown | (() => unknown)
+): unknown => (typeof toggleValue === 'function' ? toggleValue() : toggleValue)

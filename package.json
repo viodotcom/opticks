@@ -14,7 +14,7 @@
     "prepare": "npm run build",
     "test": "xo && jest src",
     "test:watch": "jest --watch src",
-    "typescript": "tsc",
+    "typescript": "tsc --noEmit",
     "xo": "xo",
     "xo:fix": "xo --fix"
   },

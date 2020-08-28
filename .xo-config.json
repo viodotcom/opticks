@@ -24,6 +24,12 @@
     "capitalized-comments": [
       "off"
     ],
+    "import/no-anonymous-default-export": [
+      "off"
+    ],
+    "unicorn/explicit-length-check": [
+      "off"
+    ],
     "unicorn/filename-case": [
       "off"
     ],

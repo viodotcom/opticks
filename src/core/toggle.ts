@@ -1,10 +1,11 @@
 import {ToggleIdType, TogglerGetterType} from '../types'
 import {handleToggleVariant} from '../variantUtils'
 
-export const toggle = (getToggle: TogglerGetterType) => <T>(
+type VariantType = unknown | (() => unknown)
+export const toggle = (getToggle: TogglerGetterType) => (
   toggleId: ToggleIdType,
-  ...variants: T[]
-): T | null | undefined => {
+  ...variants: VariantType[]
+): unknown => {
   const baseCharCode = 'a'.charCodeAt(0)
 
   const activeVariant = getToggle(toggleId)

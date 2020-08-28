@@ -28,6 +28,7 @@ let audienceSegmentationAttributes: AudienceSegmentationAttributesType = {}
 
 type FeatureEnabledCacheType = {[key in ToggleIdType]?: BooleanToggleValueType}
 type ExperimentCacheType = {[key in ToggleIdType]?: ExperimentToggleValueType}
+type CacheType = ExperimentCacheType | FeatureEnabledCacheType
 type ForcedTogglesType = {[key in ToggleIdType]?: ToggleValueType}
 
 let featureEnabledCache: FeatureEnabledCacheType = {}
@@ -84,8 +85,9 @@ export const resetAudienceSegmentationAttributes = () => {
   audienceSegmentationAttributes = {}
 }
 
-type ActivateEventHandlerType = Function
-type EventDispatcherType = {dispatchEvent: Function}
+type ActivateEventHandlerType = () => void
+type EventDispatcherType = {dispatchEvent: () => void}
+type EventListenerType = () => void
 
 const voidActivateHandler = () => null
 const voidEventDispatcher = {
@@ -105,16 +107,19 @@ export const initialize = (
   addActivateListener(onExperimentDecision)
 }
 
-export const addActivateListener = (listener) =>
+export const addActivateListener = (listener: EventListenerType) =>
   optimizelyClient.notificationCenter.addNotificationListener(
     NOTIFICATION_TYPES.ACTIVATE,
     listener
   )
 
-const isForcedOrCached = (toggleId, cache): boolean =>
+const isForcedOrCached = (toggleId: ToggleIdType, cache: CacheType): boolean =>
   forcedToggles.hasOwnProperty(toggleId) || cache.hasOwnProperty(toggleId)
 
-const getForcedOrCached = (toggleId, cache): ToggleValueType => {
+const getForcedOrCached = (
+  toggleId: ToggleIdType,
+  cache: CacheType
+): ToggleValueType | null | undefined => {
   const register = forcedToggles.hasOwnProperty(toggleId)
     ? forcedToggles
     : cache
@@ -122,11 +127,13 @@ const getForcedOrCached = (toggleId, cache): ToggleValueType => {
   return register[toggleId]
 }
 
-const validateUserId = (id) => {
+const validateUserId = (id: UserIdType) => {
   if (!id) throw new Error('Opticks: Fatal error: user id is not set')
 }
 
-const getOrSetCachedFeatureEnabled = (toggleId): BooleanToggleValueType => {
+const getOrSetCachedFeatureEnabled = (
+  toggleId: ToggleIdType
+): BooleanToggleValueType => {
   validateUserId(userId)
 
   const DEFAULT = false

@@ -1,7 +1,7 @@
 import {booleanToggle as baseBooleanToggle} from './booleanToggle'
 
 describe('Boolean Toggles', () => {
-  let booleanToggle
+  let booleanToggle: ReturnType<typeof baseBooleanToggle>
 
   beforeEach(() => {
     const dummyGetToggle = jest.fn(
