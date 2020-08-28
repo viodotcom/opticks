@@ -14,7 +14,8 @@ const mockEventListener = jest.fn()
 const optimizelyClientInstance = Optimizely.createInstance({
   datafile,
   logger: defaultLogger.createLogger({
-    logLevel: LOG_LEVEL.INFO
+    logLevel: LOG_LEVEL.INFO,
+    logToConsole: false
   })
 })
 

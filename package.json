@@ -13,7 +13,7 @@
     "jscodeshift": "jscodeshift",
     "prepare": "npm run build",
     "test": "xo && jest src",
-    "test:watch": "jest --watch src",
+    "test:watch": "jest src --watch",
     "typescript": "tsc --noEmit",
     "xo": "xo",
     "xo:fix": "xo --fix"
@@ -31,13 +31,14 @@
   "author": "Jop de Klein",
   "license": "ISC",
   "peerDependencies": {
-    "@optimizely/optimizely-sdk": "^3.0.1",
+    "@optimizely/optimizely-sdk": "^4.2.1",
     "jscodeshift": "^0.5.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
+    "@babel/preset-typescript": "^7.10.4",
     "@optimizely/optimizely-sdk": "^3.0.1",
     "@rollup/plugin-typescript": "^5.0.2",
     "@types/jest": "^26.0.10",
@@ -46,7 +47,7 @@
     "eslint-plugin-jest": "^23.20.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-prettier": "^3.1.4",
-    "jest": "^23.6.0",
+    "jest": "^26.4",
     "jscodeshift": "^0.5.1",
     "regenerator-runtime": "^0.12.1",
     "rollup": "^0.68.2",
