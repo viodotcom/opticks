@@ -3,7 +3,8 @@ import {booleanToggle as baseBooleanToggle} from '../core/booleanToggle'
 import {toggle as baseToggle} from '../core/toggle'
 import {NOTIFICATION_TYPES} from '@optimizely/optimizely-sdk/lib/utils/enums'
 
-import OptimizelyLibType from '@optimizely/optimizely-sdk'
+import OptimizelyLib from '@optimizely/optimizely-sdk'
+import type {Client} from '@optimizely/optimizely-sdk'
 
 type UserIdType = string
 type AudienceSegmentationAttributeKeyType = string
@@ -21,8 +22,8 @@ export type OptimizelyDatafileType = any
 
 export {NOTIFICATION_TYPES}
 
-let Optimizely: OptimizelyLibType // reference to injected Optimizely library
-let optimizelyClient // reference to active Optimizely instance
+let Optimizely: typeof OptimizelyLib // reference to injected Optimizely library
+let optimizelyClient: Client // reference to active Optimizely instance
 let userId: UserIdType
 let audienceSegmentationAttributes: AudienceSegmentationAttributesType = {}
 
@@ -35,7 +36,7 @@ let featureEnabledCache: FeatureEnabledCacheType = {}
 let experimentCache: ExperimentCacheType = {}
 const forcedToggles: ForcedTogglesType = {}
 
-export const registerLibrary = (lib: OptimizelyLibType) => {
+export const registerLibrary = (lib: typeof OptimizelyLib) => {
   // TODO: Double-check if this works with server environments
   // Since they load the module in memory, make sure they are not persisted
   // across different requests

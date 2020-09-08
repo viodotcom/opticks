@@ -1,23 +1,36 @@
 // Just a playground to test the datafile with the real Optimizely integration
 
 import datafile from './__fixtures__/dataFile'
+// import validator from '@optimizely/optimizely-sdk/dist/optimizely.json_shema_validator.min'
 import {NOTIFICATION_TYPES} from '@optimizely/optimizely-sdk/lib/utils/enums'
 const Optimizely = jest.requireActual('@optimizely/optimizely-sdk')
 const defaultLogger = require('@optimizely/optimizely-sdk/lib/plugins/logger')
 const LOG_LEVEL = require('@optimizely/optimizely-sdk/lib/utils/enums')
   .LOG_LEVEL
 
+const validator = require('@optimizely/optimizely-sdk/lib/utils/json_schema_validator')
+
 jest.unmock('@optimizely/optimizely-sdk')
 
 const mockEventListener = jest.fn()
 
-const optimizelyClientInstance = Optimizely.createInstance({
-  datafile,
-  logger: defaultLogger.createLogger({
+console.log(
+  defaultLogger.createLogger({
     logLevel: LOG_LEVEL.INFO,
     logToConsole: false
   })
+)
+
+const optimizelyClientInstance = Optimizely.createInstance({
+  datafile,
+  jsonSchemaValidator: validator,
+  logger: defaultLogger.createLogger({
+    logLevel: LOG_LEVEL.DEBUG,
+    logToConsole: true
+  })
 })
+
+// console.log(optimizelyClientInstance.getOptimizelyConfig().getDatafile())
 
 optimizelyClientInstance.notificationCenter.addNotificationListener(
   NOTIFICATION_TYPES.ACTIVATE,

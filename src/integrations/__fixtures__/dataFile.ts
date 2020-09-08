@@ -71,12 +71,14 @@ export default {
     {
       experimentIds: ['foo'],
       id: 'foo',
-      key: 'foo'
+      key: 'foo',
+      variables: []
     },
     {
       experimentIds: ['bar'],
       id: 'bar',
-      key: 'bar'
+      key: 'bar',
+      variables: []
     }
   ],
   events: [],
@@ -94,6 +96,72 @@ export default {
     {id: 'deviceType', key: 'deviceType'}
   ],
   groups: [],
-  rollouts: [],
+  rollouts: [
+    {
+      experiments: [
+        {
+          id: 'foo',
+          key: 'foo',
+          status: 'Running',
+          layerId: 'layerFoo',
+          variations: [
+            {
+              featureEnabled: false,
+              id: 'foo-a',
+              key: 'a'
+            },
+            {
+              featureEnabled: true,
+              id: 'foo-b',
+              key: 'b'
+            }
+          ],
+          trafficAllocation: [
+            {
+              entityId: 'foo-a',
+              endOfRange: 5000
+            },
+            {
+              entityId: 'foo-b',
+              endOfRange: 10000
+            }
+          ],
+          audienceIds: ['foo-default-dates'],
+          forcedVariations: []
+        },
+        {
+          id: 'bar',
+          key: 'bar',
+          status: 'Running',
+          layerId: 'layerBar',
+          variations: [
+            {
+              featureEnabled: false,
+              id: 'bar-a',
+              key: 'a'
+            },
+            {
+              featureEnabled: true,
+              id: 'bar-b',
+              key: 'b'
+            }
+          ],
+          trafficAllocation: [
+            {
+              entityId: 'bar-a',
+              endOfRange: 5000
+            },
+            {
+              entityId: 'bar-b',
+              endOfRange: 10000
+            }
+          ],
+          audienceIds: [],
+          forcedVariations: []
+        }
+      ],
+      id: 'fooRollout'
+    }
+  ],
   variables: []
 }
