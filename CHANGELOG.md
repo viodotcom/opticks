@@ -10,6 +10,16 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v3.0.0
+
+- :boom: Flow -> TypeScript
+- :house: Bump dev dependencies
+
+## Optimizely Integration
+
+- :rocket: Support for Optimizely Rollouts
+- :boom: :house: Support for Optimizely 4.2.1 (please see example dataFile example)
+
 # v2.0.0
 
 ## Optimizely Integration

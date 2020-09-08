@@ -1,16 +1,17 @@
-import babel from 'rollup-plugin-babel'
-import resolve from 'rollup-plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs'
+import babel from '@rollup/plugin-babel'
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
 import {terser} from 'rollup-plugin-terser'
 import copy from 'rollup-plugin-copy'
 import typescript from '@rollup/plugin-typescript'
 
 const plugins = (outputDir) => [
   babel({
-    exclude: 'node_modules/**'
+    exclude: 'node_modules/**',
+    babelHelpers: 'bundled'
   }),
+  commonjs({extensions: ['.js', '.ts']}),
   resolve(),
-  commonjs(),
   terser(),
   typescript(),
   copy({
@@ -19,12 +20,17 @@ const plugins = (outputDir) => [
 ]
 
 const generateConfig = (integration) => ({
-  input: `src/${integration}.ts`,
+  input: `src/integrations/${integration}.ts`,
   output: {
-    file: `lib/${integration}.ts`,
-    format: 'cjs'
+    file: `lib/${integration}.js`,
+    format: 'cjs',
+    exports: 'named'
   },
-  plugins: plugins('lib')
+  plugins: plugins('lib'),
+  external: [
+    '@optimizely/optimizely-sdk',
+    '@optimizely/optimizely-sdk/lib/utils/enums'
+  ]
 })
 
 module.exports = [generateConfig('optimizely'), generateConfig('simple')]
