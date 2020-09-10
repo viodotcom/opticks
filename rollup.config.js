@@ -8,12 +8,15 @@ import typescript from '@rollup/plugin-typescript'
 const plugins = (outputDir) => [
   babel({
     exclude: 'node_modules/**',
+    extensions: ['.ts'],
     babelHelpers: 'bundled'
   }),
-  commonjs({extensions: ['.js', '.ts']}),
   resolve(),
-  terser(),
+  // typescript({module: 'CommonJS'}),
   typescript(),
+  commonjs({extensions: ['.js', '.ts']}),
+  // terser(),
+  // TODO: doesn't seem to be working
   copy({
     'src/transform': `${outputDir}/transform`
   })
@@ -22,9 +25,11 @@ const plugins = (outputDir) => [
 const generateConfig = (integration) => ({
   input: `src/integrations/${integration}.ts`,
   output: {
-    file: `lib/${integration}.js`,
+    dir: 'lib',
     format: 'cjs',
-    exports: 'named'
+    // format: 'es',
+    exports: 'named',
+    sourcemap: true
   },
   plugins: plugins('lib'),
   external: [
