@@ -6,15 +6,15 @@ import copy from 'rollup-plugin-copy'
 import typescript from '@rollup/plugin-typescript'
 
 const plugins = (outputDir) => [
-  babel({
-    exclude: 'node_modules/**',
-    extensions: ['.ts'],
-    babelHelpers: 'bundled'
-  }),
-  resolve(),
+  // babel({
+  //   exclude: 'node_modules/**',
+  //   extensions: ['.ts'],
+  //   babelHelpers: 'bundled'
+  // }),
+  // resolve(),
   // typescript({module: 'CommonJS'}),
   typescript(),
-  commonjs({extensions: ['.js', '.ts']}),
+  // commonjs({extensions: ['.js', '.ts']}),
   // terser(),
   // TODO: doesn't seem to be working
   copy({
@@ -26,8 +26,8 @@ const generateConfig = (integration) => ({
   input: `src/integrations/${integration}.ts`,
   output: {
     dir: 'lib',
-    format: 'cjs',
-    // format: 'es',
+    // format: 'cjs',
+    format: 'es',
     exports: 'named',
     sourcemap: true
   },
