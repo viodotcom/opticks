@@ -95,18 +95,17 @@ const voidEventDispatcher = {
   dispatchEvent: () => null
 }
 
-export const initialize = async (
-  sdkKey: SdkKeyValueType,
+export const initialize = (
+  datafile: OptimizelyDatafileType,
   onExperimentDecision: ActivateEventHandlerType = voidActivateHandler,
   eventDispatcher: EventDispatcherType = voidEventDispatcher
 ) => {
   optimizelyClient = Optimizely.createInstance({
-    sdkKey,
+    datafile,
     eventDispatcher: eventDispatcher
   })
 
   addActivateListener(onExperimentDecision)
-  await optimizelyClient.onReady()
 }
 
 export const addActivateListener = listener =>
