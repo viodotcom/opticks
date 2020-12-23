@@ -12,18 +12,6 @@ describe('Multi Toggle', () => {
     toggle = baseToggle(dummyGetToggle)
   })
 
-  /*
-  describe.skip('Getting active variant', () => {
-    it('is case insensitive', () => {
-      expect(getActiveVariant('fOO')).toEqual('b')
-    })
-
-    it("defaults to 'a' when experiment cannot be found", () => {
-      expect(getActiveVariant('nonexistentId')).toEqual('a')
-    })
-  })
-  */
-
   describe('Experiment Variant', () => {
     it('returns the correct variant based on argument index', () => {
       expect(toggle('foo', 'a', 'b', 'c')).toEqual('b')
@@ -39,6 +27,11 @@ describe('Multi Toggle', () => {
 
     it("defaults to 'a' when experiment cannot be found", () => {
       expect(toggle('nonexistentId', 'a', 'b', 'c')).toEqual('a')
+    })
+
+    it('returns the experiment decision when no arguments are supplied', () => {
+      expect(toggle('foo')).toEqual('b')
+      expect(toggle('nonexistentId')).toEqual('a')
     })
   })
 })

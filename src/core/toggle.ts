@@ -10,7 +10,6 @@ export const toggle = (getToggle: TogglerGetterType) => (
 
   const activeVariant = getToggle(toggleId)
 
-  // TOOD: Write stand alone unit test for this case
   if (!variants.length) return activeVariant
 
   const argumentIndex = activeVariant.charCodeAt(0) - baseCharCode // a, b, c etc...
