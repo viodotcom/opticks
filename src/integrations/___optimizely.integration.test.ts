@@ -14,35 +14,20 @@ jest.unmock('@optimizely/optimizely-sdk')
 
 const mockEventListener = jest.fn()
 
-console.log(
-  defaultLogger.createLogger({
-    logLevel: LOG_LEVEL.INFO,
-    logToConsole: false
-  })
-)
-
 const optimizelyClientInstance = Optimizely.createInstance({
   datafile,
   jsonSchemaValidator: validator,
   logger: defaultLogger.createLogger({
     logLevel: LOG_LEVEL.DEBUG,
-    logToConsole: true
+    logToConsole: false
   })
 })
-
-// console.log(optimizelyClientInstance.getOptimizelyConfig().getDatafile())
 
 optimizelyClientInstance.notificationCenter.addNotificationListener(
   NOTIFICATION_TYPES.ACTIVATE,
   mockEventListener
 )
 
-/*
-optimizelyClientInstance.notificationCenter.addNotificationListener(
-  NOTIFICATION_TYPES.ACTIVATE,
-  experiment => console.log(experiment)
-)
-*/
 const fooUserIdFalse = 'zhhhh' // control
 const fooUserIdTrue = 'barbazhhhaaah' // variation
 const barUserIdFalse = 'w=zkhkjz' // control

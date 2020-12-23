@@ -13,7 +13,7 @@
     "clean:toggle": "jscodeshift --parser flow --transform lib/transform/toggle.ts",
     "jscodeshift": "jscodeshift",
     "prepare": "npm run build",
-    "test": "xo && jest src",
+    "test": "jest src --runInBand",
     "test:watch": "jest src --watch",
     "typescript": "tsc --noEmit",
     "typescript:declarations": "tsc --declarationDir ./lib --declaration true --declarationMap true --emitDeclarationOnly --noEmit false",
