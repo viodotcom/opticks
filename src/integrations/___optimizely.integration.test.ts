@@ -1,7 +1,6 @@
 // Just a playground to test the datafile with the real Optimizely integration
 
 import datafile from './__fixtures__/dataFile'
-// import validator from '@optimizely/optimizely-sdk/dist/optimizely.json_shema_validator.min'
 import {NOTIFICATION_TYPES} from '@optimizely/optimizely-sdk/lib/utils/enums'
 const Optimizely = jest.requireActual('@optimizely/optimizely-sdk')
 const defaultLogger = require('@optimizely/optimizely-sdk/lib/plugins/logger')
