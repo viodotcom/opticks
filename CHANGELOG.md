@@ -10,6 +10,11 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v3.0.0
+- :boom: Support for Optimizely Rollouts with feature toggles
+- :boom: Update to Optimizely SDK 4.2.1
+- :boom: `toggle` now detrmines whether to use booleanToggles or multiToggles based on the amount of arguments passed
+ 
 # v2.0.0
 
 ## Optimizely Integration
