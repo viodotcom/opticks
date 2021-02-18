@@ -21,7 +21,8 @@ const optimizelyClientInstance = Optimizely.createInstance({
 })
 
 optimizelyClientInstance.notificationCenter.addNotificationListener(
-  NOTIFICATION_TYPES.ACTIVATE,
+  // NOTIFICATION_TYPES.ACTIVATE,
+  'DECISION:type, userId, attributes, decisionInfo',
   mockEventListener
 )
 
