@@ -170,7 +170,11 @@ export const isUserInRolloutAudience = (toggleId) => {
       ''
     );
 
-    if (decisionIfUserIsInAudience.result) isInAnyAudience = !isPausedBooleanToggle(rolloutRule)
+    // This will be decisionIfUserIsInAudience.result for Optimizely 4.3.3 and up
+    if (
+      decisionIfUserIsInAudience && !isPausedBooleanToggle(rolloutRule)
+    )
+      isInAnyAudience = true
   }
 
   const isEveryoneElseRulePaused = isPausedBooleanToggle(

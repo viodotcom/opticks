@@ -10,6 +10,13 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v3.2.0
+- :bug: Fix for Optimizely 4.2.1 `isUserInRolloutAudience`
+
+# v3.1.0
+- :house: Pin Optimizely SDK version to 4.2.1
+- :house: Update unit tests
+
 # v3.0.0
 - :boom: Support for Optimizely Rollouts with feature toggles
 - :boom: Update to Optimizely SDK 4.2.1
