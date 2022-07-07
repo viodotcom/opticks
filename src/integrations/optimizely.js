@@ -170,3 +170,16 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
 }
 
 export const toggle = baseToggle(getToggle)
+
+/**
+ * Get all enabled feature for the user
+ */
+export const getEnabledFeatures = () => {
+  validateUserId(userId)
+
+  return optimizelyClient.getEnabledFeatures(
+    userId,
+    audienceSegmentationAttributes
+  )
+}
+
