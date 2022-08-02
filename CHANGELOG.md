@@ -10,6 +10,9 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v3.3.0
+- :rocket: Add getEnabledFeatures method.
+
 # v3.2.0
 - :bug: Fix for Optimizely 4.2.1 `isUserInRolloutAudience`
 
