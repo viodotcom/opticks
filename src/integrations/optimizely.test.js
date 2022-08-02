@@ -31,23 +31,23 @@ const testAudienceSegmentationCacheBusting = (toggleFn, fn) => {
   it('Caches results until setAudienceSegmentationAttributes is called', () => {
     resetAudienceSegmentationAttributes()
     fn.mockClear()
-    toggleFn('foo') // call activate for the first time
-    toggleFn('foo') // cached, don't call activate
-    toggleFn('bax') // call activate for the second time
+    toggleFn('foo', 'a', 'b', 'c') // call activate for the first time
+    toggleFn('foo', 'a', 'b', 'c') // cached, don't call activate
+    toggleFn('bax', 'a', 'b', 'c') // call activate for the second time
     expect(fn).toHaveBeenCalledTimes(2)
 
     // Reset user attributes, clearing cache
     fn.mockClear()
     setAudienceSegmentationAttributes({ foo: 'baz' })
 
-    toggleFn('foo') // call 1
+    toggleFn('foo', 'a', 'b', 'c') // call 1
     expect(fn).toHaveBeenCalledTimes(1)
     expect(fn).toHaveBeenCalledWith('foo', 'fooBSide', {
       foo: 'baz'
     })
-    toggleFn('foo') // cached
-    toggleFn('bar') // call 2
-    toggleFn('bar') // cached
+    toggleFn('foo', 'a', 'b', 'c') // cached
+    toggleFn('bar', 'a', 'b', 'c') // call 2
+    toggleFn('bar', 'a', 'b', 'c') // cached
     expect(fn).toHaveBeenCalledTimes(2)
     expect(fn).toHaveBeenCalledWith('bar', 'fooBSide', {
       foo: 'baz'
@@ -78,7 +78,8 @@ describe('Optimizely Integration', () => {
 
       it('Subscribes to the Activate event', () => {
         expect(addNotificationListenerMock).toHaveBeenCalledWith(
-          NOTIFICATION_TYPES.ACTIVATE,
+          NOTIFICATION_TYPES.DECISION,
+          // 'DECISION:type, userId, attributes, decisionInfo',
           activateHandler
         )
       })
@@ -130,9 +131,22 @@ describe('Optimizely Integration', () => {
           setUserId('fooBSide')
         })
 
+        /*
+        it('Switches between boolean and multi toggle depending on the amount of arguments', () => {
+          expect(toggle('foo', 'a', 'b', 'c')).toEqual('b')
+          expect(toggle('bax', 'a', 'b', 'c')).toEqual('c')
+          expect(toggle('foo')).toEqual('b')
+          expect(toggle('bar')).toEqual('a')
+          expect(booleanToggle('foo')).toEqual(true)
+          expect(booleanToggle('bar')).toEqual(false)
+        })
+        */
+
         it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
-          toggle('foo')
+          toggle('foo', 'a', 'b', 'c')
           expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {})
+          toggle('foo')
+          expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {})
           booleanToggle('foo')
           expect(isFeatureEnabledMock).toHaveBeenCalledWith(
             'foo',
@@ -153,8 +167,15 @@ describe('Optimizely Integration', () => {
         })
 
         it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
-          toggle('foo')
+          toggle('foo', 'a', 'b', 'c')
           expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {
+            thisWillNotBeOverwritten: 'foo',
+            deviceType: 'mobile',
+            isLoggedIn: false
+          })
+
+          toggle('foo')
+          expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {
             thisWillNotBeOverwritten: 'foo',
             deviceType: 'mobile',
             isLoggedIn: false
@@ -177,8 +198,18 @@ describe('Optimizely Integration', () => {
         })
 
         it('Forwards correct audience segmentation attributes', () => {
-          toggle('foo', 'a', 'b')
+          toggle('foo', 'a', 'b', 'c')
           expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {
+            valueAfterReset: true
+          })
+
+          toggle('foo', 'a', 'b')
+          expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {
+            valueAfterReset: true
+          })
+
+          toggle('foo')
+          expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {
             valueAfterReset: true
           })
         })
@@ -187,7 +218,7 @@ describe('Optimizely Integration', () => {
       testAudienceSegmentationCacheBusting(toggle, activateMock)
       testAudienceSegmentationCacheBusting(booleanToggle, isFeatureEnabledMock)
 
-      it("Returns Optimizely's value when no arguments supplied", () => {
+      it("Returns Optimizely's value when no arguments supplied using booleanToggle", () => {
         // maps to a, b, c
         expect(toggle('foo')).toEqual('b')
         expect(toggle('bar')).toEqual('a')
@@ -213,28 +244,30 @@ describe('Optimizely Integration', () => {
       })
 
       it('respects the overridden values', () => {
-        expect(toggle('foo')).toEqual('a')
-        expect(toggle('bax')).toEqual('c')
+        expect(toggle('foo', 'a', 'b', 'c')).toEqual('a')
+        expect(toggle('bax', 'a', 'b', 'c')).toEqual('c')
+        expect(toggle('bar')).toEqual('a')
+        expect(toggle('baz')).toEqual('b')
         expect(booleanToggle('bar')).toEqual(false)
         expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('allows you to invent non-existing experiments', () => {
-        expect(toggle('bax')).toEqual('c')
+        expect(toggle('bax', 'a', 'b', 'c')).toEqual('c')
         expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('persist after setAudienceSegmentationAttributes is called', () => {
-        expect(toggle('bax')).toEqual('c')
+        expect(toggle('bax', 'a', 'b', 'c')).toEqual('c')
         setAudienceSegmentationAttributes({ foo: 'bar' })
-        expect(toggle('foo')).toEqual('a')
-        expect(toggle('bax')).toEqual('c')
+        expect(toggle('foo', 'a', 'b', 'c')).toEqual('a')
+        expect(toggle('bax', 'a', 'b', 'c')).toEqual('c')
         expect(booleanToggle('bar')).toEqual(false)
         expect(booleanToggle('baz')).toEqual(true)
       })
 
       it('makes sure Toggles return defaults if forced values are of wrong type', () => {
-        expect(toggle('baz')).toEqual('a')
+        expect(toggle('baz', 'a', 'b', 'c')).toEqual('a')
         expect(booleanToggle('bax')).toEqual(false)
       })
 
@@ -244,16 +277,16 @@ describe('Optimizely Integration', () => {
         })
 
         it('should yield real values for cleared toggles', () => {
-          expect(toggle('foo')).toEqual('b')
-          expect(toggle('bar')).toEqual('a')
+          expect(toggle('foo', 'a', 'b', 'c')).toEqual('b')
+          expect(toggle('bar', 'a', 'b', 'c')).toEqual('a')
           expect(booleanToggle('foo')).toEqual(true)
           expect(booleanToggle('bar')).toEqual(false)
         })
 
         it('should keep the non-cleared forced toggles and other defaults', () => {
-          expect(toggle('bax')).toEqual('c')
+          expect(toggle('bax', 'a', 'b', 'c')).toEqual('c')
           expect(booleanToggle('baz')).toEqual(true)
-          expect(toggle('nonexistent')).toEqual('a')
+          expect(toggle('nonexistent', 'a', 'b', 'c')).toEqual('a')
           expect(booleanToggle('nonexistent')).toEqual(false)
         })
       })
