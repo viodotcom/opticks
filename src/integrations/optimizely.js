@@ -3,7 +3,6 @@
 import type { ToggleIdType } from '../types'
 import { booleanToggle as baseBooleanToggle } from '../core/booleanToggle'
 import { toggle as baseToggle } from '../core/toggle'
-// import { NOTIFICATION_TYPES } from '@optimizely/js-sdk-utils'
 
 import type OptimizelyLibType from '@optimizely/optimizely-sdk'
 
@@ -22,7 +21,6 @@ type ToggleValueType = ExperimentToggleValueType | BooleanToggleValueType
 
 export type OptimizelyDatafileType = any // $FlowFixMe
 
-// export { NOTIFICATION_TYPES }
 export const NOTIFICATION_TYPES = {
   DECISION: 'DECISION:type, userId, attributes, decisionInfo',
 }
