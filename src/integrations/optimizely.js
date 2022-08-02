@@ -228,3 +228,16 @@ export const toggle = (...args) => {
     return baseToggle(convertBooleanToggleToFeatureVariant)(...args)
   }
 }
+
+/**
+ * Get all enabled features for the user
+ */
+export const getEnabledFeatures = () => {
+  validateUserId(userId)
+
+  return optimizelyClient.getEnabledFeatures(
+    userId,
+    audienceSegmentationAttributes
+  )
+}
+
