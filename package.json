@@ -2,9 +2,7 @@
   "name": "opticks",
   "version": "4.0.0",
   "description": "FindHotel Toggle Flag JavaScript SDK",
-  "main": "dist/simple.js",
-  "module": "dist/simple.mjs",
-  "typings": "dist/simple.d.ts",
+  "main": "lib/simple.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "clean:booleanToggle": "jscodeshift --parser flow --transform lib/transform/booleanToggle.js",
@@ -46,8 +44,10 @@
     "jscodeshift": "^0.5.1",
     "regenerator-runtime": "^0.12.1",
     "rollup": "^2.77.2",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-esbuild": "^4.9.1",
+    "rollup-plugin-terser": "^7.0.2",
     "typescript": "^4.7.4",
     "xo": "^0.51.0"
   }
