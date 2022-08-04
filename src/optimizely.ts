@@ -1,1 +1,1 @@
-export * from './integrations/optimizely';
+export * from './integrations/optimizely'

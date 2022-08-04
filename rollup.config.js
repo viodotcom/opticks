@@ -1,35 +1,39 @@
-import dts from 'rollup-plugin-dts';
-import esbuild from 'rollup-plugin-esbuild';
+import dts from 'rollup-plugin-dts'
+import esbuild from 'rollup-plugin-esbuild'
 
-const name = require('./package.json').main.replace(/\.js$/, '');
+const generateConfig = (integrationName) => {
+  const bundle = (config) => ({
+    ...config,
+    input: `src/${integrationName}.ts`,
+    external: (id) => !/^[./]/.test(id),
+  })
 
-const bundle = config => ({
-	...config,
-	input: 'src/index.ts',
-	external: id => !/^[./]/.test(id),
-});
+  return (
+    bundle({
+      plugins: [esbuild()],
+      output: [
+        {
+          file: `${integrationName}.js`,
+          format: 'cjs',
+          sourcemap: true,
+        },
+        {
+          file: `${integrationName}.mjs`,
+          format: 'es',
+          sourcemap: true,
+        },
+      ],
+    }),
+    bundle({
+      plugins: [dts()],
+      output: {
+        file: `${integrationName}.d.ts`,
+        format: 'es',
+      },
+    })
+  )
+}
 
-export default [
-	bundle({
-		plugins: [esbuild()],
-		output: [
-			{
-				file: `${name}.js`,
-				format: 'cjs',
-				sourcemap: true,
-			},
-			{
-				file: `${name}.mjs`,
-				format: 'es',
-				sourcemap: true,
-			},
-		],
-	}),
-	bundle({
-		plugins: [dts()],
-		output: {
-			file: `${name}.d.ts`,
-			format: 'es',
-		},
-	}),
-];
+const config = [generateConfig('optimizely'), generateConfig('simple')]
+
+export default config
