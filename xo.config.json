@@ -1,0 +1,35 @@
+{
+  "space": 2,
+  "semicolon": false,
+  "prettier": true,
+  "env": [
+    "node",
+    "browser",
+    "jest/globals"
+  ],
+  "globals": [],
+  "plugins": [
+    "jest",
+    "jsx-a11y",
+    "unicorn"
+  ],
+  "extends": [
+    "plugin:unicorn/recommended",
+    "plugin:jest/recommended",
+    "plugin:jsx-a11y/recommended",
+    "prettier",
+    "prettier/unicorn"
+  ],
+  "rules": {
+    "capitalized-comments": [
+      "off"
+    ],
+    "unicorn/filename-case": [
+      "off"
+    ],
+    "unicorn/no-null": [
+      "off"
+    ]
+  },
+  "overrides": []
+}
