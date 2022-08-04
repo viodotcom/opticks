@@ -1,5 +1,5 @@
-import type OptimizelyLibType from '@optimizely/optimizely-sdk'
-import type {ToggleIdType} from '../types'
+import OptimizelyLib from '@optimizely/optimizely-sdk'
+import {ToggleIdType} from '../types'
 import {booleanToggle as baseBooleanToggle} from '../core/booleanToggle'
 import {toggle as baseToggle} from '../core/toggle'
 
@@ -8,38 +8,37 @@ type AudienceSegmentationAttributeKeyType = string
 type AudienceSegmentationAttributeValueType = string | boolean
 
 type AudienceSegmentationAttributesType = {
-  [AudienceSegmentationAttributeKeyType]: AudienceSegmentationAttributeValueType
+  [key in AudienceSegmentationAttributeKeyType]?: AudienceSegmentationAttributeValueType
 }
 
 type BooleanToggleValueType = boolean
 type ExperimentToggleValueType = string
-type SdkKeyValueType = string
 type ToggleValueType = ExperimentToggleValueType | BooleanToggleValueType
 
-export type OptimizelyDatafileType = any // $FlowFixMe
+export type OptimizelyDatafileType = any
 
 export const NOTIFICATION_TYPES = {
   DECISION: 'DECISION:type, userId, attributes, decisionInfo',
 }
 
-let Optimizely: OptimizelyLibType // reference to injected Optimizely library
+let optimisely = OptimizelyLib // reference to injected Optimizely library
 let optimizelyClient // reference to active Optimizely instance
 let userId: UserIdType
 let audienceSegmentationAttributes: AudienceSegmentationAttributesType = {}
 
-type FeatureEnabledCacheType = {[ToggleIdType]: BooleanToggleValueType}
-type ExperimentCacheType = {[ToggleIdType]: ExperimentToggleValueType}
-type ForcedTogglesType = {[ToggleIdType]: ToggleValueType}
+type FeatureEnabledCacheType = {[key in ToggleIdType]?: BooleanToggleValueType}
+type ExperimentCacheType = {[key in ToggleIdType]?: ExperimentToggleValueType}
+type ForcedTogglesType = {[key in ToggleIdType]?: ToggleValueType}
 
 let featureEnabledCache: FeatureEnabledCacheType = {}
 let experimentCache: ExperimentCacheType = {}
 const forcedToggles: ForcedTogglesType = {}
 
-export const registerLibrary = (lib: OptimizelyLibType) => {
+export const registerLibrary = (lib) => {
   // TODO: Double-check if this works with server environments
   // Since they load the module in memory, make sure they are not persisted
   // across different requests
-  Optimizely = lib
+  optimisely = lib
 }
 
 const clearFeatureEnabledCache = () => (featureEnabledCache = {})
@@ -47,7 +46,7 @@ const clearExperimentCache = () => (experimentCache = {})
 
 // Adds / removes Toggles to force from the forcedToggles list
 export const forceToggles = (toggleKeyValues: {
-  [ToggleIdType]: ToggleValueType | undefined
+  [key in ToggleIdType]?: ToggleValueType | undefined
 }) => {
   for (const toggleId of Object.keys(toggleKeyValues)) {
     const value = toggleKeyValues[toggleId]
@@ -85,8 +84,8 @@ export const resetAudienceSegmentationAttributes = () => {
   audienceSegmentationAttributes = {}
 }
 
-type ActivateEventHandlerType = Function
-type EventDispatcherType = {dispatchEvent: Function}
+type ActivateEventHandlerType = () => void
+type EventDispatcherType = {dispatchEvent: () => void}
 
 const voidActivateHandler = () => null
 const voidEventDispatcher = {
@@ -98,7 +97,7 @@ export const initialize = (
   onExperimentDecision: ActivateEventHandlerType = voidActivateHandler,
   eventDispatcher: EventDispatcherType = voidEventDispatcher,
 ) => {
-  optimizelyClient = Optimizely.createInstance({
+  optimizelyClient = optimisely.createInstance({
     datafile,
     eventDispatcher,
   })
@@ -220,9 +219,11 @@ const convertBooleanToggleToFeatureVariant = (toggleId) => {
 export const toggle = (...args) => {
   // An A/B/C... test
   if (args.length > 3) {
+    // @ts-expect-error
     return baseToggle(getToggle)(...args)
   }
 
+  // @ts-expect-error
   return baseToggle(convertBooleanToggleToFeatureVariant)(...args)
 }
 

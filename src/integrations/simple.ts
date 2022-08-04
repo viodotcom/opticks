@@ -5,12 +5,12 @@ import {toggle as baseToggle} from '../core/toggle'
 // This implementation expects you to populate a list of boolean toggles in
 // advance, in the following format:
 // { foo: true, bar: false }
-export type BooleanToggleListType = {[ToggleIdType]: BooleanToggleType}
+export type BooleanToggleListType = {[key in ToggleIdType]?: BooleanToggleType}
 
 // This implementation expects you to populate a list of multi toggle objects in
 // advance, in the following format:
 // { fooExperiment: {variant: 'a'}, barExperiment: {variant: 'b'} }
-export type toggleListType = {[ToggleIdType]: {variant: VariantType}}
+export type toggleListType = {[key in ToggleIdType]?: {variant: VariantType}}
 
 let booleanToggleList: BooleanToggleListType = {}
 let toggleList: toggleListType = {}
