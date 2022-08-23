@@ -47,7 +47,7 @@ Assuming you're running the codemods directly from the Opticks directory in your
 `node_modules`, to declare the `b` side of the `foo` Multi Toggle the winner and
 prune all losing code in the `src` directory, run the script as follows:
 
-```
+```shell
 npm run clean:toggle -- --toggle=foo --winner=b
 ```
 
@@ -55,7 +55,7 @@ Most likely you'd want to run the script your own project which consumes
 Opticks, you can add the following to your npm scripts (in your package.json)
 for convenience:
 
-```
+```json
 "scripts": {
   "clean:toggle": "npm explore opticks -- npm run clean:toggle `pwd`/src --dry -- ",
 }
@@ -66,7 +66,7 @@ in the Opticks package with your project's src directory.
 
 Then you can run it right from your project:
 
-```
+```shell
 npm run clean:toggle -- --toggle=foo --winner=b
 ```
 
@@ -75,7 +75,7 @@ npm run clean:toggle -- --toggle=foo --winner=b
 Boolean Toggle clean up works in a similar way, noting the winner accepts a
 string value `'true'` or `'false'`:
 
-```
+```shell
 npm run clean:booleanToggle -- --toggle=foo --winner='true'
 ```
 
@@ -84,7 +84,7 @@ npm run clean:booleanToggle -- --toggle=foo --winner='true'
 By default the codemods make assumptions on the name of the imports to clean,
 namely:
 
-```
+```typescript
 import { booleanToggle } from 'opticks'
 // or
 import { toggle } from 'opticks'
@@ -98,7 +98,7 @@ You can override these values via:
 
 Simple variable substitution:
 
-```
+```typescript
 // during experiment:
 const CTAColor = toggle('CTAColor', 'black', 'green', 'red')
 
@@ -108,7 +108,7 @@ const CTAColor = 'red'
 
 Conditional component rendering:
 
-```
+```typescript
 // simplified, somewhat naive example as it doesn't account for
 // layout changes or conditional loading of the component
 
@@ -123,7 +123,7 @@ const SearchBox = toggle(
 
 To get the toggle variant
 
-```
+```typescript
 const result = toggle('toggleFoo') // 'b'
 ```
 
@@ -133,7 +133,7 @@ functions that will be executed only for a particular experiment branch.
 
 For example:
 
-```
+```typescript
 // during the experiment
 const alwaysDoSomething = () => console.log('always')
 const doSomething = (msg) => console.log('default', msg)
@@ -171,7 +171,7 @@ on the particular experiment.
 One solution is to simply inline code that is only used in one branch of the
 experiment:
 
-```
+```typescript
 // during the experiment
 const alwaysDoSomething = () => console.log('always')
 
@@ -197,7 +197,7 @@ const handleOnClick = () => {
 Our codemods are designed to prune branches with `null` allowing you to execute
 code only for one side of a test:
 
-```
+```typescript
 // before
 toggle(
   'ShowConfirmationDialogBeforeDoingSomething',
@@ -226,7 +226,7 @@ The simplest way to render something conditionally is to assign a boolean to a
 variable. Though this is probably better done with a boolean toggle, it's
 possible with a toggle as well:
 
-```
+```typescript
 const shouldRenderIcon = toggle('SomethingWithIcon', false, true)
 
 // in render:
@@ -237,14 +237,14 @@ const shouldRenderIcon = toggle('SomethingWithIcon', false, true)
 This would leave a shouldRenderIcon after the experiment concluded. If this
 bothers you, you can opt for an inline solution:
 
-```
+```typescript
 <div>Foo {toggle('SomethingWithIcon', null, <Icon/>)}</div>
 ```
 
 Or make the icon configurable in a separate component:
 // TODO: Check
 
-```
+```typescript
 <Component
   foo="bar"
   {toggle('ComponentWithIcon', null, () => ...{withIcon: true}}
@@ -261,7 +261,7 @@ component is being experimented on at all.
 You can use composition to cleanly combine experimental code with existing
 functions or components, such as with a Higher Order Component:
 
-```
+```typescript
 const withSomethingGreat = (Component) => // ... do something with the SearchBox
 
 export default toggle(
