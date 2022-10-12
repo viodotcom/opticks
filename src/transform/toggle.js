@@ -52,7 +52,6 @@ const implementWinningToggle = (
       .find(j.Identifier)
       .forEach(x => {
         const name = x.value.name
-        console.log(name)
 
         // Remove variable declarations
         removeUnusedReferences(j.VariableDeclarator, name, {

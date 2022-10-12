@@ -3,7 +3,6 @@
 import type { ToggleIdType } from '../types'
 import { booleanToggle as baseBooleanToggle } from '../core/booleanToggle'
 import { toggle as baseToggle } from '../core/toggle'
-import { NOTIFICATION_TYPES } from '@optimizely/optimizely-sdk/lib/utils/enums'
 
 import type OptimizelyLibType from '@optimizely/optimizely-sdk'
 
@@ -17,11 +16,14 @@ type AudienceSegmentationAttributesType = {
 
 type BooleanToggleValueType = boolean
 type ExperimentToggleValueType = string
+type SdkKeyValueType = string
 type ToggleValueType = ExperimentToggleValueType | BooleanToggleValueType
 
 export type OptimizelyDatafileType = any // $FlowFixMe
 
-export { NOTIFICATION_TYPES }
+export const NOTIFICATION_TYPES = {
+  DECISION: 'DECISION:type, userId, attributes, decisionInfo',
+}
 
 let Optimizely: OptimizelyLibType // reference to injected Optimizely library
 let optimizelyClient // reference to active Optimizely instance
@@ -105,11 +107,12 @@ export const initialize = (
   })
 
   addActivateListener(onExperimentDecision)
+  return optimizelyClient
 }
 
 export const addActivateListener = listener =>
   optimizelyClient.notificationCenter.addNotificationListener(
-    NOTIFICATION_TYPES.ACTIVATE,
+    NOTIFICATION_TYPES.DECISION,
     listener
   )
 
@@ -145,6 +148,47 @@ const getOrSetCachedFeatureEnabled = (toggleId): BooleanToggleValueType => {
   ))
 }
 
+export const isUserInRolloutAudience = (toggleId) => {
+  const config = optimizelyClient.projectConfigManager.getConfig()
+  const feature = config.featureKeyMap[toggleId]
+  const rollout = config.rolloutIdMap[feature.rolloutId]
+
+  const endIndex = rollout.experiments.length - 1
+  let index
+  let isInAnyAudience = false
+
+  for (index = 0; index < endIndex; index++) {
+    const rolloutRule = config.experimentKeyMap[rollout.experiments[index].key];
+    const decisionIfUserIsInAudience = optimizelyClient.decisionService.__checkIfUserIsInAudience(
+      config,
+      rolloutRule.key,
+      'rule',
+      userId,
+      audienceSegmentationAttributes,
+      ''
+    );
+
+    // This will be decisionIfUserIsInAudience.result for Optimizely 4.3.3 and up
+    if (
+      decisionIfUserIsInAudience && !isPausedBooleanToggle(rolloutRule)
+    )
+      isInAnyAudience = true
+  }
+
+  const isEveryoneElseRulePaused = isPausedBooleanToggle(
+    config.experimentKeyMap[rollout.experiments[endIndex].key]
+  )
+
+  return isInAnyAudience || !isEveryoneElseRulePaused
+}
+
+const isPausedBooleanToggle = (rolloutRule) => {
+  // TODO: Support a/b/c MVTs
+  const trafficAllocationVariation = rolloutRule.trafficAllocation[0]
+  // We consider a toggle paused if traffic is 100% to either side
+  return (typeof trafficAllocationVariation === 'undefined' || trafficAllocationVariation.endOfRange === 10000)
+}
+
 const getBooleanToggle = getOrSetCachedFeatureEnabled
 
 export const booleanToggle = baseBooleanToggle(getBooleanToggle)
@@ -169,4 +213,29 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
     ) || DEFAULT)
 }
 
-export const toggle = baseToggle(getToggle)
+const convertBooleanToggleToFeatureVariant = (toggleId) => {
+  const isFeatureEnabled = getBooleanToggle(toggleId)
+  return isFeatureEnabled ? 'b' : 'a'
+}
+
+export const toggle = (...args) => {
+  // An A/B/C... test
+  if (args.length > 3) {
+    return baseToggle(getToggle)(...args)
+  } else {
+    return baseToggle(convertBooleanToggleToFeatureVariant)(...args)
+  }
+}
+
+/**
+ * Get all enabled features for the user
+ */
+export const getEnabledFeatures = () => {
+  validateUserId(userId)
+
+  return optimizelyClient.getEnabledFeatures(
+    userId,
+    audienceSegmentationAttributes
+  )
+}
+
