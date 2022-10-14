@@ -223,7 +223,7 @@ const result = <div>Foo</div>
       fooLoserOptions,
       `
 import { booleanToggle } from '${packageName}'
-const Foo = () => void
+const Foo = () => null
 const result = <div>Foo{booleanToggle('foo', () => Foo())}</div>
 `,
       `
