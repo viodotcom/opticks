@@ -1,7 +1,5 @@
 // @flow
 
-module.exports.parser = 'flow'
-
 const PACKAGE_NAME = 'opticks'
 const BOOLEAN_TOGGLE_FUNCTION_NAME = 'booleanToggle'
 

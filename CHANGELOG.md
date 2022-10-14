@@ -10,6 +10,9 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v3.3.1
+- :house: Make JSCodeShift parser configurable
+
 # v3.3.0
 - :rocket: Add getEnabledFeatures method.
 
