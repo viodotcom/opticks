@@ -1,6 +1,6 @@
 {
   "name": "opticks",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "FindHotel Toggle Flag JavaScript SDK",
   "main": "lib/simple.js",
   "files": [
@@ -8,8 +8,8 @@
   ],
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "clean:booleanToggle": "jscodeshift --parser flow --transform lib/transform/booleanToggle.js",
-    "clean:toggle": "jscodeshift --parser flow --transform lib/transform/toggle.js",
+    "clean:booleanToggle": "jscodeshift --transform lib/transform/booleanToggle.js",
+    "clean:toggle": "jscodeshift --transform lib/transform/toggle.js",
     "flow": "flow",
     "flow-typed": "flow-typed",
     "jscodeshift": "jscodeshift",
