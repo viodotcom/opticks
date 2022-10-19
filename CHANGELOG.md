@@ -10,6 +10,9 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v3.3.3
+- :nail_care: Update JSCodeShift to 0.14.0
+
 # v3.3.2
 - :nail_care: Remove overridable parser flag in clean:toggle and clean:booleanToggle
 

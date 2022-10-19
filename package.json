@@ -1,6 +1,6 @@
 {
   "name": "opticks",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "description": "FindHotel Toggle Flag JavaScript SDK",
   "main": "lib/simple.js",
   "files": [
@@ -33,7 +33,7 @@
   "license": "ISC",
   "peerDependencies": {
     "@optimizely/optimizely-sdk": "4.2.1",
-    "jscodeshift": "^0.5.1"
+    "jscodeshift": "^0.14.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -62,7 +62,7 @@
     "flow-copy-source": "^2.0.2",
     "flow-typed": "^2.5.1",
     "jest": "^23.6.0",
-    "jscodeshift": "^0.5.1",
+    "jscodeshift": "^0.14.0",
     "prettier-eslint-cli": "^4.7.1",
     "regenerator-runtime": "^0.12.1",
     "rollup": "^0.68.2",
