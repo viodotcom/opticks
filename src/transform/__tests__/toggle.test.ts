@@ -152,6 +152,52 @@ const result = B()
     )
   })
 
+  describe('Removing unused variables in losing variations, only if not used in other variations', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+const B = 'foo'
+const C = 'bar'
+const result = toggle('foo', () => B(), () => B(), () => C())
+`,
+      `
+const B = 'foo'
+const result = B()
+  `
+    )
+  })
+  
+  describe('Removing unused variables in losing variations, only if not used in imports', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+import {B} from 'somewhere'
+
+const A = 'removeme'
+const C = 'keepme'
+
+const result = toggle('foo', () => B(), () => B(), () => C())
+const result2 = toggle('foo', () => A(), () => B(), () => C())
+
+C()
+`,
+      `
+import {B} from 'somewhere'
+
+const C = 'keepme'
+
+const result = B()
+const result2 = B()
+
+C()
+  `
+    )
+  })
+
   describe('Deals with missing options', () => {
     const code = `
 import { toggle } from '${packageName}'
@@ -159,9 +205,5 @@ const result = toggle('foo', 'a', () => {foo(); bar()}, 'c')
 `
 
     defineInlineTest(transform, {}, code, code)
-  })
-
-  xdescribe('Removes references to unused variables in call expressions upon removal', () => {
-    // ... TODO
   })
 })
