@@ -212,12 +212,14 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
     ) || DEFAULT);
 };
 
-const convertBooleanToggleToFeatureVariant = (toggleId) => {
+const convertBooleanToggleToFeatureVariant = (
+  toggleId: ToggleIdType
+): ExperimentToggleValueType => {
   const isFeatureEnabled = getBooleanToggle(toggleId);
   return isFeatureEnabled ? "b" : "a";
 };
 
-export const toggle = <T>(...args: T[]) => {
+export const toggle = <Type>(toggleId: ToggleIdType, ...args: Type[]): Type => {
   // An A/B/C... test
   if (args.length > 3) {
     // @ts-expect-error TODO: Fix type

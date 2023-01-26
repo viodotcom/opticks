@@ -3,7 +3,7 @@ import { handleToggleVariant } from "../variantUtils";
 
 export const toggle =
   (getToggle: TogglerGetterType) =>
-  <T>(toggleId: ToggleIdType, ...variants: T[]): T | undefined => {
+  <Type>(toggleId: ToggleIdType, ...variants: Type[]): Type | undefined => {
     const baseCharCode = "a".charCodeAt(0);
     const activeVariant = getToggle(toggleId);
     // TOOD: Write stand alone unit test for this case
