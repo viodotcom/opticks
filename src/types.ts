@@ -1,13 +1,13 @@
-export type ToggleIdType = string;
+export type ToggleIdType = string
 
-export type VariantType = "a" | "b" | "c" | "d" | "e" | "f";
+export type VariantType = 'a' | 'b' | 'c' | 'd' | 'e' | 'f'
 
 // Value Toggle
 export type ToggleType = {
-  variant: VariantType;
-};
+  variant: VariantType
+}
 
 // Boolean Toggle
-export type BooleanToggleType = boolean;
+export type BooleanToggleType = boolean
 
-export type TogglerGetterType = (ToggleIdType) => any;
+export type TogglerGetterType = (ToggleIdType) => any

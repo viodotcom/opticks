@@ -11,29 +11,36 @@
 > - :nail_care: [Polish]
 
 # v3.3.3
+
 - :nail_care: Update JSCodeShift to 0.14.0
 
 # v3.3.2
+
 - :nail_care: Remove overridable parser flag in clean:toggle and clean:booleanToggle
 
 # v3.3.1
+
 - :house: Make JSCodeShift parser configurable
 
 # v3.3.0
+
 - :rocket: Add getEnabledFeatures method.
 
 # v3.2.0
+
 - :bug: Fix for Optimizely 4.2.1 `isUserInRolloutAudience`
 
 # v3.1.0
+
 - :house: Pin Optimizely SDK version to 4.2.1
 - :house: Update unit tests
 
 # v3.0.0
+
 - :boom: Support for Optimizely Rollouts with feature toggles
 - :boom: Update to Optimizely SDK 4.2.1
 - :boom: `toggle` now detrmines whether to use booleanToggles or multiToggles based on the amount of arguments passed
- 
+
 # v2.0.0
 
 ## Optimizely Integration

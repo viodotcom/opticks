@@ -1,21 +1,21 @@
-jest.autoMockOff();
+jest.autoMockOff()
 
-const defineInlineTest = require("jscodeshift/dist/testUtils").defineInlineTest;
-const transform = require("../booleanToggle");
+const defineInlineTest = require('jscodeshift/dist/testUtils').defineInlineTest
+const transform = require('../booleanToggle')
 
-const packageName = "opticks";
+const packageName = 'opticks'
 const fooWinnerOptions = {
-  toggle: "foo",
+  toggle: 'foo',
   winner: true,
-};
+}
 const fooLoserOptions = {
-  toggle: "foo",
+  toggle: 'foo',
   winner: false,
-};
+}
 
-describe("Boolean Toggle", () => {
-  describe("Simple boolean value", () => {
-    describe("Replaces winning toggle call with true", () => {
+describe('Boolean Toggle', () => {
+  describe('Simple boolean value', () => {
+    describe('Replaces winning toggle call with true', () => {
       defineInlineTest(
         transform,
         fooWinnerOptions,
@@ -25,11 +25,11 @@ const result = booleanToggle('foo')
 `,
         `
 const result = true
-  `
-      );
-    });
+  `,
+      )
+    })
 
-    describe("Replaces losing toggle call with false", () => {
+    describe('Replaces losing toggle call with false', () => {
       defineInlineTest(
         transform,
         fooLoserOptions,
@@ -39,10 +39,10 @@ const result = booleanToggle('foo')
 `,
         `
 const result = false
-  `
-      );
-    });
-  });
+  `,
+      )
+    })
+  })
 
   describe("For 'on' config only when winning, keep value", () => {
     defineInlineTest(
@@ -58,9 +58,9 @@ booleanToggle('foo', () => foo())
 const result = 'toggleIsOn'
 const resultOfFunction = 'toggleIsOn'
 foo()
-  `
-    );
-  });
+  `,
+    )
+  })
 
   describe("For 'on' config only when losing, remove the call altogether", () => {
     defineInlineTest(
@@ -73,9 +73,9 @@ booleanToggle('foo', () => bar())
 `,
       `
 const foo = 'bar'
-  `
-    );
-  });
+  `,
+    )
+  })
 
   describe("For 'on' and 'off' config when winning", () => {
     defineInlineTest(
@@ -91,9 +91,9 @@ booleanToggle('foo', null, () => 'toggleIsOn')
 const result = 'toggleIsOn'
 const resultOfFunction = 'toggleIsOn'
 'toggleIsOn'
-  `
-    );
-  });
+  `,
+    )
+  })
 
   describe("For 'on' and 'off' config when losing, keep 'off' value", () => {
     defineInlineTest(
@@ -108,11 +108,11 @@ booleanToggle('foo', null, () => 'toggleIsOn')
       `
 const result = 'toggleIsOff'
 const resultOfFunction = 'toggleIsOff'
-  `
-    );
-  });
+  `,
+    )
+  })
 
-  describe("Keeps the import if there are leftover toggle calls", () => {
+  describe('Keeps the import if there are leftover toggle calls', () => {
     defineInlineTest(
       transform,
       fooWinnerOptions,
@@ -125,11 +125,11 @@ const nonRelevantResult = booleanToggle('bar', 'a', 'b')
 import { booleanToggle } from '${packageName}'
 const result = true
 const nonRelevantResult = booleanToggle('bar', 'a', 'b')
-  `
-    );
-  });
+  `,
+    )
+  })
 
-  describe("Keeps Opticks imports other than booleanToggle", () => {
+  describe('Keeps Opticks imports other than booleanToggle', () => {
     defineInlineTest(
       transform,
       fooWinnerOptions,
@@ -140,11 +140,11 @@ const result = booleanToggle('foo')
       `
 import { foo } from '${packageName}';
 const result = true
-  `
-    );
-  });
+  `,
+    )
+  })
 
-  describe("Inline function body replacement", () => {
+  describe('Inline function body replacement', () => {
     defineInlineTest(
       transform,
       fooWinnerOptions,
@@ -154,11 +154,11 @@ const result = booleanToggle('foo', () => foo())
 `,
       `
 const result = foo()
-  `
-    );
-  });
+  `,
+    )
+  })
 
-  describe("Inline function body replacement with multiple statements", () => {
+  describe('Inline function body replacement with multiple statements', () => {
     defineInlineTest(
       transform,
       fooWinnerOptions,
@@ -168,11 +168,11 @@ const result = booleanToggle('foo', 'a', () => {foo(); bar()})
 `,
       `
 const result = {foo(); bar()}
-  `
-    );
-  });
+  `,
+    )
+  })
 
-  describe("Removes JSX call expressions upon removal", () => {
+  describe('Removes JSX call expressions upon removal', () => {
     defineInlineTest(
       transform,
       fooLoserOptions,
@@ -182,8 +182,8 @@ const result = <div>Foo{booleanToggle('foo', 'bar')}</div>
 `,
       `
 const result = <div>Foo</div>
-  `
-    );
+  `,
+    )
 
     defineInlineTest(
       transform,
@@ -194,11 +194,11 @@ const result = <div>Foo{booleanToggle('foo', null)}</div>
 `,
       `
 const result = <div>Foo</div>
-  `
-    );
-  });
+  `,
+    )
+  })
 
-  describe("Removes references to unused variables in call expressions upon removal", () => {
+  describe('Removes references to unused variables in call expressions upon removal', () => {
     defineInlineTest(
       transform,
       fooLoserOptions,
@@ -209,8 +209,8 @@ const result = <div>Foo{booleanToggle('foo', () => <Foo/>)}</div>
 `,
       `
 const result = <div>Foo</div>
-  `
-    );
+  `,
+    )
 
     defineInlineTest(
       transform,
@@ -222,8 +222,8 @@ const result = <div>Foo{booleanToggle('foo', () => Foo())}</div>
 `,
       `
 const result = <div>Foo</div>
-  `
-    );
+  `,
+    )
 
     defineInlineTest(
       transform,
@@ -236,8 +236,8 @@ const result = <div>Foo{booleanToggle('foo', () => isBar && <Baz/>)}</div>
 `,
       `
 const result = <div>Foo</div>
-  `
-    );
+  `,
+    )
 
     defineInlineTest(
       transform,
@@ -250,8 +250,8 @@ const result = <div>Foo{booleanToggle('foo', () => isBar && <Baz/>)}</div>
 `,
       `
 const result = <div>Foo</div>
-  `
-    );
+  `,
+    )
 
     defineInlineTest(
       transform,
@@ -274,15 +274,15 @@ const stillUsed = true
 console.log(Bax)
 const result = <div>Foo</div>
 if(stillUsed) doSomething()
-  `
-    );
-  });
-  describe("Deals with missing options", () => {
+  `,
+    )
+  })
+  describe('Deals with missing options', () => {
     const code = `
 import { booleanConfig } from '${packageName}'
 const result = booleanConfig('foo', 'a', () => {foo(); bar()})
-`;
+`
 
-    defineInlineTest(transform, {}, code, code);
-  });
-});
+    defineInlineTest(transform, {}, code, code)
+  })
+})
