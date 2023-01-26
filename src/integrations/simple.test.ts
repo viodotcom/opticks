@@ -18,7 +18,7 @@ describe("Simple Integration", () => {
 
     it("defaults to false when toggle cannot be found", () => {
       expect(getBooleanToggle("baz")).toEqual(false);
-      // $FlowFixMe: invalid API call for testing purpose
+      // @ts-expect-error invalid API call for testing purpose
       expect(getBooleanToggle()).toEqual(false);
     });
   });
@@ -40,7 +40,7 @@ describe("Simple Integration", () => {
 
     it('defaults to "a" when toggle cannot be found', () => {
       expect(getToggle("baz")).toEqual("a");
-      // $FlowFixMe: invalid API call for testing purpose
+      // @ts-expect-error invalid API call for testing purpose
       expect(getToggle()).toEqual("a");
     });
   });

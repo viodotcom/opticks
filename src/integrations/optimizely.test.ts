@@ -14,13 +14,18 @@ import {
 // During the tests:
 // for booleanToggle 'foo' yields true and 'bar' yields false, unless forced
 // for toggle 'foo' yields 'b' and 'bar' yields 'a', unless forced
-import datafile from "./__fixtures__/dataFile.js";
+import datafile from "./__fixtures__/dataFile";
 
 import Optimizely, {
+  // @ts-expect-error
   addNotificationListenerMock,
+  // @ts-expect-error
   createInstanceMock,
+  // @ts-expect-error
   isFeatureEnabledMock,
+  // @ts-expect-error
   getEnabledFeaturesMock,
+  // @ts-expect-error
   activateMock,
 } from "@optimizely/optimizely-sdk";
 

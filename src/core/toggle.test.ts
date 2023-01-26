@@ -12,16 +12,6 @@ describe("Multi Toggle", () => {
     toggle = baseToggle(dummyGetToggle);
   });
 
-  xdescribe("Getting active variant", () => {
-    it("is case insensitive", () => {
-      expect(getActiveVariant("fOO")).toEqual("b");
-    });
-
-    it("defaults to 'a' when experiment cannot be found", () => {
-      expect(getActiveVariant("nonexistentId")).toEqual("a");
-    });
-  });
-
   describe("Experiment Variant", () => {
     it("returns the correct variant based on argument index", () => {
       expect(toggle("foo", "a", "b", "c")).toEqual("b");

@@ -217,7 +217,7 @@ const convertBooleanToggleToFeatureVariant = (toggleId) => {
   return isFeatureEnabled ? "b" : "a";
 };
 
-export const toggle = (...args) => {
+export const toggle = <T>(...args: T[]) => {
   // An A/B/C... test
   if (args.length > 3) {
     // @ts-expect-error TODO: Fix type
