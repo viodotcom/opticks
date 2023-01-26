@@ -1,7 +1,7 @@
 jest.autoMockOff()
 
-const defineInlineTest = require('jscodeshift/dist/testUtils').defineInlineTest
-const transform = require('../toggle')
+import {defineInlineTest} from 'jscodeshift/dist/testUtils'
+import transform from '../toggle'
 
 const packageName = 'opticks'
 const fooWinnerAConfig = {
