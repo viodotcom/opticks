@@ -1,22 +1,20 @@
-// @flow
+jest.autoMockOff();
 
-jest.autoMockOff()
+const defineInlineTest = require("jscodeshift/dist/testUtils").defineInlineTest;
+const transform = require("../toggle");
 
-const defineInlineTest = require('jscodeshift/dist/testUtils').defineInlineTest
-const transform = require('../toggle')
-
-const packageName = 'opticks'
+const packageName = "opticks";
 const fooWinnerAConfig = {
-  toggle: 'foo',
-  winner: 'a'
-}
+  toggle: "foo",
+  winner: "a",
+};
 const fooWinnerBConfig = {
-  toggle: 'foo',
-  winner: 'b'
-}
+  toggle: "foo",
+  winner: "b",
+};
 
-describe('Multi Toggle', () => {
-  describe('Simple variable replacement a', () => {
+describe("Multi Toggle", () => {
+  describe("Simple variable replacement a", () => {
     defineInlineTest(
       transform,
       fooWinnerAConfig,
@@ -27,10 +25,10 @@ const result = toggle('foo', 'a', 'b', 'c')
       `
 const result = 'a'
   `
-    )
-  })
+    );
+  });
 
-  describe('Simple variable replacement b', () => {
+  describe("Simple variable replacement b", () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
@@ -41,15 +39,15 @@ const result = toggle('foo', 'a', 'b', 'c')
       `
 const result = 'b'
   `
-    )
-  })
+    );
+  });
 
-  describe('Test Name with dashes', () => {
+  describe("Test Name with dashes", () => {
     defineInlineTest(
       transform,
       {
-        toggle: 'foo-bar-baz-dash-boom',
-        winner: 'a'
+        toggle: "foo-bar-baz-dash-boom",
+        winner: "a",
       },
       `
 import { toggle } from '${packageName}'
@@ -58,10 +56,10 @@ const result = toggle('foo-bar-baz-dash-boom', 'a', 'b', 'c')
       `
 const result = 'a'
   `
-    )
-  })
+    );
+  });
 
-  describe('Keeps the import for non-relevant toggle calls', () => {
+  describe("Keeps the import for non-relevant toggle calls", () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
@@ -75,10 +73,10 @@ import { toggle } from '${packageName}'
 const result = 'b'
 const nonRelevantResult = toggle('bar', 'a', 'b', 'c')
   `
-    )
-  })
+    );
+  });
 
-  describe('Keeps Opticks imports other than toggle', () => {
+  describe("Keeps Opticks imports other than toggle", () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
@@ -90,10 +88,10 @@ const result = toggle('foo', 'a', 'b', 'c')
 import { foo } from '${packageName}';
 const result = 'b'
   `
-    )
-  })
+    );
+  });
 
-  describe('Inline function body replacement', () => {
+  describe("Inline function body replacement", () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
@@ -104,10 +102,10 @@ const result = toggle('foo', 'a', () => foo(), 'c')
       `
 const result = foo()
   `
-    )
-  })
+    );
+  });
 
-  describe('Inline function body replacement with multiple statements braces', () => {
+  describe("Inline function body replacement with multiple statements braces", () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
@@ -118,10 +116,10 @@ const result = toggle('foo', 'a', () => {foo(); bar()}, 'c')
       `
 const result = {foo(); bar()}
   `
-    )
-  })
+    );
+  });
 
-  describe('Removing winning null values', () => {
+  describe("Removing winning null values", () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
@@ -133,10 +131,10 @@ toggle('foo', 'a', null, 'c')
       `
 const foo = 'bar'
   `
-    )
-  })
+    );
+  });
 
-  describe('Removing unused variables in losing variations', () => {
+  describe("Removing unused variables in losing variations", () => {
     defineInlineTest(
       transform,
       fooWinnerBConfig,
@@ -151,19 +149,19 @@ const result = toggle('foo', () => A(), () => B(), () => C())
 const B = 'B'
 const result = B()
   `
-    )
-  })
+    );
+  });
 
-  describe('Deals with missing options', () => {
+  describe("Deals with missing options", () => {
     const code = `
 import { toggle } from '${packageName}'
 const result = toggle('foo', 'a', () => {foo(); bar()}, 'c')
-`
+`;
 
-    defineInlineTest(transform, {}, code, code)
-  })
+    defineInlineTest(transform, {}, code, code);
+  });
 
-  xdescribe('Removes references to unused variables in call expressions upon removal', () => {
+  xdescribe("Removes references to unused variables in call expressions upon removal", () => {
     // ... TODO
-  })
-})
+  });
+});

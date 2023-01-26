@@ -1,3 +1,1 @@
-// @flow
-
-export * from './integrations/simple'
+export * from "./integrations/simple";
