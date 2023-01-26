@@ -2,12 +2,17 @@
   "name": "opticks",
   "version": "4.0.0",
   "description": "FindHotel Toggle Flag JavaScript SDK",
-  "main": "dist/simple.ts",
-  "module": "dist/simple.mjs",
-  "types": "dist/simple.d.ts",
+  "main": "lib/simple.ts",
+  "module": "lib/simple.mjs",
+  "types": "lib/simple.d.ts",
+  "files": [
+    "lib/"
+  ],
   "scripts": {
     "build": "tsup",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
+    "clean:booleanToggle": "jscodeshift --transform lib/transform/booleanToggle.js",
+    "clean:toggle": "jscodeshift --transform lib/transform/toggle.js",
     "jscodeshift": "jscodeshift",
     "test": "jest src",
     "test:watch": "jest --watch src"
