@@ -17,8 +17,6 @@ jobs:
         with:
           node-version: '16'
           cache: 'npm'
-        run: |
-        export NODE_OPTIONS="--max_old_space_size=4096"
-        npm ci
+      - run: npm i
       - run: npm run build
       - run: npm test
