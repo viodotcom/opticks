@@ -212,20 +212,12 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
     ) || DEFAULT)
 }
 
-const convertBooleanToggleToFeatureVariant = (
-  toggleId: ToggleIdType,
-): ExperimentToggleValueType => {
+const convertBooleanToggleToFeatureVariant = (toggleId) => {
   const isFeatureEnabled = getBooleanToggle(toggleId)
   return isFeatureEnabled ? 'b' : 'a'
 }
 
-/**
- * Optimizely experiment toggle
- * @param toggleId - The id of the experiment (e.g `90a8wh07-your-experiment`)
- * @param args - The variants to toggle
- * @returns The active variant
- */
-export const toggle = <Type>(toggleId: ToggleIdType, ...args: Type[]): Type => {
+export const toggle = <T>(...args: T[]) => {
   // An A/B/C... test
   if (args.length > 3) {
     // @ts-expect-error TODO: Fix type
