@@ -219,6 +219,12 @@ const convertBooleanToggleToFeatureVariant = (
   return isFeatureEnabled ? "b" : "a";
 };
 
+/**
+ * Optimizely experiment toggle
+ * @param toggleId - The id of the experiment (e.g `90a8wh07-your-experiment`)
+ * @param args - The variants to toggle
+ * @returns The active variant
+ */
 export const toggle = <Type>(toggleId: ToggleIdType, ...args: Type[]): Type => {
   // An A/B/C... test
   if (args.length > 3) {
