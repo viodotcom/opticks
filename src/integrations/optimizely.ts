@@ -294,8 +294,7 @@ const convertBooleanToggleToFeatureVariant = (toggleId: ToggleIdType) => {
  * or arrow functions which will be executed for the winning side, the return type is unknown
  * on purpose since it's expected the return value will likely be implicit.
  *
- * The typing discourages mixing values and functions as variants to make the return type explicit,
- * but it will work.
+ * When mixing values and function variants, the return type is unknown and needs to be cast.
  *
  * @param toggleId
  * @param variants
@@ -305,6 +304,10 @@ export function toggle(
   toggleId: string,
   ...variants: (() => unknown)[]
 ): unknown
+export function toggle<A = unknown>(
+  experimentId: string,
+  ...variants: (A | (() => unknown))[]
+): A | unknown
 export function toggle(toggleId: ToggleIdType, ...variants) {
   // An A/B/C... test
   if (variants.length > 2) {
