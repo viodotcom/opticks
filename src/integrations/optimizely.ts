@@ -114,7 +114,7 @@ export const resetAudienceSegmentationAttributes = () => {
   audienceSegmentationAttributes = {}
 }
 
-type ActivateEventHandlerType = Function
+type ActivateEventHandlerType = () => void
 
 const voidActivateHandler = () => null
 const voidEventDispatcher = {
@@ -158,13 +158,14 @@ export const addActivateListener = (listener) =>
   )
 
 const isForcedOrCached = (toggleId: ToggleIdType, cache: CacheType): boolean =>
-  forcedToggles.hasOwnProperty(toggleId) || cache.hasOwnProperty(toggleId)
+  Object.prototype.hasOwnProperty.call(forcedToggles, toggleId) ||
+  Object.prototype.hasOwnProperty.call(cache, toggleId)
 
 const getForcedOrCached = (
   toggleId: ToggleIdType,
   cache: CacheType,
 ): ToggleValueType => {
-  const register = forcedToggles.hasOwnProperty(toggleId)
+  const register = Object.prototype.hasOwnProperty.call(forceToggles, toggleId)
     ? forcedToggles
     : cache
 
