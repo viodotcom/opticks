@@ -1,12 +1,12 @@
 {
   "name": "opticks",
-  "version": "4.0.0",
+  "version": "3.3.3",
   "description": "FindHotel Toggle Flag JavaScript SDK",
   "main": "lib/simple.ts",
   "module": "lib/simple.mjs",
   "types": "lib/simple.d.ts",
   "files": [
-    "lib/"
+    "lib"
   ],
   "scripts": {
     "build": "tsup",
