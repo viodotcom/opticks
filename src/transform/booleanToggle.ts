@@ -1,3 +1,4 @@
+/** @deprecated */
 const PACKAGE_NAME = 'opticks'
 const BOOLEAN_TOGGLE_FUNCTION_NAME = 'booleanToggle'
 

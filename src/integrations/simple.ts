@@ -1,3 +1,4 @@
+/** @deprecated */
 import type {BooleanToggleType, ToggleIdType, VariantType} from '../types'
 import {booleanToggle as baseBooleanToggle} from '../core/booleanToggle'
 import {toggle as baseToggle} from '../core/toggle'

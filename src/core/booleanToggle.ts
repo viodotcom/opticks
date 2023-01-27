@@ -1,3 +1,4 @@
+/** @deprecated */
 import type {ToggleIdType, TogglerGetterType} from '../types'
 import {handleToggleVariant} from '../variantUtils'
 
