@@ -158,14 +158,13 @@ export const addActivateListener = (listener) =>
   )
 
 const isForcedOrCached = (toggleId: ToggleIdType, cache: CacheType): boolean =>
-  Object.prototype.hasOwnProperty.call(forcedToggles, toggleId) ||
-  Object.prototype.hasOwnProperty.call(cache, toggleId)
+  forcedToggles.hasOwnProperty(toggleId) || cache.hasOwnProperty(toggleId)
 
 const getForcedOrCached = (
   toggleId: ToggleIdType,
   cache: CacheType,
 ): ToggleValueType => {
-  const register = Object.prototype.hasOwnProperty.call(forceToggles, toggleId)
+  const register = forcedToggles.hasOwnProperty(toggleId)
     ? forcedToggles
     : cache
 

@@ -10,7 +10,9 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
-  rules: {},
+  rules: {
+    'no-prototype-builtins': 'off',
+  },
   env: {
     browser: true,
     es2021: true,
