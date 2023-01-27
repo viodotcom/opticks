@@ -15,7 +15,7 @@ jobs:
       - name: Tests
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '16.13.1'
           cache: 'npm'
       - run: npm i
       - run: npm run build
