@@ -75,8 +75,8 @@ const implementBooleanToggle = (j, isWinner: boolean, root, callExpression) => {
             removeUnusedReferences(j.VariableDeclarator, name, {
               id: {
                 type: 'Identifier',
-                name: name,
-              },
+                name: name
+              }
             })
 
             // Remove imports
@@ -84,10 +84,10 @@ const implementBooleanToggle = (j, isWinner: boolean, root, callExpression) => {
               specifiers: [
                 {
                   local: {
-                    name: name,
-                  },
-                },
-              ],
+                    name: name
+                  }
+                }
+              ]
             })
           })
       }
@@ -128,7 +128,7 @@ export default function transformer(file, api, options) {
         // find local imported names of the toggle calls
         j(importDef)
           .find(j.ImportSpecifier, {
-            imported: {name: functionName},
+            imported: {name: functionName}
           })
           .forEach((importSpecifier) => {
             const localName = importSpecifier.value.local.name
@@ -138,20 +138,20 @@ export default function transformer(file, api, options) {
                 null,
                 j,
                 j(importSpecifier),
-                localName,
+                localName
               )
 
             const toggleCallModifier = implementBooleanToggle.bind(
               null,
               j,
               isWinner,
-              source,
+              source
             )
 
             // transform toggle calls based on local scoped name
             findToggleCallsByLocalImportName()
               .filter((importCall) =>
-                isCurrentToggle(importCall.node.arguments[0].value, toggleName),
+                isCurrentToggle(importCall.node.arguments[0].value, toggleName)
               )
               .forEach(toggleCallModifier)
 

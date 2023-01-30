@@ -6,11 +6,11 @@ import transform from '../booleanToggle'
 const packageName = 'opticks'
 const fooWinnerOptions = {
   toggle: 'foo',
-  winner: true,
+  winner: true
 }
 const fooLoserOptions = {
   toggle: 'foo',
-  winner: false,
+  winner: false
 }
 
 describe('Boolean Toggle', () => {
@@ -25,7 +25,7 @@ const result = booleanToggle('foo')
 `,
         `
 const result = true
-  `,
+  `
       )
     })
 
@@ -39,7 +39,7 @@ const result = booleanToggle('foo')
 `,
         `
 const result = false
-  `,
+  `
       )
     })
   })
@@ -58,7 +58,7 @@ booleanToggle('foo', () => foo())
 const result = 'toggleIsOn'
 const resultOfFunction = 'toggleIsOn'
 foo()
-  `,
+  `
     )
   })
 
@@ -73,7 +73,7 @@ booleanToggle('foo', () => bar())
 `,
       `
 const foo = 'bar'
-  `,
+  `
     )
   })
 
@@ -91,7 +91,7 @@ booleanToggle('foo', null, () => 'toggleIsOn')
 const result = 'toggleIsOn'
 const resultOfFunction = 'toggleIsOn'
 'toggleIsOn'
-  `,
+  `
     )
   })
 
@@ -108,7 +108,7 @@ booleanToggle('foo', null, () => 'toggleIsOn')
       `
 const result = 'toggleIsOff'
 const resultOfFunction = 'toggleIsOff'
-  `,
+  `
     )
   })
 
@@ -125,7 +125,7 @@ const nonRelevantResult = booleanToggle('bar', 'a', 'b')
 import { booleanToggle } from '${packageName}'
 const result = true
 const nonRelevantResult = booleanToggle('bar', 'a', 'b')
-  `,
+  `
     )
   })
 
@@ -140,7 +140,7 @@ const result = booleanToggle('foo')
       `
 import { foo } from '${packageName}';
 const result = true
-  `,
+  `
     )
   })
 
@@ -154,7 +154,7 @@ const result = booleanToggle('foo', () => foo())
 `,
       `
 const result = foo()
-  `,
+  `
     )
   })
 
@@ -168,7 +168,7 @@ const result = booleanToggle('foo', 'a', () => {foo(); bar()})
 `,
       `
 const result = {foo(); bar()}
-  `,
+  `
     )
   })
 
@@ -182,7 +182,7 @@ const result = <div>Foo{booleanToggle('foo', 'bar')}</div>
 `,
       `
 const result = <div>Foo</div>
-  `,
+  `
     )
 
     defineInlineTest(
@@ -194,7 +194,7 @@ const result = <div>Foo{booleanToggle('foo', null)}</div>
 `,
       `
 const result = <div>Foo</div>
-  `,
+  `
     )
   })
 
@@ -209,7 +209,7 @@ const result = <div>Foo{booleanToggle('foo', () => <Foo/>)}</div>
 `,
       `
 const result = <div>Foo</div>
-  `,
+  `
     )
 
     defineInlineTest(
@@ -222,7 +222,7 @@ const result = <div>Foo{booleanToggle('foo', () => Foo())}</div>
 `,
       `
 const result = <div>Foo</div>
-  `,
+  `
     )
 
     defineInlineTest(
@@ -236,7 +236,7 @@ const result = <div>Foo{booleanToggle('foo', () => isBar && <Baz/>)}</div>
 `,
       `
 const result = <div>Foo</div>
-  `,
+  `
     )
 
     defineInlineTest(
@@ -250,7 +250,7 @@ const result = <div>Foo{booleanToggle('foo', () => isBar && <Baz/>)}</div>
 `,
       `
 const result = <div>Foo</div>
-  `,
+  `
     )
 
     defineInlineTest(
@@ -274,7 +274,7 @@ const stillUsed = true
 console.log(Bax)
 const result = <div>Foo</div>
 if(stillUsed) doSomething()
-  `,
+  `
     )
   })
   describe('Deals with missing options', () => {

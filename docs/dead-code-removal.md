@@ -115,7 +115,7 @@ Conditional component rendering:
 const SearchBox = toggle(
   'SearchBoxComponent',
   HorizontalSearchBox,
-  VerticalSearchBox,
+  VerticalSearchBox
 )
 
 // .. in render method: <SearchBox />
@@ -144,7 +144,7 @@ const handleOnClick = () => {
   toggle(
     'DoSomethingOnClick',
     () => doSomething('foo'), // default
-    () => doSomethingElseForB('bar'), // for b
+    () => doSomethingElseForB('bar') // for b
   )
 }
 
@@ -180,7 +180,7 @@ const handleOnClick = () => {
   toggle(
     'DoSomethingOnClick',
     () => console.log('default', 'foo'), // a / default
-    () => console.log('b', 'bar'), // for b
+    () => console.log('b', 'bar') // for b
   )
 }
 
@@ -200,7 +200,7 @@ code only for one side of a test:
 ```typescript
 // before
 toggle('ShowConfirmationDialogBeforeDoingSomething', null, () =>
-  showConfirmationDialog(),
+  showConfirmationDialog()
 )
 doSomething()
 

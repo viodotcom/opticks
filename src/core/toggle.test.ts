@@ -6,7 +6,7 @@ describe('Multi Toggle', () => {
   beforeEach(() => {
     const dummyGetToggle = jest.fn(
       // only 'foo' is considered true for the tests
-      (toggleId) => (toggleId === 'foo' ? 'b' : 'a'),
+      (toggleId) => (toggleId === 'foo' ? 'b' : 'a')
     )
 
     toggle = baseToggle(dummyGetToggle)

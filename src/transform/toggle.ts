@@ -11,7 +11,7 @@ const implementWinningToggle = (
   j,
   toggleName,
   winnerArgumentIndex,
-  callExpression,
+  callExpression
 ) => {
   const node = callExpression.value
   const currentToggleCallName = node.arguments[0].value
@@ -37,7 +37,7 @@ const implementWinningToggle = (
   // Clean up dangling losing variable references
   const losingArgumentFunctions = node.arguments.filter(
     (arg, index) =>
-      arg.type === 'ArrowFunctionExpression' && index !== winnerArgumentIndex,
+      arg.type === 'ArrowFunctionExpression' && index !== winnerArgumentIndex
   )
 
   losingArgumentFunctions.forEach((losingFunction) => {
@@ -50,8 +50,8 @@ const implementWinningToggle = (
         removeUnusedReferences(j.VariableDeclarator, name, {
           id: {
             type: 'Identifier',
-            name: name,
-          },
+            name: name
+          }
         })
       })
   })
@@ -103,7 +103,7 @@ export default function transformer(file, api, options) {
         // find local imported names of the toggle calls
         j(importDef)
           .find(j.ImportSpecifier, {
-            imported: {name: functionName},
+            imported: {name: functionName}
           })
           .forEach((importSpecifier) => {
             const localName = importSpecifier.value.local.name
@@ -112,14 +112,14 @@ export default function transformer(file, api, options) {
               null,
               j,
               j(importSpecifier),
-              localName,
+              localName
             )
 
             const toggleCallModifier = implementWinningToggle.bind(
               null,
               j,
               toggleName,
-              winnerArgumentIndex,
+              winnerArgumentIndex
             )
 
             // implement winners for toggle calls based on local scoped name

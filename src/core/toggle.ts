@@ -13,4 +13,3 @@ export const toggle =
     const variant = variants[argumentIndex]
     return handleToggleVariant(variant)
   }
-

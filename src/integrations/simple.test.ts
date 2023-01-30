@@ -6,8 +6,8 @@ describe('Simple Integration', () => {
       initialize({
         booleanToggles: {
           foo: true,
-          bar: false,
-        },
+          bar: false
+        }
       })
     })
 
@@ -28,8 +28,8 @@ describe('Simple Integration', () => {
       initialize({
         toggles: {
           foo: {variant: 'b'},
-          bar: {variant: 'a'},
-        },
+          bar: {variant: 'a'}
+        }
       })
     })
 

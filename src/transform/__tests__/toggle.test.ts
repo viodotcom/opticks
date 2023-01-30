@@ -6,11 +6,11 @@ import transform from '../toggle'
 const packageName = 'opticks'
 const fooWinnerAConfig = {
   toggle: 'foo',
-  winner: 'a',
+  winner: 'a'
 }
 const fooWinnerBConfig = {
   toggle: 'foo',
-  winner: 'b',
+  winner: 'b'
 }
 
 describe('Multi Toggle', () => {
@@ -24,7 +24,7 @@ const result = toggle('foo', 'a', 'b', 'c')
 `,
       `
 const result = 'a'
-  `,
+  `
     )
   })
 
@@ -38,7 +38,7 @@ const result = toggle('foo', 'a', 'b', 'c')
 `,
       `
 const result = 'b'
-  `,
+  `
     )
   })
 
@@ -47,7 +47,7 @@ const result = 'b'
       transform,
       {
         toggle: 'foo-bar-baz-dash-boom',
-        winner: 'a',
+        winner: 'a'
       },
       `
 import { toggle } from '${packageName}'
@@ -55,7 +55,7 @@ const result = toggle('foo-bar-baz-dash-boom', 'a', 'b', 'c')
 `,
       `
 const result = 'a'
-  `,
+  `
     )
   })
 
@@ -72,7 +72,7 @@ const nonRelevantResult = toggle('bar', 'a', 'b', 'c')
 import { toggle } from '${packageName}'
 const result = 'b'
 const nonRelevantResult = toggle('bar', 'a', 'b', 'c')
-  `,
+  `
     )
   })
 
@@ -87,7 +87,7 @@ const result = toggle('foo', 'a', 'b', 'c')
       `
 import { foo } from '${packageName}';
 const result = 'b'
-  `,
+  `
     )
   })
 
@@ -101,7 +101,7 @@ const result = toggle('foo', 'a', () => foo(), 'c')
 `,
       `
 const result = foo()
-  `,
+  `
     )
   })
 
@@ -115,7 +115,7 @@ const result = toggle('foo', 'a', () => {foo(); bar()}, 'c')
 `,
       `
 const result = {foo(); bar()}
-  `,
+  `
     )
   })
 
@@ -130,7 +130,7 @@ toggle('foo', 'a', null, 'c')
 `,
       `
 const foo = 'bar'
-  `,
+  `
     )
   })
 
@@ -148,7 +148,7 @@ const result = toggle('foo', () => A(), () => B(), () => C())
       `
 const B = 'B'
 const result = B()
-  `,
+  `
     )
   })
 

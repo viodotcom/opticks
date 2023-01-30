@@ -6,7 +6,7 @@ describe('Boolean Toggles', () => {
   beforeEach(() => {
     const dummyGetToggle = jest.fn(
       // only 'foo' is considered true for the tests
-      (toggleId) => (toggleId && toggleId.toLowerCase() === 'foo') || false,
+      (toggleId) => (toggleId && toggleId.toLowerCase() === 'foo') || false
     )
 
     booleanToggle = baseBooleanToggle(dummyGetToggle)
@@ -38,10 +38,10 @@ describe('Boolean Toggles', () => {
   describe('When both Off and On toggles are specified', () => {
     it('Returns value for active side of the toggle', () => {
       expect(booleanToggle('foo', 'toggleIsOff', 'toggleIsOn')).toEqual(
-        'toggleIsOn',
+        'toggleIsOn'
       )
       expect(booleanToggle('bar', 'toggleIsOff', 'toggleIsOn')).toEqual(
-        'toggleIsOff',
+        'toggleIsOff'
       )
     })
     it('Executes value for active side of the toggle if it is a function', () => {
@@ -49,8 +49,8 @@ describe('Boolean Toggles', () => {
         booleanToggle(
           'foo',
           () => 'toggleIsOff',
-          () => 'toggleIsOn',
-        ),
+          () => 'toggleIsOn'
+        )
       ).toEqual('toggleIsOn')
       expect(booleanToggle('bar', null, () => 'toggleIsOn')).toEqual(null)
     })

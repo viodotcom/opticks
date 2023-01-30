@@ -1,5 +1,5 @@
 export const voidEventDispatcher = {
-  dispatchEvent: () => null,
+  dispatchEvent: () => null
 }
 
 export const addNotificationListenerMock = jest.fn()
@@ -8,9 +8,9 @@ export const createInstanceMock = jest.fn(() => ({
   getEnabledFeatures: getEnabledFeaturesMock,
   isFeatureEnabled: isFeatureEnabledMock,
   notificationCenter: {
-    addNotificationListener: addNotificationListenerMock,
+    addNotificationListener: addNotificationListenerMock
   },
-  activate: activateMock,
+  activate: activateMock
 }))
 
 export const isFeatureEnabledMock = jest.fn((toggleId) => toggleId === 'foo')
@@ -20,7 +20,7 @@ export const getEnabledFeaturesMock = jest.fn((userId, attributes) => {
     if (attributes.deviceType) {
       return [
         `${userId}-${attributes.deviceType}-test-1`,
-        `${userId}-${attributes.deviceType}-test-2`,
+        `${userId}-${attributes.deviceType}-test-2`
       ]
     }
 
@@ -39,7 +39,7 @@ export const activateMock = jest.fn((toggleId, userId) => {
 })
 
 const mock = {
-  createInstance: createInstanceMock,
+  createInstance: createInstanceMock
 }
 
 export default mock

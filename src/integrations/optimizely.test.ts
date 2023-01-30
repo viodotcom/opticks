@@ -8,7 +8,7 @@ import {
   booleanToggle,
   toggle,
   forceToggles,
-  getEnabledFeatures,
+  getEnabledFeatures
 } from './optimizely'
 
 // During the tests:
@@ -26,7 +26,7 @@ import Optimizely, {
   // @ts-expect-error
   getEnabledFeaturesMock,
   // @ts-expect-error
-  activateMock,
+  activateMock
 } from '@optimizely/optimizely-sdk'
 
 // Re-used between toggle test suites
@@ -46,14 +46,14 @@ const testAudienceSegmentationCacheBusting = (toggleFn, fn) => {
     toggleFn('foo', 'a', 'b', 'c') // call 1
     expect(fn).toHaveBeenCalledTimes(1)
     expect(fn).toHaveBeenCalledWith('foo', 'fooBSide', {
-      foo: 'baz',
+      foo: 'baz'
     })
     toggleFn('foo', 'a', 'b', 'c') // cached
     toggleFn('bar', 'a', 'b', 'c') // call 2
     toggleFn('bar', 'a', 'b', 'c') // cached
     expect(fn).toHaveBeenCalledTimes(2)
     expect(fn).toHaveBeenCalledWith('bar', 'fooBSide', {
-      foo: 'baz',
+      foo: 'baz'
     })
   })
 }
@@ -75,7 +75,7 @@ describe('Optimizely Integration', () => {
       it('Initializes with the dataFile for Optimizely and default eventDispatcher', () => {
         expect(createInstanceMock).toHaveBeenCalledWith({
           datafile,
-          eventDispatcher: {dispatchEvent: expect.any(Function)},
+          eventDispatcher: {dispatchEvent: expect.any(Function)}
         })
       })
 
@@ -83,7 +83,7 @@ describe('Optimizely Integration', () => {
         expect(addNotificationListenerMock).toHaveBeenCalledWith(
           NOTIFICATION_TYPES.DECISION,
           // 'DECISION:type, userId, attributes, decisionInfo',
-          activateHandler,
+          activateHandler
         )
       })
     })
@@ -101,7 +101,7 @@ describe('Optimizely Integration', () => {
       it('attaches supplied eventDispatcher', () => {
         expect(createInstanceMock).toHaveBeenCalledWith({
           datafile,
-          eventDispatcher,
+          eventDispatcher
         })
       })
     })
@@ -121,10 +121,10 @@ describe('Optimizely Integration', () => {
       describe('Calls without userId are invalid', () => {
         it('Throws an error when userId is not set', () => {
           expect(() => toggle('foo')).toThrow(
-            'Opticks: Fatal error: user id is not set',
+            'Opticks: Fatal error: user id is not set'
           )
           expect(() => booleanToggle('foo')).toThrow(
-            'Opticks: Fatal error: user id is not set',
+            'Opticks: Fatal error: user id is not set'
           )
         })
       })
@@ -152,13 +152,13 @@ describe('Optimizely Integration', () => {
           expect(isFeatureEnabledMock).toHaveBeenCalledWith(
             'foo',
             'fooBSide',
-            {},
+            {}
           )
           booleanToggle('foo')
           expect(isFeatureEnabledMock).toHaveBeenCalledWith(
             'foo',
             'fooBSide',
-            {},
+            {}
           )
         })
       })
@@ -167,11 +167,11 @@ describe('Optimizely Integration', () => {
         beforeEach(() => {
           // setAudienceSegmentationAttributes doesn't overwrite already existing attributes
           setAudienceSegmentationAttributes({
-            thisWillNotBeOverwritten: 'foo',
+            thisWillNotBeOverwritten: 'foo'
           })
           setAudienceSegmentationAttributes({
             deviceType: 'mobile',
-            isLoggedIn: false,
+            isLoggedIn: false
           })
         })
 
@@ -180,21 +180,21 @@ describe('Optimizely Integration', () => {
           expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {
             thisWillNotBeOverwritten: 'foo',
             deviceType: 'mobile',
-            isLoggedIn: false,
+            isLoggedIn: false
           })
 
           toggle('foo')
           expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {
             thisWillNotBeOverwritten: 'foo',
             deviceType: 'mobile',
-            isLoggedIn: false,
+            isLoggedIn: false
           })
 
           booleanToggle('foo')
           expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {
             thisWillNotBeOverwritten: 'foo',
             deviceType: 'mobile',
-            isLoggedIn: false,
+            isLoggedIn: false
           })
         })
       })
@@ -209,17 +209,17 @@ describe('Optimizely Integration', () => {
         it('Forwards correct audience segmentation attributes', () => {
           toggle('foo', 'a', 'b', 'c')
           expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {
-            valueAfterReset: true,
+            valueAfterReset: true
           })
 
           toggle('foo', 'a', 'b')
           expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {
-            valueAfterReset: true,
+            valueAfterReset: true
           })
 
           toggle('foo')
           expect(isFeatureEnabledMock).toHaveBeenCalledWith('foo', 'fooBSide', {
-            valueAfterReset: true,
+            valueAfterReset: true
           })
         })
       })
@@ -244,7 +244,7 @@ describe('Optimizely Integration', () => {
     describe('Forcing toggles', () => {
       beforeEach(() => {
         setAudienceSegmentationAttributes({
-          deviceType: 'mobile',
+          deviceType: 'mobile'
         })
         forceToggles({foo: 'a', bar: false})
         // calling forceToggles multiple times should retain previously
@@ -306,7 +306,7 @@ describe('Optimizely Integration', () => {
     beforeEach(() => {
       setUserId('chewbacca')
       setAudienceSegmentationAttributes({
-        deviceType: 'desktop',
+        deviceType: 'desktop'
       })
     })
 
@@ -314,7 +314,7 @@ describe('Optimizely Integration', () => {
       setUserId('R2-D2')
       expect(getEnabledFeatures()).toEqual([
         'R2-D2-desktop-test-1',
-        'R2-D2-desktop-test-2',
+        'R2-D2-desktop-test-2'
       ])
     })
 
@@ -322,18 +322,18 @@ describe('Optimizely Integration', () => {
       setUserId('C-3PO')
       expect(getEnabledFeatures()).toEqual([
         'C-3PO-desktop-test-1',
-        'C-3PO-desktop-test-2',
+        'C-3PO-desktop-test-2'
       ])
     })
 
     it('should return enabled features for C-3PO user for mobile', () => {
       setUserId('C-3PO')
       setAudienceSegmentationAttributes({
-        deviceType: 'mobile',
+        deviceType: 'mobile'
       })
       expect(getEnabledFeatures()).toEqual([
         'C-3PO-mobile-test-1',
-        'C-3PO-mobile-test-2',
+        'C-3PO-mobile-test-2'
       ])
     })
   })

@@ -18,7 +18,7 @@ type ToggleValueType = ExperimentToggleValueType | BooleanToggleValueType
 export type OptimizelyDatafileType = object
 
 export const NOTIFICATION_TYPES = {
-  DECISION: 'DECISION:type, userId, attributes, decisionInfo',
+  DECISION: 'DECISION:type, userId, attributes, decisionInfo'
 }
 
 let optimizely = OptimizelyLib // reference to injected Optimizely library
@@ -96,12 +96,12 @@ export const setUserId = (id: UserIdType) => {
  * @param attributes
  */
 export const setAudienceSegmentationAttributes = (
-  attributes: AudienceSegmentationAttributesType = {},
+  attributes: AudienceSegmentationAttributesType = {}
 ) => {
   invalidateCaches()
   audienceSegmentationAttributes = {
     ...audienceSegmentationAttributes,
-    ...attributes,
+    ...attributes
   }
 }
 
@@ -118,7 +118,7 @@ type ActivateEventHandlerType = () => void
 
 const voidActivateHandler = () => null
 const voidEventDispatcher = {
-  dispatchEvent: () => null,
+  dispatchEvent: () => null
 }
 
 /**
@@ -134,11 +134,11 @@ const voidEventDispatcher = {
 export const initialize = (
   datafile: OptimizelyDatafileType,
   onExperimentDecision: ActivateEventHandlerType = voidActivateHandler,
-  eventDispatcher: EventDispatcher = voidEventDispatcher,
+  eventDispatcher: EventDispatcher = voidEventDispatcher
 ): OptimizelyLib.Client => {
   optimizelyClient = optimizely.createInstance({
     datafile,
-    eventDispatcher: eventDispatcher,
+    eventDispatcher: eventDispatcher
   })
 
   addActivateListener(onExperimentDecision)
@@ -154,7 +154,7 @@ export const initialize = (
 export const addActivateListener = (listener) =>
   optimizelyClient.notificationCenter.addNotificationListener(
     NOTIFICATION_TYPES.DECISION,
-    listener,
+    listener
   )
 
 const isForcedOrCached = (toggleId: ToggleIdType, cache: CacheType): boolean =>
@@ -162,7 +162,7 @@ const isForcedOrCached = (toggleId: ToggleIdType, cache: CacheType): boolean =>
 
 const getForcedOrCached = (
   toggleId: ToggleIdType,
-  cache: CacheType,
+  cache: CacheType
 ): ToggleValueType => {
   const register = forcedToggles.hasOwnProperty(toggleId)
     ? forcedToggles
@@ -176,7 +176,7 @@ const validateUserId = (id) => {
 }
 
 const getOrSetCachedFeatureEnabled = (
-  toggleId: ToggleIdType,
+  toggleId: ToggleIdType
 ): BooleanToggleValueType => {
   validateUserId(userId)
 
@@ -190,7 +190,7 @@ const getOrSetCachedFeatureEnabled = (
   return (featureEnabledCache[toggleId] = optimizelyClient.isFeatureEnabled(
     toggleId,
     userId,
-    audienceSegmentationAttributes,
+    audienceSegmentationAttributes
   ))
 }
 
@@ -220,7 +220,7 @@ export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
         'rule',
         userId,
         audienceSegmentationAttributes,
-        '',
+        ''
       )
 
     // This will be decisionIfUserIsInAudience.result for Optimizely 4.3.3 and up
@@ -229,7 +229,7 @@ export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
   }
 
   const isEveryoneElseRulePaused = isPausedBooleanToggle(
-    config.experimentKeyMap[rollout.experiments[endIndex].key],
+    config.experimentKeyMap[rollout.experiments[endIndex].key]
   )
 
   return isInAnyAudience || !isEveryoneElseRulePaused
@@ -278,7 +278,7 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
     optimizelyClient.activate(
       toggleId,
       userId,
-      audienceSegmentationAttributes,
+      audienceSegmentationAttributes
     ) || DEFAULT)
 }
 
@@ -315,7 +315,7 @@ export function toggle(toggleId: ToggleIdType, ...variants) {
   } else {
     return baseToggle(convertBooleanToggleToFeatureVariant)(
       toggleId,
-      ...variants,
+      ...variants
     )
   }
 }
@@ -330,6 +330,6 @@ export const getEnabledFeatures = () => {
 
   return optimizelyClient.getEnabledFeatures(
     userId,
-    audienceSegmentationAttributes,
+    audienceSegmentationAttributes
   )
 }

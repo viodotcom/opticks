@@ -15,26 +15,26 @@ export default {
         {
           featureEnabled: false,
           id: 'foo-a',
-          key: 'a',
+          key: 'a'
         },
         {
           featureEnabled: true,
           id: 'foo-b',
-          key: 'b',
-        },
+          key: 'b'
+        }
       ],
       trafficAllocation: [
         {
           entityId: 'foo-a',
-          endOfRange: 5000,
+          endOfRange: 5000
         },
         {
           entityId: 'foo-b',
-          endOfRange: 10000,
-        },
+          endOfRange: 10000
+        }
       ],
       audienceIds: ['foo-default-dates'],
-      forcedVariations: [],
+      forcedVariations: []
     },
     {
       id: 'bar',
@@ -45,39 +45,39 @@ export default {
         {
           featureEnabled: false,
           id: 'bar-a',
-          key: 'a',
+          key: 'a'
         },
         {
           featureEnabled: true,
           id: 'bar-b',
-          key: 'b',
-        },
+          key: 'b'
+        }
       ],
       trafficAllocation: [
         {
           entityId: 'bar-a',
-          endOfRange: 5000,
+          endOfRange: 5000
         },
         {
           entityId: 'bar-b',
-          endOfRange: 10000,
-        },
+          endOfRange: 10000
+        }
       ],
       audienceIds: [],
-      forcedVariations: [],
-    },
+      forcedVariations: []
+    }
   ],
   featureFlags: [
     {
       experimentIds: ['foo'],
       id: 'foo',
-      key: 'foo',
+      key: 'foo'
     },
     {
       experimentIds: ['bar'],
       id: 'bar',
-      key: 'bar',
-    },
+      key: 'bar'
+    }
   ],
   events: [],
   audiences: [
@@ -85,15 +85,15 @@ export default {
       id: 'foo-default-dates',
       name: 'Foo Traffic',
       conditions:
-        '[ "and", { "name": "trafficSource", "value": "foo", "type": "custom_attribute" }, { "name": "hasDefaultDates", "value": true, "type": "custom_attribute" }, ["not", { "name": "deviceType", "value": "mobile", "type": "custom_attribute" } ] ]',
-    },
+        '[ "and", { "name": "trafficSource", "value": "foo", "type": "custom_attribute" }, { "name": "hasDefaultDates", "value": true, "type": "custom_attribute" }, ["not", { "name": "deviceType", "value": "mobile", "type": "custom_attribute" } ] ]'
+    }
   ],
   attributes: [
     {id: 'trafficSource', key: 'trafficSource'},
     {id: 'hasDefaultDates', key: 'hasDefaultDates'},
-    {id: 'deviceType', key: 'deviceType'},
+    {id: 'deviceType', key: 'deviceType'}
   ],
   groups: [],
   rollouts: [],
-  variables: [],
+  variables: []
 }

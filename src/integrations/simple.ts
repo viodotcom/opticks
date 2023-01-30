@@ -48,7 +48,7 @@ export const toggle = baseToggle(getToggle)
 
 export const initialize = ({
   booleanToggles,
-  toggles,
+  toggles
 }: {
   booleanToggles?: BooleanToggleListType
   toggles?: toggleListType
