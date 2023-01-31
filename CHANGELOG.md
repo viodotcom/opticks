@@ -10,6 +10,13 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v4.0.0
+
+- :boom: Migrate from Flow -> TypeScript
+- :memo: Document and type the Optimizely integration
+- :boom: Deprecate the Simple integration, still functions but won't be improved
+- :boom: Deprecate `booleanToggle`, as the `toggle` supports both feature flags and MVT experiments
+
 # v3.3.3
 
 - :nail_care: Update JSCodeShift to 0.14.0
