@@ -28,8 +28,7 @@
     "jscodeshift"
   ],
   "engines": {
-    "node": "16.13.1",
-    "npm": "8.1.4"
+    "node": "16.13.1"
   },
   "author": "Jop de Klein",
   "license": "ISC",
