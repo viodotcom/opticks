@@ -38,7 +38,7 @@ let experimentCache: ExperimentCacheType = {}
 const forcedToggles: ForcedTogglesType = {}
 
 /**
- * Registers an externally passed in OptimizelySDK instance to use.
+ * Registers an externally passed in OptimizelySDK library to use.
  * This is meant to give flexibility in which SDK to use, but since Opticks
  * now relies on a specific version this will be bundled in future versions.
  *
