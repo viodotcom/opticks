@@ -85,9 +85,9 @@ By default the codemods make assumptions on the name of the imports to clean,
 namely:
 
 ```typescript
-import { booleanToggle } from 'opticks'
+import {booleanToggle} from 'opticks'
 // or
-import { toggle } from 'opticks'
+import {toggle} from 'opticks'
 ```
 
 You can override these values via:
@@ -199,10 +199,8 @@ code only for one side of a test:
 
 ```typescript
 // before
-toggle(
-  'ShowConfirmationDialogBeforeDoingSomething',
-  null,
-  () => showConfirmationDialog()
+toggle('ShowConfirmationDialogBeforeDoingSomething', null, () =>
+  showConfirmationDialog()
 )
 doSomething()
 
@@ -238,7 +236,7 @@ This would leave a shouldRenderIcon after the experiment concluded. If this
 bothers you, you can opt for an inline solution:
 
 ```typescript
-<div>Foo {toggle('SomethingWithIcon', null, <Icon/>)}</div>
+<div>Foo {toggle('SomethingWithIcon', null, <Icon />)}</div>
 ```
 
 Or make the icon configurable in a separate component:
