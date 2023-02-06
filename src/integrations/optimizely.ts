@@ -22,7 +22,7 @@ export const NOTIFICATION_TYPES = {
 }
 
 let optimizely = OptimizelyLib // reference to injected Optimizely library
-let optimizelyClient // reference to active Optimizely instance
+let optimizelyClient: OptimizelyLib.Client | null // reference to active Optimizely instance
 let userId: UserIdType
 let audienceSegmentationAttributes: AudienceSegmentationAttributesType = {}
 
@@ -114,12 +114,42 @@ export const resetAudienceSegmentationAttributes = () => {
   audienceSegmentationAttributes = {}
 }
 
-type ActivateEventHandlerType = () => void
-
 const voidActivateHandler = () => null
 const voidEventDispatcher = {
   dispatchEvent: () => null
 }
+
+export enum ExperimentType {
+  flag = 'feature',
+  mvt = 'feature-test'
+}
+
+/**
+ * REVIEW: This decisionInfo payload cannot be found anywhere in the types in the SDK.
+ * However the information typed here is sent, the payload changes based on whether it is a feature flag or MVT, so typing it here.
+ * https://github.com/optimizely/javascript-sdk/blob/625cb7c3835e31e25b16fa34b5f25a2bda42ed57/packages/optimizely-sdk/lib/optimizely/index.ts#L1577
+ *
+ * It would be best if Opticks abstracts this difference from the client in future versions.
+ */
+interface ActivateMVTNotificationPayload extends OptimizelyLib.ListenerPayload {
+  type: ExperimentType.mvt
+  decisionInfo: {
+    experimentKey: string
+    variationKey: string
+  }
+}
+interface ActivateFlagNotificationPayload
+  extends OptimizelyLib.ListenerPayload {
+  type: ExperimentType.flag
+  decisionInfo: {
+    featureKey: string
+    featureEnabled: boolean
+  }
+}
+
+export type ActivateNotificationPayload =
+  | ActivateMVTNotificationPayload
+  | ActivateFlagNotificationPayload
 
 /**
  * Initializes Opticks with the supplied Optimizely datafile,
@@ -133,7 +163,7 @@ const voidEventDispatcher = {
  */
 export const initialize = (
   datafile: OptimizelyDatafileType,
-  onExperimentDecision: ActivateEventHandlerType = voidActivateHandler,
+  onExperimentDecision: OptimizelyLib.NotificationListener<ActivateNotificationPayload> = voidActivateHandler,
   eventDispatcher: EventDispatcher = voidEventDispatcher
 ): OptimizelyLib.Client => {
   optimizelyClient = optimizely.createInstance({
@@ -151,7 +181,9 @@ export const initialize = (
  * @param listener
  * @returns void
  */
-export const addActivateListener = (listener) =>
+export const addActivateListener = (
+  listener: OptimizelyLib.NotificationListener<ActivateNotificationPayload>
+) =>
   optimizelyClient.notificationCenter.addNotificationListener(
     NOTIFICATION_TYPES.DECISION,
     listener
@@ -203,6 +235,7 @@ const getOrSetCachedFeatureEnabled = (
  * @param toggleId
  */
 export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
+  // @ts-expect-error we're being naughty here and using internals
   const config = optimizelyClient.projectConfigManager.getConfig()
   const feature = config.featureKeyMap[toggleId]
   const rollout = config.rolloutIdMap[feature.rolloutId]
@@ -214,6 +247,7 @@ export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
   for (index = 0; index < endIndex; index++) {
     const rolloutRule = config.experimentKeyMap[rollout.experiments[index].key]
     const decisionIfUserIsInAudience =
+      // @ts-expect-error we're being naughty here and using internals
       optimizelyClient.decisionService.__checkIfUserIsInAudience(
         config,
         rolloutRule.key,
@@ -246,7 +280,6 @@ export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
 const isPausedBooleanToggle = (rolloutRule: {
   trafficAllocation: [{endOfRange: number}]
 }) => {
-  // TODO: Support a/b/c MVTs
   const trafficAllocationVariation = rolloutRule.trafficAllocation[0]
   // We consider a toggle paused if traffic is 100% to either side
   return (
