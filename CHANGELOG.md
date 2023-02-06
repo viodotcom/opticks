@@ -10,6 +10,10 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v4.0.1
+
+- :nail_care: Fix types for initialize and addActivateListener
+
 # v4.0.0
 
 - :boom: Migrate from Flow -> TypeScript
