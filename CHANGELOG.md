@@ -10,6 +10,10 @@
 > - :house: [Internal]
 > - :nail_care: [Polish]
 
+# v4.0.2
+
+- :house: Run build before NPM publish
+
 # v4.0.1
 
 - :nail_care: Fix types for initialize and addActivateListener
