@@ -1,22 +1,18 @@
-name: Test
-
+name: Main
 on:
   push:
-    branches: ['master']
-  pull_request:
-    branches: ['master']
+    branches:
+      - '**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
-      - name: Tests
-        uses: actions/setup-node@v3
         with:
           node-version: '16.13.1'
           cache: 'npm'
-      - run: npm i
+
+      - run: npm ci
       - run: npm run build
       - run: npm test
