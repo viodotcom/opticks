@@ -1,5 +1,5 @@
 import OptimizelyLib, {EventDispatcher} from '@optimizely/optimizely-sdk'
-import type {ToggleIdType} from '../types'
+import {ToggleIdType, VariantType} from '../types'
 import {booleanToggle as baseBooleanToggle} from '../core/booleanToggle'
 import {toggle as baseToggle} from '../core/toggle'
 
@@ -134,15 +134,15 @@ export enum ExperimentType {
 interface ActivateMVTNotificationPayload extends OptimizelyLib.ListenerPayload {
   type: ExperimentType.mvt
   decisionInfo: {
-    experimentKey: string
-    variationKey: string
+    experimentKey: ToggleIdType
+    variationKey: VariantType
   }
 }
 interface ActivateFlagNotificationPayload
   extends OptimizelyLib.ListenerPayload {
   type: ExperimentType.flag
   decisionInfo: {
-    featureKey: string
+    featureKey: ToggleIdType
     featureEnabled: boolean
   }
 }
@@ -332,13 +332,13 @@ const convertBooleanToggleToFeatureVariant = (toggleId: ToggleIdType) => {
  * @param toggleId
  * @param variants
  */
-export function toggle<A = unknown>(toggleId: string, ...variants: A[]): A
+export function toggle<A = unknown>(toggleId: ToggleIdType, ...variants: A[]): A
 export function toggle(
-  toggleId: string,
+  toggleId: ToggleIdType,
   ...variants: (() => unknown)[]
 ): unknown
 export function toggle<A = unknown>(
-  experimentId: string,
+  toggleId: ToggleIdType,
   ...variants: (A | (() => unknown))[]
 ): A | unknown
 export function toggle(toggleId: ToggleIdType, ...variants) {
@@ -366,3 +366,8 @@ export const getEnabledFeatures = () => {
     audienceSegmentationAttributes
   )
 }
+
+/**
+ * Export imported types
+ */
+export {ToggleIdType, VariantType}
