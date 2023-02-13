@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.0.3
+
+### Patch Changes
+
+- 849fc6b: :house: Fix GitHub publish action
+- d037295: :house: Automate versioning and releasing and export types from optimizely integration
+
 ## v4.0.2
 
 - :house: Run build before NPM publish
