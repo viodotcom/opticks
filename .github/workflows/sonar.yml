@@ -28,7 +28,7 @@ jobs:
 
       - name: Prep test coverage for sonar
         run: |
-            npm test-cov       
+            npm run test-cov       
               
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
