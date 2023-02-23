@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.4
+
+### Patch Changes
+
+- 5610ad3: :bug: Fix library entry point
+
 ## 4.0.3
 
 ### Patch Changes
