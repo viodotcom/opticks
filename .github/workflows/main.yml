@@ -18,3 +18,9 @@ jobs:
       - run: npm i
       - run: npm run build
       - run: npm test
+  report:
+    needs: [build]
+    uses: ./.github/workflows/sonar.yml
+    secrets:
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   

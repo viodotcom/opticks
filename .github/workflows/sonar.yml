@@ -1,0 +1,40 @@
+name: sonar
+
+on:
+  workflow_call:
+    secrets:
+      SONAR_HOST_URL:
+        description: "Sonar host"
+        required: true    
+      SONAR_TOKEN:
+        description: "SonarQube token"
+        required: true
+
+env:
+  LANG: "en_US.UTF-8"
+  LANGUAGE: "en_US:en"
+  LC_ALL: "en_US.UTF-8"
+
+jobs:
+  sonarqube:
+    name: Sonar analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.13.1'
+          cache: 'npm'               
+
+      - name: Prep test coverage for sonar
+        run: |
+            npm test-cov       
+              
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          args:
+            -Dsonar.verbose=true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
