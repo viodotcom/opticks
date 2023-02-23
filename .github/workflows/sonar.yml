@@ -24,10 +24,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16.13.1'
-          cache: 'npm'               
+          cache: 'npm'
 
       - name: Prep test coverage for sonar
         run: |
+            npm i
             npm run test-cov       
               
       - name: SonarQube Scan
