@@ -198,35 +198,6 @@ C()
     )
   })
 
-  xdescribe('Removing unused imports in losing variations', () => {
-    defineInlineTest(
-      transform,
-      fooWinnerBConfig,
-      `
-import { toggle } from '${packageName}'
-import {A} from 'somewhere'
-import {B} from 'somewhere'
-
-const C = 'keepme'
-
-const result = toggle('foo', () => B(), () => B(), () => C())
-const result2 = toggle('foo', () => A(), () => B(), () => C())
-
-C()
-`,
-      `
-import {B} from 'somewhere'
-
-const C = 'keepme'
-
-const result = B()
-const result2 = B()
-
-C()
-  `
-    )
-  })
-
   describe('Deals with missing options', () => {
     const code = `
 import { toggle } from '${packageName}'
