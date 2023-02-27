@@ -22,7 +22,7 @@ const implementWinningToggle = (
 
   // Looks for references only referred in the losing arrow function usage, 
   // and one declaration - hence 2 in total
-  const findUnusedReferencesOfType = (type, name) =>
+  const findUnusedReferencesOfType = (name) =>
     root
       .find(j.Identifier, { name })
       .size() === 2
@@ -30,7 +30,7 @@ const implementWinningToggle = (
   const removeUnusedReferences = (type, name, identifiers) =>
     root
       .find(type, identifiers)
-      .filter(findUnusedReferencesOfType.bind(null, type, name))
+      .filter(findUnusedReferencesOfType.bind(null, name))
       .remove()
 
   const losingArgumentFunctions = node.arguments.filter(
@@ -52,8 +52,6 @@ const implementWinningToggle = (
             name: name
           }
         })
-
-        // TODO: Remove imports too
       })
   })
 
