@@ -53,32 +53,27 @@ const implementWinningToggle = (
       })
   })
 
+  // if a parent is an JSX expression, remove it altogether
+  // <>{toggle('foo', <A/>, <B/>)}</> becomes <></B></>
+  const closestJsxExpressions = callPath.closest(j.JSXExpressionContainer)
+  const nodeToClean = closestJsxExpressions.length
+    ? closestJsxExpressions
+    : callPath
+
   // Winner implementation
   // function, use body
   if (winningArgument.type === 'ArrowFunctionExpression') {
-    callPath.replaceWith(winningArgument.body)
+    nodeToClean.replaceWith(winningArgument.body)
   } else if (
     // null value, remove
     winningArgument.type === 'NullLiteral' &&
     winningArgument.value === null
   ) {
-    const closestJsxExpressions = callPath.closest(j.JSXExpressionContainer)
-
-    // if the parent is an JSX expression, remove it altogether
-    // <>{toggle('foo', <A/>, <B/>)}</> becomes <></B></>
-    closestJsxExpressions.length
-      ? closestJsxExpressions.remove()
-      : callPath.remove()
+    nodeToClean.remove()
   } else {
     // use raw value
-    callPath.replaceWith(node.arguments[winnerArgumentIndex])
+    nodeToClean.replaceWith(node.arguments[winnerArgumentIndex])
   }
-
-  // clean up lingering JSX expessions with one JSXElement
-  callPath.closest(j.JSXExpressionContainer).forEach((node) => {
-    const expression = node.value.expression
-    if (expression.type === 'JSXElement') node.replace(node.value.expression)
-  })
 }
 
 const findToggleCalls = (j, context, localName) =>
