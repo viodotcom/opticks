@@ -219,6 +219,22 @@ C()
     )
   })
 
+  describe('Removing unused variables if defined in a template literal', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+const removeMe = 'a'
+
+const Foo = toggle('foo', () => \`\${removeMe}\`, 'keepme')
+`,
+      `
+const Foo = 'keepme'
+  `
+    )
+  })
+
   describe('Deals with missing options', () => {
     const code = `
 import { toggle } from '${packageName}'
