@@ -70,6 +70,10 @@ Then you can run it right from your project:
 npm run clean:toggle -- --toggle=foo --winner=b
 ```
 
+### Supported languages
+
+The codemods are designed to work with TypeScript and they expect the `tsx` parser to be used. You can override the parser option from the consuming project to parse code other than TypeScript, but not all patterns might be cleaned up as intended.
+
 ### Boolean Toggles
 
 Boolean Toggle clean up works in a similar way, noting the winner accepts a

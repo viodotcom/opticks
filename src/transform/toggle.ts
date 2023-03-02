@@ -61,7 +61,7 @@ const implementWinningToggle = (
     callPath.replaceWith(winningArgument.body)
   } else if (
     // null value, remove
-    winningArgument.type === 'Literal' &&
+    winningArgument.type === 'NullLiteral' &&
     winningArgument.value === null
   ) {
     callPath.remove()
