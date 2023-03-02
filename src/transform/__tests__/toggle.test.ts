@@ -130,12 +130,27 @@ import { toggle } from '${packageName}'
 const foo = 'bar'
 toggle('foo', 'a', null, 'c')
 
-const X = () => <div>{toggle('foo', 'a', null)}</div>
+const Component = () => <div>{toggle('foo', 'a', null)}</div>
 `,
       `
 const foo = 'bar'
 
-const X = () => <div>{}</div>
+const Component = () => <div></div>
+  `
+    )
+  })
+
+  describe('Removing unecessary expressions in JSX after toggle removal', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+
+const Component = () => <div>{true ? 'yes' : 'no'}{toggle('foo', 'a', null)}{toggle('foo', 'a', <B/>)}</div>
+`,
+      `
+const Component = () => <div>{true ? 'yes' : 'no'}<B/></div>
   `
     )
   })
@@ -174,7 +189,7 @@ const result = B()
   `
     )
   })
-  
+
   describe('Removing unused variables in losing variations, only if not used elsewhere', () => {
     defineInlineTest(
       transform,

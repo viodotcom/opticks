@@ -62,11 +62,23 @@ const implementWinningToggle = (
     winningArgument.type === 'NullLiteral' &&
     winningArgument.value === null
   ) {
-    callPath.remove()
+    const closestJsxExpressions = callPath.closest(j.JSXExpressionContainer)
+
+    // if the parent is an JSX expression, remove it altogether
+    // <>{toggle('foo', <A/>, <B/>)}</> becomes <></B></>
+    closestJsxExpressions.length
+      ? closestJsxExpressions.remove()
+      : callPath.remove()
   } else {
     // use raw value
     callPath.replaceWith(node.arguments[winnerArgumentIndex])
   }
+
+  // clean up lingering JSX expessions with one JSXElement
+  callPath.closest(j.JSXExpressionContainer).forEach((node) => {
+    const expression = node.value.expression
+    if (expression.type === 'JSXElement') node.replace(node.value.expression)
+  })
 }
 
 const findToggleCalls = (j, context, localName) =>
