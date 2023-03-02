@@ -20,12 +20,10 @@ const implementWinningToggle = (
   const callPath = j(callExpression)
   const winningArgument = node.arguments[winnerArgumentIndex]
 
-  // Looks for references only referred in the losing arrow function usage, 
+  // Looks for references only referred in the losing arrow function usage,
   // and one declaration - hence 2 in total
   const findUnusedReferencesOfType = (name) =>
-    root
-      .find(j.Identifier, { name })
-      .size() === 2
+    root.find(j.Identifier, {name}).size() === 2
 
   const removeUnusedReferences = (type, name, identifiers) =>
     root
@@ -39,7 +37,7 @@ const implementWinningToggle = (
   )
 
   // Clean up dangling losing variable references
-  losingArgumentFunctions.forEach(losingFunction => {
+  losingArgumentFunctions.forEach((losingFunction) => {
     j(losingFunction.body)
       .find(j.Identifier)
       .forEach((x) => {
