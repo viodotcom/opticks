@@ -43,7 +43,7 @@ const implementBooleanToggle = (j, isWinner: boolean, root, callExpression) => {
     if (winningArgument.type === 'ArrowFunctionExpression') {
       callPath.replaceWith(winningArgument.body)
     } else if (
-      winningArgument.type === 'Literal' &&
+      winningArgument.type === 'NullLiteral' &&
       winningArgument.value === null
     ) {
       removeCall(callExpression)
