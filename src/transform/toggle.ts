@@ -55,10 +55,9 @@ const implementWinningToggle = (
 
   // if a parent is an JSX expression, remove it altogether
   // <>{toggle('foo', <A/>, <B/>)}</> becomes <><B/></> and not <>{<B/>}<>
-  const closestJsxExpressions = callPath.closest(j.JSXExpressionContainer)
-  const nodeToClean = closestJsxExpressions.length
-    ? closestJsxExpressions
-    : callPath
+  const parent = callExpression.parentPath
+  const parentIsJSXExpression = parent.value.type === 'JSXExpressionContainer'
+  const nodeToClean = parentIsJSXExpression ? j(parent) : callPath
 
   // Winner implementation
   // function, use body

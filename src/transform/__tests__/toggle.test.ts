@@ -147,10 +147,24 @@ const Component = () => <div></div>
       `
 import { toggle } from '${packageName}'
 
-const Component = () => <div>{true ? 'yes' : 'no'}{toggle('foo', 'a', null)}{toggle('foo', 'a', <B/>)}</div>
+const Component = () => <div>
+  {true ? 'yes' : 'no'}
+  {toggle('foo', 'a', null)}
+  {toggle('foo', 'a', <B/>)}
+</div>
+const ShouldKeepExpression = () => <div>{
+  true ? toggle('foo', 'a', 'b') : null
+}</div>
 `,
       `
-const Component = () => <div>{true ? 'yes' : 'no'}<B/></div>
+const Component = () => <div>
+  {true ? 'yes' : 'no'}
+
+  <B/>
+</div>
+const ShouldKeepExpression = () => <div>{
+  true ? 'b' : null
+}</div>
   `
     )
   })
