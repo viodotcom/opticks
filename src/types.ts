@@ -11,3 +11,12 @@ export type ToggleType = {
 export type BooleanToggleType = boolean
 
 export type TogglerGetterType = (ToggleIdType) => any
+
+// Return type of `toggle` function
+export type ToggleFuncReturnType<ToggleFuncParams extends any[]> = {
+  [ParamKey in keyof ToggleFuncParams]: ToggleFuncParams[ParamKey] extends (
+    ...args: any[]
+  ) => infer ParamFuncReturnType
+    ? ParamFuncReturnType
+    : ToggleFuncParams[ParamKey]
+}[number]

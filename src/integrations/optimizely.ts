@@ -1,5 +1,5 @@
 import OptimizelyLib, {EventDispatcher} from '@optimizely/optimizely-sdk'
-import {ToggleIdType, VariantType} from '../types'
+import {ToggleFuncReturnType, ToggleIdType, VariantType} from '../types'
 import {booleanToggle as baseBooleanToggle} from '../core/booleanToggle'
 import {toggle as baseToggle} from '../core/toggle'
 
@@ -332,15 +332,8 @@ const convertBooleanToggleToFeatureVariant = (toggleId: ToggleIdType) => {
  * @param toggleId
  * @param variants
  */
-export function toggle<A = unknown>(toggleId: ToggleIdType, ...variants: A[]): A
-export function toggle(
-  toggleId: ToggleIdType,
-  ...variants: (() => unknown)[]
-): unknown
-export function toggle<A = unknown>(
-  toggleId: ToggleIdType,
-  ...variants: (A | (() => unknown))[]
-): A | unknown
+
+export function toggle<A extends any[]>(toggleId: ToggleIdType, ...variants: A): ToggleFuncReturnType<A>;
 export function toggle(toggleId: ToggleIdType, ...variants) {
   // An A/B/C... test
   if (variants.length > 2) {
