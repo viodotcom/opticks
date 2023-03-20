@@ -2,4 +2,4 @@
 'opticks': patch
 ---
 
-Toggle function types update
+:nail_care: Update toggle function return type
