@@ -1,6 +1,6 @@
 {
   "name": "opticks",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "FindHotel Toggle Flag JavaScript SDK",
   "main": "lib/optimizely.js",
   "module": "lib/optimizely.mjs",
