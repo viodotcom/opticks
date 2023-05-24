@@ -1,5 +1,27 @@
 # Changelog
 
+## 4.1.1
+
+### Patch Changes
+
+- 0846ab0: :nail_care: Improve toggle function return type, which now supports anonymous function return types and mixed arguments properly
+
+## 4.1.0
+
+### Minor Changes
+
+- 8756fe2:
+  - :rocket: Codemods: Hardcode the TSX parser
+  - :bug: Codemods: Fix null removal for the TSX parser
+  - :bug: Codemods: Fix variable cleanup that was too aggressive and cleaned optimistically
+  - :nail_care: Codemods: Clean up dangling JSX expressions such as `{<B/>}` -> `<B/>`
+
+## 4.0.4
+
+### Patch Changes
+
+- 5610ad3: :bug: Fix library entry point
+
 ## 4.0.3
 
 ### Patch Changes

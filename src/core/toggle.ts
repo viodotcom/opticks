@@ -1,9 +1,9 @@
-import type {ToggleIdType, TogglerGetterType} from '../types'
+import type {ToggleFuncReturnType, ToggleIdType, TogglerGetterType} from '../types'
 import {handleToggleVariant} from '../variantUtils'
 
 export const toggle =
   (getToggle: TogglerGetterType) =>
-  <T>(toggleId: ToggleIdType, ...variants: T[]): T | undefined => {
+  <T extends any[]>(toggleId: ToggleIdType, ...variants: T): ToggleFuncReturnType<T> | undefined => {
     const baseCharCode = 'a'.charCodeAt(0)
     const activeVariant = getToggle(toggleId)
     // TOOD: Write stand alone unit test for this case

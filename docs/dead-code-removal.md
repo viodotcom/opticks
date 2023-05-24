@@ -70,6 +70,10 @@ Then you can run it right from your project:
 npm run clean:toggle -- --toggle=foo --winner=b
 ```
 
+### Supported languages
+
+The codemods are designed to work with TypeScript and they expect the `tsx` parser to be used. You can override the parser option from the consuming project to parse code other than TypeScript, but not all patterns might be cleaned up as intended.
+
 ### Boolean Toggles
 
 Boolean Toggle clean up works in a similar way, noting the winner accepts a
@@ -288,13 +292,18 @@ returning early.
 ## Coding Style Conventions
 
 When the codemods rewrite your code, the resulting output might not match your
-coding conventions such as the use of semicolons. This project doesn't attempt
-to apply any pretty printing itself as your needs might vary from others. It is
-recommended to run ESLint with the `--fix` option, Prettier, or another pretty
-print tool after running the codemods to ensure uniformity in your codebase.
+coding conventions, such as the use of semicolons. This project doesn't attempt
+to apply any pretty printing itself, as your needs will vary from other's.
 
 See https://github.com/benjamn/recast/issues/140#issuecomment-69794531 for more
 details.
+
+The strategy is to offload as much as possible to existing tools, and we
+recommended running ESLint with the `--fix` option, Prettier, or another
+pretty print tool after running the codemods to ensure uniformity in your codebase.
+
+The [eslint-plugin-unused-imports](https://github.com/sweepline/eslint-plugin-unused-imports)
+plugin can be used to remove lingering import statements after cleanup.
 
 ## Request For Comments
 

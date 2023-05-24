@@ -2,6 +2,8 @@ jest.autoMockOff()
 
 import {defineInlineTest} from 'jscodeshift/dist/testUtils'
 import transform from '../toggle'
+// @ts-expect-error: default to TSX parser
+transform.parser = 'tsx'
 
 const packageName = 'opticks'
 const fooWinnerAConfig = {
@@ -127,9 +129,42 @@ const result = {foo(); bar()}
 import { toggle } from '${packageName}'
 const foo = 'bar'
 toggle('foo', 'a', null, 'c')
+
+const Component = () => <div>{toggle('foo', 'a', null)}</div>
 `,
       `
 const foo = 'bar'
+
+const Component = () => <div></div>
+  `
+    )
+  })
+
+  describe('Removing unecessary expressions in JSX after toggle removal', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+
+const Component = () => <div>
+  {true ? 'yes' : 'no'}
+  {toggle('foo', 'a', null)}
+  {toggle('foo', 'a', <B/>)}
+</div>
+const ShouldKeepExpression = () => <div>{
+  true ? toggle('foo', 'a', 'b') : null
+}</div>
+`,
+      `
+const Component = () => <div>
+  {true ? 'yes' : 'no'}
+
+  <B/>
+</div>
+const ShouldKeepExpression = () => <div>{
+  true ? 'b' : null
+}</div>
   `
     )
   })
@@ -140,14 +175,76 @@ const foo = 'bar'
       fooWinnerBConfig,
       `
 import { toggle } from '${packageName}'
-const A = 'A'
-const B = 'B'
-const C = 'C'
+const A = 'removeme'
+const B = 'keepme'
+const C = 'removeme'
 const result = toggle('foo', () => A(), () => B(), () => C())
 `,
       `
-const B = 'B'
+const B = 'keepme'
 const result = B()
+  `
+    )
+  })
+
+  describe('Removing unused variables in losing variations, only if not used in other variations', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+const B = 'keepme'
+const C = 'removeme'
+const result = toggle('foo', () => B(), () => B(), () => C())
+`,
+      `
+const B = 'keepme'
+const result = B()
+  `
+    )
+  })
+
+  describe('Removing unused variables in losing variations, only if not used elsewhere', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+import {B} from 'somewhere'
+
+const A = 'removeme'
+const C = 'keepme'
+
+const result = toggle('foo', () => B(), () => B(), () => C())
+const result2 = toggle('foo', () => A(), () => B(), () => C())
+
+C()
+`,
+      `
+import {B} from 'somewhere'
+
+const C = 'keepme'
+
+const result = B()
+const result2 = B()
+
+C()
+  `
+    )
+  })
+
+  describe('Removing unused variables if defined in a template literal', () => {
+    defineInlineTest(
+      transform,
+      fooWinnerBConfig,
+      `
+import { toggle } from '${packageName}'
+const removeMe = 'a'
+
+const Foo = toggle('foo', () => \`\${removeMe}\`, 'keepme')
+`,
+      `
+const Foo = 'keepme'
   `
     )
   })
@@ -159,9 +256,5 @@ const result = toggle('foo', 'a', () => {foo(); bar()}, 'c')
 `
 
     defineInlineTest(transform, {}, code, code)
-  })
-
-  xdescribe('Removes references to unused variables in call expressions upon removal', () => {
-    // ... TODO
   })
 })

@@ -2,6 +2,8 @@ jest.autoMockOff()
 
 import {defineInlineTest} from 'jscodeshift/dist/testUtils'
 import transform from '../booleanToggle'
+// @ts-expect-error: default to TSX parser
+transform.parser = 'tsx'
 
 const packageName = 'opticks'
 const fooWinnerOptions = {
