@@ -19,7 +19,7 @@ jobs:
   sonarqube:
     name: Sonar analysis
     runs-on: ubuntu-latest
-    continue-on-error: true    
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -28,13 +28,16 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: sonar-report-artifacts
+
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag        
               
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         with:
           args:
             -Dsonar.verbose=true
-            -Dsonar.projectVersion=${{ GITHUB_REF_NAME }}
+            -Dsonar.projectVersion=${{ steps.release-label.outputs.level != null }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
