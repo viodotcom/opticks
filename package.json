@@ -16,8 +16,7 @@
     "jscodeshift": "jscodeshift",
     "prepare": "npm run build",
     "release": "npm run prepare && npx changeset publish",
-    "test": "jest src",
-    "test-cov": "jest src --coverage --testResultsProcessor jest-sonar-reporter",
+    "test": "jest src --coverage",
     "test:watch": "jest --watch src",
     "changeset": "npx changeset"
   },
@@ -49,7 +48,6 @@
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
     "jest": "^29.4.0",
-    "jest-sonar-reporter": "^2.0.0",
     "jscodeshift": "^0.14.0",
     "prettier": "^2.8.3",
     "ts-jest": "^29.0.5",
