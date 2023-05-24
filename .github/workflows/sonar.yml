@@ -38,9 +38,3 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-      - name: Remove reporting artifacts for Sonar
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: sonar-report-artifacts
-          failOnError: false  
