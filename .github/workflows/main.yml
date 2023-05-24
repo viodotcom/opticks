@@ -22,9 +22,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: sonar-report-artifacts
-          failOnError: false
           path: |
             coverage/lcov.info
+
   report:
     needs: [build]
     uses: ./.github/workflows/sonar.yml
