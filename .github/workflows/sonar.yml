@@ -15,27 +15,31 @@ env:
   LANGUAGE: "en_US:en"
   LC_ALL: "en_US.UTF-8"
 
-jobs:
-  sonarqube:
+jobs:  sonarqube:
     name: Sonar analysis
     runs-on: ubuntu-latest
+    continue-on-error: true    
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16.13.1'
-          cache: 'npm'
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Prep test coverage for sonar
-        run: |
-            npm i
-            npm run test-cov       
+      - name: Download reporting artifacts for Sonar
+        uses: actions/download-artifact@v3
+        with:
+          name: sonar-report-artifacts
               
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         with:
           args:
             -Dsonar.verbose=true
+            -Dsonar.projectVersion=${{  github.ref_name }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Remove reporting artifacts for Sonar
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: sonar-report-artifacts
+          failOnError: false  
