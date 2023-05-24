@@ -15,7 +15,8 @@ env:
   LANGUAGE: "en_US:en"
   LC_ALL: "en_US.UTF-8"
 
-jobs:  sonarqube:
+jobs:  
+  sonarqube:
     name: Sonar analysis
     runs-on: ubuntu-latest
     continue-on-error: true    
