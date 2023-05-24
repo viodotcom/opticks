@@ -33,4 +33,4 @@ jobs:
     uses: ./.github/workflows/sonar.yml
     secrets:
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
