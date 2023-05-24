@@ -28,16 +28,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: sonar-report-artifacts
-
-      - uses: actions-ecosystem/action-get-latest-tag@v1
-        id: get-latest-tag        
               
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         with:
           args:
             -Dsonar.verbose=true
-            -Dsonar.projectVersion=${{ steps.release-label.outputs.level != null }}
+            -Dsonar.projectVersion="1.0"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
