@@ -24,8 +24,6 @@ jobs:
           name: sonar-report-artifacts
           path: |
             coverage/lcov.info
-            coverage/coverage-final.json
-            coverage/clover.xml
 
   report:
     needs: [build]
