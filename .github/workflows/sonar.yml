@@ -29,18 +29,12 @@ jobs:
         with:
           name: sonar-report-artifacts
 
-      - name: 'Get latest release tag'
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          fallback: 1.0
-
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         with:
           args:
             -Dsonar.verbose=true
-            -Dsonar.projectVersion=${{ steps.previoustag.outputs.tag }}
+            -Dsonar.projectVersion=${{github.ref_name}} 
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
