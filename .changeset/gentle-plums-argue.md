@@ -2,4 +2,4 @@
 'opticks': minor
 ---
 
-Upgrade @optimizely/optimizely-sdk to version 4.3
+Upgrade @optimizely/optimizely-sdk to version 4.4.x
