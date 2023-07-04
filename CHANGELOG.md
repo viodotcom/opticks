@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.2.0
+
+### Minor Changes
+
+- 232d1bc: Upgrade @optimizely/optimizely-sdk to version 4.4.x
+
 ## 4.1.1
 
 ### Patch Changes
