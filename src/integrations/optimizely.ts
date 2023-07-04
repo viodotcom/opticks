@@ -246,6 +246,11 @@ export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
 
   for (index = 0; index < endIndex; index++) {
     const rolloutRule = config.experimentKeyMap[rollout.experiments[index].key]
+
+    // The method `__checkIfUserIsInAudience()` will return `{result, reasons}` for versions > 4.5.0
+    // For versions < 4.5.0 it will return `result` only.
+    //
+    // Reference: https://github.com/optimizely/javascript-sdk/blob/v4.4.3/packages/optimizely-sdk/lib/core/decision_service/index.js#L230
     const decisionIfUserIsInAudience =
       // @ts-expect-error we're being naughty here and using internals
       optimizelyClient.decisionService.__checkIfUserIsInAudience(
@@ -257,7 +262,6 @@ export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
         ''
       )
 
-    // This will be decisionIfUserIsInAudience.result for Optimizely 4.3.3 and up
     if (decisionIfUserIsInAudience && !isPausedBooleanToggle(rolloutRule))
       isInAnyAudience = true
   }
