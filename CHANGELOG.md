@@ -99,3 +99,30 @@
 ## v1.4.0
 
 - Optimizely Integration: Forced toggles are now retained after setting audience segmentation attributes #14
+
+## v1.3.0
+
+- Optimizely Integration: Allow setting / overriding individual audience segmentation attributes #11
+- Optimizely Integration: Document DataFile specifics
+
+## v1.2.1
+
+- Codemod documentation
+- Codemods now only remove imports for toggles being removed
+
+## v1.2.0
+
+- Optimizely Integration: Example datafile for audience segmentation
+- Optimizely Integration: Rename setUserAttributes -> setAudienceSegmentationAttributes
+
+## v1.1.0
+
+- Optimizely Integration: Add capability to force toggles
+
+## v1.0.1
+
+- Missing Flow Type exports
+
+## v1.0.0
+
+- Initial release
