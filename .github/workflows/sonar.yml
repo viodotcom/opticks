@@ -34,8 +34,9 @@ jobs:
         with:
           args:
             -Dsonar.verbose=true
-            -Dsonar.projectVersion=${{github.ref_name}} 
-        env:
+            # TODO: pass in the latest release tag name
+            # -Dsonar.projectVersion=${{ xxx }}
+        env:        
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       
