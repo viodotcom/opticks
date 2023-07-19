@@ -16,7 +16,7 @@
     "jscodeshift": "jscodeshift",
     "prepare": "npm run build",
     "release": "npm run prepare && npx changeset publish",
-    "test": "jest src",
+    "test": "jest src --coverage",
     "test:watch": "jest --watch src",
     "changeset": "npx changeset"
   },

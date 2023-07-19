@@ -3,6 +3,15 @@ on:
   push:
     branches:
       - '**'
+  workflow_call:
+    secrets:
+      SONAR_HOST_URL:
+        description: "Sonar host"
+        required: true
+      SONAR_TOKEN:
+        description: "SonarQube token"
+        required: true      
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,4 +26,20 @@ jobs:
 
       - run: npm i
       - run: npm run build
-      - run: npm test
+
+      - name: Test
+        run: npm test
+
+      - name: Store reporting artifacts for Sonar
+        uses: actions/upload-artifact@v3
+        with:
+          name: sonar-report-artifacts
+          path: |
+            coverage/lcov.info
+
+  report:
+    needs: [build]
+    uses: ./.github/workflows/sonar.yml
+    secrets:
+      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

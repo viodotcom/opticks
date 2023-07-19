@@ -1,0 +1,47 @@
+name: sonar
+
+on:
+  workflow_call:
+    secrets:
+      SONAR_HOST_URL:
+        description: "Sonar host"
+        required: true    
+      SONAR_TOKEN:
+        description: "SonarQube token"
+        required: true
+
+env:
+  LANG: "en_US.UTF-8"
+  LANGUAGE: "en_US:en"
+  LC_ALL: "en_US.UTF-8"
+
+jobs:  
+  sonarqube:
+    name: Sonar analysis
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download reporting artifacts for Sonar
+        uses: actions/download-artifact@v3
+        with:
+          name: sonar-report-artifacts
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        with:
+          args:
+            -Dsonar.verbose=true
+            # TODO: pass in the latest release tag name
+            # -Dsonar.projectVersion=${{ xxx }}
+        env:        
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      
+      - name: Remove reporting artifacts for Sonar
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: sonar-report-artifacts
+          failOnError: false
