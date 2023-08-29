@@ -23,7 +23,7 @@ It can be used in a variety of ways:
 1.  Execute code or for a variant of a multi toggle
 1.  Execute code when a boolean toggle is on
 
-We use React at FindHotel and some of the code examples use JSX, but the code
+We use React at Vio.com and some of the code examples use JSX, but the code
 and concept is compatible with any front-end framework or architecture.
 
 The `booleanToggle` is the simplest toggle type to use for feature flagging, but
