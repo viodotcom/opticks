@@ -1,12 +1,7 @@
 import {defineConfig} from 'tsup'
 
 export default defineConfig({
-  entry: [
-    'src/simple.ts',
-    'src/optimizely.ts',
-    'src/transform/toggle.ts',
-    'src/transform/booleanToggle.ts'
-  ],
+  entry: ['src/simple.ts', 'src/optimizely.ts'],
   outDir: 'dist',
   format: ['cjs', 'esm'],
   dts: true,
