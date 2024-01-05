@@ -2417,7 +2417,7 @@ __metadata:
     jscodeshift: "npm:^0.14.0"
     meow: "npm:^13.1.0"
   bin:
-    opticks: cli.js
+    opticks: index.js
   languageName: unknown
   linkType: soft
 

@@ -7,7 +7,7 @@ export default defineConfig({
     'src/transform/toggle.ts',
     'src/transform/booleanToggle.ts'
   ],
-  outDir: 'lib',
+  outDir: 'dist',
   format: ['cjs', 'esm'],
   dts: true,
   sourcemap: true,

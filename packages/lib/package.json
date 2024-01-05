@@ -2,17 +2,17 @@
   "name": "opticks",
   "version": "4.2.0",
   "description": "FindHotel Toggle Flag JavaScript SDK",
-  "main": "lib/optimizely.js",
-  "module": "lib/optimizely.mjs",
-  "types": "lib/optimizely.d.ts",
+  "main": "dist/optimizely.js",
+  "module": "dist/optimizely.mjs",
+  "types": "dist/optimizely.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
   "scripts": {
     "build": "tsup",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
-    "clean:booleanToggle": "jscodeshift --transform lib/transform/booleanToggle.js  --parser=tsx --extensions=ts,tsx",
-    "clean:toggle": "jscodeshift --transform lib/transform/toggle.js --parser=tsx --extensions=ts,tsx",
+    "clean:booleanToggle": "jscodeshift --transform dist/transform/booleanToggle.js  --parser=tsx --extensions=ts,tsx",
+    "clean:toggle": "jscodeshift --transform dist/transform/toggle.js --parser=tsx --extensions=ts,tsx",
     "jscodeshift": "jscodeshift",
     "prepare": "npm run build",
     "release": "npm run prepare && npx changeset publish",
