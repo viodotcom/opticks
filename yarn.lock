@@ -2410,6 +2410,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cli@workspace:packages/cli":
+  version: 0.0.0-use.local
+  resolution: "cli@workspace:packages/cli"
+  dependencies:
+    jscodeshift: "npm:^0.14.0"
+    meow: "npm:^13.1.0"
+  bin:
+    opticks: cli.js
+  languageName: unknown
+  linkType: soft
+
 "cliui@npm:^6.0.0":
   version: 6.0.0
   resolution: "cliui@npm:6.0.0"
@@ -4986,6 +4997,13 @@ __metadata:
   version: 4.3.0
   resolution: "map-obj@npm:4.3.0"
   checksum: 1c19e1c88513c8abdab25c316367154c6a0a6a0f77e3e8c391bb7c0e093aefed293f539d026dc013d86219e5e4c25f23b0003ea588be2101ccd757bacc12d43b
+  languageName: node
+  linkType: hard
+
+"meow@npm:^13.1.0":
+  version: 13.1.0
+  resolution: "meow@npm:13.1.0"
+  checksum: 2dac9dbf99a17ce29618fe5919072a9b28e2aedb9547f9b1f15d046d5501dd6c14fe1f35f7a5665d0ee7111c98c4d359fcf3f985463ec5896dd50177363f442d
   languageName: node
   linkType: hard
 
