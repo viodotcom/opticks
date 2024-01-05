@@ -3,23 +3,19 @@
   "version": "1.0.0",
   "description": "The Opticks Command Line Interface",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "license": "MIT",
-  "type": "module",
   "bin": {
     "opticks": "dist/index.js"
   },
-  "files": [
-    "dist"
-  ],
+  "license": "MIT",
   "scripts": {
-    "build": "tsup",
+    "build": "npx tsc",
     "test": "jest src",
     "test:watch": "jest --watch src"
   },
   "dependencies": {
     "jscodeshift": "^0.14.0",
-    "meow": "^13.1.0"
+    "meow": "^13.1.0",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
