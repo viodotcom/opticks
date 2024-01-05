@@ -13,5 +13,10 @@
     "prettier": "^2.8.3"
   },
   "packageManager": "yarn@4.0.2",
-  "npmClient": "yarn"
+  "npmClient": "yarn",
+  "volta": {
+    "node": "20.8.0",
+    "npm": "10.1.0",
+    "yarn": "4.0.2"
+  }
 }

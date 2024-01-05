@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "The Opticks Command Line Interface",
   "license": "MIT",
+  "type":"module",
   "bin": {
     "opticks": "index.js"
   },
