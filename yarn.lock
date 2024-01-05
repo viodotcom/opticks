@@ -2588,6 +2588,8 @@ __metadata:
   dependencies:
     jscodeshift: "npm:^0.14.0"
     meow: "npm:^13.1.0"
+    tsup: "npm:^6.5.0"
+    typescript: "npm:^4.9.4"
   bin:
     opticks: index.js
   languageName: unknown
