@@ -1,14 +1,14 @@
 {
-  "name": "cli",
+  "name": "opticks-cli",
   "version": "1.0.0",
   "description": "The Opticks Command Line Interface",
-  "main": "dist/index.js",
+  "main": "dist/index.mjs",
   "bin": {
-    "opticks": "dist/index.js"
+    "opticks": "dist/index.mjs"
   },
   "license": "MIT",
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsup",
     "build:watch": "nodemon --watch src -e ts --exec \"yarn build\"",
     "test": "jest src",
     "test:watch": "jest --watch src"
@@ -16,6 +16,7 @@
   "dependencies": {
     "jscodeshift": "^0.14.0",
     "meow": "^13.1.0",
+    "read-pkg": "^9.0.1",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
