@@ -12,7 +12,7 @@ export async function clean(argv) {
     ) {
       const isWinner = winner === 'a' ? false : true
 
-      const cmd = `./node_modules/.bin/jscodeshift --transform ./node_modules/opticks-cli/dist/transform/toggle.mjs --parser=tsx --extensions=ts,tsx src --toggle=${id} --winner='${isWinner}'`
+      const cmd = `./node_modules/.bin/jscodeshift --transform ./node_modules/opticks-cli/dist/transform/toggle.mjs src --parser=tsx --extensions=ts,tsx --toggle=${id} --winner='${isWinner}'`
 
       console.log(cmd)
 
