@@ -4,6 +4,7 @@ import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import enquirer from 'enquirer'
 import {clean} from './commands/clean'
+import ora from 'ora'
 
 async function main() {
   const {prompt} = enquirer
@@ -39,12 +40,23 @@ async function main() {
             type: 'select',
             name: 'winner',
             message: 'Please enter the winning side of the experiment:',
-            choices: ['A', 'B', 'C']
+            choices: ['A', 'B']
           })
           argv.winner = response.winner.toLowerCase()
         }
 
-        clean(argv)
+        // clean(argv)
+
+        // const spinner = ora(
+        //   `Cleaning up the A side of experiment ${argv.id}`
+        // ).start()
+        // setTimeout(() => {
+        //   spinner.stop()
+        //   console.log('✅ Experiment cleaned successfully')
+        //   console.log('Results:')
+        //   console.log('0 errors')
+        //   console.log('3 files changed')
+        // }, 3000)
       }
     )
 
