@@ -5252,22 +5252,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lib@workspace:packages/lib":
-  version: 0.0.0-use.local
-  resolution: "lib@workspace:packages/lib"
-  dependencies:
-    "@changesets/cli": "npm:^2.26.0"
-    "@optimizely/optimizely-sdk": "npm:~4.4.3"
-    "@types/jest": "npm:^29.4.0"
-    jest: "npm:^29.4.0"
-    ts-jest: "npm:^29.0.5"
-    tsup: "npm:^6.5.0"
-    typescript: "npm:^4.9.4"
-  peerDependencies:
-    "@optimizely/optimizely-sdk": ~4.4.3
-  languageName: unknown
-  linkType: soft
-
 "lilconfig@npm:^2.0.5":
   version: 2.1.0
   resolution: "lilconfig@npm:2.1.0"
@@ -6047,6 +6031,22 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     opticks: dist/index.mjs
+  languageName: unknown
+  linkType: soft
+
+"opticks@workspace:packages/lib":
+  version: 0.0.0-use.local
+  resolution: "opticks@workspace:packages/lib"
+  dependencies:
+    "@changesets/cli": "npm:^2.26.0"
+    "@optimizely/optimizely-sdk": "npm:~4.4.3"
+    "@types/jest": "npm:^29.4.0"
+    jest: "npm:^29.4.0"
+    ts-jest: "npm:^29.0.5"
+    tsup: "npm:^6.5.0"
+    typescript: "npm:^4.9.4"
+  peerDependencies:
+    "@optimizely/optimizely-sdk": ~4.4.3
   languageName: unknown
   linkType: soft
 
