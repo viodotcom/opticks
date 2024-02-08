@@ -45,7 +45,7 @@ async function main() {
           argv.winner = response.winner.toLowerCase()
         }
 
-        // clean(argv)
+        clean(argv)
 
         // const spinner = ora(
         //   `Cleaning up the A side of experiment ${argv.id}`
@@ -55,7 +55,7 @@ async function main() {
         //   console.log('✅ Experiment cleaned successfully')
         //   console.log('Results:')
         //   console.log('0 errors')
-        //   console.log('3 files changed')
+        //   console.log('1 file changed')
         // }, 3000)
       }
     )

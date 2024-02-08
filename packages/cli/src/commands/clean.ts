@@ -14,7 +14,7 @@ export async function clean(argv) {
 
       const cmd = `./node_modules/.bin/jscodeshift --transform ./node_modules/opticks-cli/dist/transform/toggle.mjs src --parser=tsx --extensions=ts,tsx --toggle=${id} --winner='${isWinner}'`
 
-      console.log(cmd)
+      console.log(`Command that was run: ${cmd}`)
 
       exec(cmd, (error, stdout, stderr) => {
         if (error) {

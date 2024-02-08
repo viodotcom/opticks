@@ -5,7 +5,7 @@ export default defineConfig({
   outDir: 'dist',
   format: ['esm'],
   dts: false,
-  sourcemap: true,
+  sourcemap: false,
   clean: true,
-  minify: true
+  minify: false
 })
