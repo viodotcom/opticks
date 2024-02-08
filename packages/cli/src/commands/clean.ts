@@ -10,11 +10,7 @@ export async function clean(argv) {
       packageJson.dependencies &&
       Object.keys(packageJson.dependencies).includes('opticks')
     ) {
-      const isWinner = winner === 'a' ? false : true
-
-      const cmd = `./node_modules/.bin/jscodeshift --transform ./node_modules/opticks-cli/dist/transform/toggle.mjs src --parser=tsx --extensions=ts,tsx --toggle=${id} --winner='${isWinner}'`
-
-      console.log(`Command that was run: ${cmd}`)
+      const cmd = `./node_modules/.bin/jscodeshift --transform ./node_modules/opticks-cli/dist/transform/toggle.mjs src --parser=tsx --extensions=ts,tsx --toggle=${id} --winner=${winner}`
 
       exec(cmd, (error, stdout, stderr) => {
         if (error) {
