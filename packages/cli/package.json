@@ -3,15 +3,20 @@
   "version": "1.0.0",
   "description": "The Opticks Command Line Interface",
   "main": "dist/index.mjs",
-  "bin": {
-    "opticks-cli": "dist/index.mjs"
+  "bin": "dist/index.mjs",
+  "engines": {
+    "node": "16.13.1"
   },
-  "license": "MIT",
+  "license": "ISC",
+  "author": "Dale French",
   "scripts": {
     "build": "tsup",
     "build:watch": "nodemon --watch src -e ts --exec \"yarn build\"",
     "test": "jest src",
-    "test:watch": "jest --watch src"
+    "test:watch": "jest --watch src",
+    "prepare": "npm run build",
+    "release": "npm run prepare && npx changeset publish",
+    "changeset": "npx changeset"
   },
   "dependencies": {
     "enquirer": "^2.4.1",
