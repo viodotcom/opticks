@@ -9,7 +9,7 @@ async function main() {
   const {prompt} = enquirer
 
   const yarg = yargs(hideBin(process.argv))
-    .scriptName('opticks')
+    .scriptName('opticks-cli')
     .command(
       'clean',
       'Cleans up an experiment',

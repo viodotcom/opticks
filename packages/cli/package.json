@@ -4,7 +4,7 @@
   "description": "The Opticks Command Line Interface",
   "main": "dist/index.mjs",
   "bin": {
-    "opticks": "dist/index.mjs"
+    "opticks-cli": "dist/index.mjs"
   },
   "license": "MIT",
   "scripts": {
