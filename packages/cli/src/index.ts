@@ -4,7 +4,6 @@ import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import enquirer from 'enquirer'
 import {clean} from './commands/clean'
-import ora from 'ora'
 
 async function main() {
   const {prompt} = enquirer
@@ -45,18 +44,10 @@ async function main() {
           argv.winner = response.winner.toLowerCase()
         }
 
-        clean(argv)
+        const {success, message} = await clean(argv)
 
-        // const spinner = ora(
-        //   `Cleaning up the A side of experiment ${argv.id}`
-        // ).start()
-        // setTimeout(() => {
-        //   spinner.stop()
-        //   console.log('✅ Experiment cleaned successfully')
-        //   console.log('Results:')
-        //   console.log('0 errors')
-        //   console.log('1 file changed')
-        // }, 3000)
+        console.log(success)
+        console.log(message)
       }
     )
 
