@@ -28,7 +28,7 @@
     "jscodeshift"
   ],
   "engines": {
-    "node": "16.13.1"
+    "node": "20.8.0"
   },
   "author": "Jop de Klein",
   "license": "ISC",

@@ -5,7 +5,7 @@
   "main": "dist/index.mjs",
   "bin": "dist/index.mjs",
   "engines": {
-    "node": "16.13.1"
+    "node": "20.8.0"
   },
   "license": "ISC",
   "author": "Dale French",
