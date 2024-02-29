@@ -2,12 +2,9 @@
 
 import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
-import enquirer from 'enquirer'
 import {clean} from './commands/clean'
-import chalk from 'chalk'
 
 async function main() {
-  const {prompt} = enquirer
   const {log} = console
 
   const yarg = yargs(hideBin(process.argv))
@@ -26,33 +23,6 @@ async function main() {
         }
       },
       async (argv) => {
-        if (!argv.id) {
-          const response = await prompt({
-            type: 'input',
-            name: 'id',
-            message:
-              'Please enter the experiment ID you would like to clean up:',
-            validate: (i) => {
-              if (!i) {
-                log(chalk.red('Please enter a valid experiment ID'))
-                return false
-              }
-              return true
-            }
-          })
-          argv.id = response.id
-        }
-
-        if (!argv.winner) {
-          const response = await prompt({
-            type: 'select',
-            name: 'winner',
-            message: 'Please enter the winning side of the experiment:',
-            choices: ['A', 'B']
-          })
-          argv.winner = response.winner.toLowerCase()
-        }
-
         const {success, message} = await clean(argv)
 
         log(success)

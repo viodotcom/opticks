@@ -1,9 +1,45 @@
 import {readPackage} from 'read-pkg'
 import util from 'util'
 import {exec} from 'child_process'
+import enquirer from 'enquirer'
+import chalk from 'chalk'
 
 export async function clean(argv) {
+  console.log('ARGV', argv)
   const {id, winner} = argv
+  const {prompt} = enquirer
+  const {log} = console
+
+  if (!id) {
+    const response: {
+      id: string
+    } = await prompt({
+      type: 'input',
+      name: 'id',
+      message: 'Please enter the experiment ID you would like to clean up:',
+      validate: (i) => {
+        if (!i) {
+          log(chalk.red('Please enter a valid experiment ID'))
+          return false
+        }
+        return true
+      }
+    })
+    console.log(response)
+    argv.id = response.id
+  }
+
+  if (!argv.winner) {
+    const response: {
+      winner: 'a' | 'b'
+    } = await prompt({
+      type: 'select',
+      name: 'winner',
+      message: 'Please enter the winning side of the experiment:',
+      choices: ['A', 'B']
+    })
+    argv.winner = response.winner.toLowerCase()
+  }
 
   try {
     const packageJson = await readPackage()
@@ -18,7 +54,7 @@ export async function clean(argv) {
       const {stdout, stderr} = await execute(cmd)
 
       if (stderr) {
-        console.error(`Error executing jscodeshift command: ${stderr}`)
+        log(chalk.red(`Error executing jscodeshift command: ${stderr}`))
       }
 
       const numCleanedFiles = Number(
