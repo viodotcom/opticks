@@ -3,6 +3,7 @@ import util from 'util'
 import {exec} from 'child_process'
 import enquirer from 'enquirer'
 import chalk from 'chalk'
+import ora from 'ora'
 
 export async function clean({id, winner}) {
   const {prompt} = enquirer
@@ -43,6 +44,7 @@ export async function clean({id, winner}) {
 
   try {
     const packageJson = await readPackage()
+
     if (
       packageJson.dependencies &&
       Object.keys(packageJson.dependencies).includes('opticks')
@@ -51,10 +53,13 @@ export async function clean({id, winner}) {
 
       const execute = util.promisify(exec)
 
+      const spinner = ora(`Cleaning up ${id} to the ${winner} side`).start()
+
       try {
         const {stdout, stderr} = await execute(cmd)
 
         if (stderr) {
+          spinner.stop()
           return {
             success: false,
             message: `Error occurred while executing jscodeshift command: ${stderr}`
@@ -68,11 +73,15 @@ export async function clean({id, winner}) {
             .split(' ')[0]
         )
 
+        spinner.stop()
+
         return {
           success: numCleanedFiles > 0,
           message: stdout
         }
       } catch (error) {
+        spinner.stop()
+
         return {
           success: false,
           message: `Error occurred while executing jscodeshift command: ${error}`
