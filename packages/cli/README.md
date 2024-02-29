@@ -3,6 +3,8 @@
 ## Usage
 
 ```shell
+npm install opticks-cli jscodeshift --save-dev
+
 npx opticks-cli clean
 
 // OR
