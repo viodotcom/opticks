@@ -3,10 +3,9 @@
 import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import {clean} from './commands/clean'
+import {log} from './utils/log'
 
 async function main() {
-  const {log} = console
-
   const yarg = yargs(hideBin(process.argv))
     .scriptName('opticks-cli')
     .command(
@@ -25,8 +24,7 @@ async function main() {
       async (argv) => {
         const {success, message} = await clean(argv)
 
-        log(success)
-        log(message)
+        log(message, success ? 'green' : 'red')
       }
     )
     .demandCommand()

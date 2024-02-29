@@ -4,11 +4,12 @@ import {exec} from 'child_process'
 import enquirer from 'enquirer'
 import chalk from 'chalk'
 
-export async function clean(argv) {
-  console.log('ARGV', argv)
-  const {id, winner} = argv
+export async function clean({id, winner}) {
   const {prompt} = enquirer
   const {log} = console
+
+  let experimentId: string
+  let experimentWinner: string
 
   if (!id) {
     const response: {
@@ -25,11 +26,10 @@ export async function clean(argv) {
         return true
       }
     })
-    console.log(response)
-    argv.id = response.id
+    experimentId = response.id
   }
 
-  if (!argv.winner) {
+  if (!winner) {
     const response: {
       winner: 'a' | 'b'
     } = await prompt({
@@ -38,7 +38,7 @@ export async function clean(argv) {
       message: 'Please enter the winning side of the experiment:',
       choices: ['A', 'B']
     })
-    argv.winner = response.winner.toLowerCase()
+    experimentWinner = response.winner.toLowerCase()
   }
 
   try {
@@ -47,26 +47,36 @@ export async function clean(argv) {
       packageJson.dependencies &&
       Object.keys(packageJson.dependencies).includes('opticks')
     ) {
-      const cmd = `./node_modules/.bin/jscodeshift --transform ./node_modules/opticks-cli/dist/transform/toggle.mjs src --parser=tsx --extensions=ts,tsx --toggle=${id} --winner=${winner}`
+      const cmd = `./node_modules/.bin/jscodeshift --transform ./node_modules/opticks-cli/dist/transform/toggle.mjs src --parser=tsx --extensions=ts,tsx --toggle=${experimentId} --winner=${experimentWinner}`
 
       const execute = util.promisify(exec)
 
-      const {stdout, stderr} = await execute(cmd)
+      try {
+        const {stdout, stderr} = await execute(cmd)
 
-      if (stderr) {
-        log(chalk.red(`Error executing jscodeshift command: ${stderr}`))
-      }
+        if (stderr) {
+          return {
+            success: false,
+            message: `Error occurred while executing jscodeshift command: ${stderr}`
+          }
+        }
 
-      const numCleanedFiles = Number(
-        stdout
-          .split('\n')
-          .find((i) => i.includes('ok'))
-          .split(' ')[0]
-      )
+        const numCleanedFiles = Number(
+          stdout
+            .split('\n')
+            .find((i) => i.includes('ok'))
+            .split(' ')[0]
+        )
 
-      return {
-        success: numCleanedFiles > 0,
-        message: stdout
+        return {
+          success: numCleanedFiles > 0,
+          message: stdout
+        }
+      } catch (error) {
+        return {
+          success: false,
+          message: `Error occurred while executing jscodeshift command: ${error}`
+        }
       }
     } else {
       return {
