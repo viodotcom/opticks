@@ -8,8 +8,8 @@ export async function clean({id, winner}) {
   const {prompt} = enquirer
   const {log} = console
 
-  let experimentId: string
-  let experimentWinner: string
+  let experimentId: string = id
+  let experimentWinner: string = winner
 
   if (!id) {
     const response: {
