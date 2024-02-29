@@ -19,9 +19,9 @@
     "changeset": "npx changeset"
   },
   "dependencies": {
+    "chalk": "^5.3.0",
     "enquirer": "^2.4.1",
     "jscodeshift": "^0.15.1",
-    "meow": "^13.1.0",
     "read-pkg": "^9.0.1",
     "yargs": "^17.7.2"
   },

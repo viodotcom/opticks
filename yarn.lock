@@ -2447,6 +2447,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "chalk@npm:5.3.0"
+  checksum: 8297d436b2c0f95801103ff2ef67268d362021b8210daf8ddbe349695333eb3610a71122172ff3b0272f1ef2cf7cc2c41fdaa4715f52e49ffe04c56340feed09
+  languageName: node
+  linkType: hard
+
 "char-regex@npm:^1.0.2":
   version: 1.0.2
   resolution: "char-regex@npm:1.0.2"
@@ -5186,13 +5193,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"meow@npm:^13.1.0":
-  version: 13.2.0
-  resolution: "meow@npm:13.2.0"
-  checksum: d5b339ae314715bcd0b619dd2f8a266891928e21526b4800d49b4fba1cc3fff7e2c1ff5edd3344149fac841bc2306157f858e8c4d5eaee4d52ce52ad925664ce
-  languageName: node
-  linkType: hard
-
 "meow@npm:^6.0.0":
   version: 6.1.1
   resolution: "meow@npm:6.1.1"
@@ -5630,10 +5630,10 @@ __metadata:
   resolution: "opticks-cli@workspace:packages/cli"
   dependencies:
     "@types/jest": "npm:^29.5.11"
+    chalk: "npm:^5.3.0"
     enquirer: "npm:^2.4.1"
     jest: "npm:^29.7.0"
     jscodeshift: "npm:^0.15.1"
-    meow: "npm:^13.1.0"
     nodemon: "npm:^3.0.2"
     read-pkg: "npm:^9.0.1"
     ts-jest: "npm:^29.1.1"

@@ -4,9 +4,11 @@ import yargs from 'yargs'
 import {hideBin} from 'yargs/helpers'
 import enquirer from 'enquirer'
 import {clean} from './commands/clean'
+import chalk from 'chalk'
 
 async function main() {
   const {prompt} = enquirer
+  const {log} = console
 
   const yarg = yargs(hideBin(process.argv))
     .scriptName('opticks-cli')
@@ -29,7 +31,14 @@ async function main() {
             type: 'input',
             name: 'id',
             message:
-              'Please enter the experiment ID you would like to clean up:'
+              'Please enter the experiment ID you would like to clean up:',
+            validate: (i) => {
+              if (!i) {
+                log(chalk.red('Please enter a valid experiment ID'))
+                return false
+              }
+              return true
+            }
           })
           argv.id = response.id
         }
@@ -46,10 +55,11 @@ async function main() {
 
         const {success, message} = await clean(argv)
 
-        console.log(success)
-        console.log(message)
+        log(success)
+        log(message)
       }
     )
+    .demandCommand()
 
   yarg.parse(process.argv.slice(2))
 }
