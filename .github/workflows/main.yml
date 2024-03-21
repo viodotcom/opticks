@@ -8,13 +8,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16.13.1'
-          cache: 'npm'
+      - uses: actions/checkout@v4
 
-      - run: npm i
-      - run: npm run build
-      - run: npm test
+      - name: Enable Corepack before setting up Node
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.8.0'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build lib package
+        run: yarn workspace opticks build
+
+      - name: Test lib package
+        run: yarn workspace opticks test
+
+      - name: Build cli package
+        run: yarn workspace opticks-cli build
+
+      - name: Test cli package
+        run: yarn workspace opticks-cli test
