@@ -16,6 +16,16 @@ jobs:
           node-version: '20.8.0'
           cache: 'yarn'
 
+      # Enable Corepack
+      - name: Enable Corepack
+        run: corepack enable
+
+      # Verify Corepack and Yarn versions
+      - name: Verify Corepack and Yarn versions
+        run: |
+          corepack --version
+          yarn --version
+
       - run: yarn install
       - name: Create Release Pull Request or Publish
         id: changesets
