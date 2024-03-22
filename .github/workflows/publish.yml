@@ -11,14 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20.8.0'
-          cache: 'yarn'
 
       # Enable Corepack
       - name: Enable Corepack
         run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.8.0'
+          cache: 'yarn'
 
       # Verify Corepack and Yarn versions
       - name: Verify Corepack and Yarn versions
