@@ -34,15 +34,28 @@ Then configure the rules you want to use under the rules section.
 ```json
 {
     "rules": {
-        "opticks/rule-name": 2
+        "opticks/toggle": "warn",
+    }
+}
+```
+
+
+For the opticks rules to work, you also need to add your `experiments` configuration settings section.
+
+```json
+{
+    "settings": {
+        "opticks": {
+            "experiments": {
+                "foo": "a", 
+                "bar": null, 
+                "baz": "b"
+            }
+        }
     }
 }
 ```
 
 ## Rules
 
-<!-- begin auto-generated rules list -->
-TODO: Run eslint-doc-generator to generate the rules list.
-<!-- end auto-generated rules list -->
-
-
+* `opticks/toggle`: Detects stale code from expired Opticks experiments, and other common mistakes
