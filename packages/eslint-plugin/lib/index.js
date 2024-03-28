@@ -15,4 +15,10 @@ const requireIndex = require('requireindex')
 //------------------------------------------------------------------------------
 
 // import all rules in lib/rules
-module.exports.rules = requireIndex(__dirname + '/rules')
+module.exports = {
+  meta: {
+    name: 'eslint-plugin-opticks',
+    version: '0.0.1'
+  },
+  rules: requireIndex(__dirname + '/rules')
+}
