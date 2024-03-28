@@ -41,17 +41,6 @@ module.exports = {
     // while .eslintrc.js reads from `settings`
     const settings = context.settings || settings;
     const { opticks } = settings;
-    // variables should be defined here
-
-    //----------------------------------------------------------------------
-    // Helpers
-    //----------------------------------------------------------------------
-
-    // any helper functions should go here or else delete this section
-
-    //----------------------------------------------------------------------
-    // Public
-    //----------------------------------------------------------------------
 
     return {
       CallExpression: (node) => {
@@ -60,6 +49,8 @@ module.exports = {
         } = node;
         // TODO: look for imported toggles from opticks only
         if (name === "toggle") {
+
+          // Check for invalid number of variants
           if (node.arguments.length === 2) {
             return context.report({
               messageId: "InvalidNrOfVariants",
@@ -79,9 +70,10 @@ module.exports = {
               ],
             });
           }
-          // Clean up
+          
           const winningVariant = opticks.experiments[node.arguments[0].value];
 
+          // Check if the experiment is not configured
           if (typeof winningVariant === 'undefined') {
             return context.report({
               messageId: "ExperimentNotConfigured",
@@ -94,6 +86,7 @@ module.exports = {
           const winningVariantIndex = winningVariant === "a" ? 1 : 2;
           const winningVariantContent = node.arguments[winningVariantIndex].raw;
 
+          // Check if the experiment concluded
           if (typeof winningVariant === "string") {
             return context.report({
               messageId: "ExperimentConcluded",
@@ -120,8 +113,7 @@ module.exports = {
             });
           }
         }
-      },
-      // visitor functions for different types of nodes
+      }
     };
   },
 };
