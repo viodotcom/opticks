@@ -1,6 +1,7 @@
 /**
  * @fileoverview Opticks
- * @author Jop
+ * @author Jop de Klein
+ * @author Gerrit Burger
  */
 'use strict'
 
