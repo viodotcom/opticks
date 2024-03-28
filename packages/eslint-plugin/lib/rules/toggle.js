@@ -42,13 +42,26 @@ module.exports = {
     const settings = context.settings || settings
     const {opticks} = settings
 
+    let isToggleImportedFromOpticks = false
+
     return {
+      ImportDeclaration: (node) => {
+        const importPath = node.source.value
+
+        if (importPath === 'opticks') {
+          node.specifiers.forEach((specifier) => {
+            if (specifier.imported.name === 'toggle') {
+              isToggleImportedFromOpticks = true
+            }
+          })
+        }
+      },
       CallExpression: (node) => {
         const {
           callee: {name}
         } = node
-        // TODO: look for imported toggles from opticks only
-        if (name === 'toggle') {
+
+        if (name === 'toggle' && isToggleImportedFromOpticks) {
           // Check for invalid number of variants
           if (node.arguments.length === 2) {
             return context.report({
