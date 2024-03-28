@@ -13,7 +13,8 @@ module.exports = {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Detects stale code from expired Opticks experiments',
+      description:
+        'Detects stale code from expired Opticks experiments, and other common mistakes',
       recommended: false,
       url: null // URL to the documentation page for this rule
     },
@@ -101,12 +102,10 @@ module.exports = {
               messageId: 'ExperimentConcluded',
               data: {winningVariant},
               node,
-              suggests: [
+              suggest: [
                 {
                   messageId: 'AddWinningVariant',
                   fix: (fixer) => {
-                    // TODO: Add tests
-                    console.log(winningVariantContent)
                     return fixer.replaceText(node, winningVariantContent)
                   }
                 }
