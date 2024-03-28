@@ -2,14 +2,14 @@
  * @fileoverview Opticks
  * @author Jop
  */
-"use strict";
+'use strict'
 
 //------------------------------------------------------------------------------
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require("../../../lib/rules/toggle"),
-  RuleTester = require("eslint").RuleTester;
+const rule = require('../../../lib/rules/toggle'),
+  RuleTester = require('eslint').RuleTester
 
 //------------------------------------------------------------------------------
 // Tests
@@ -17,15 +17,15 @@ const rule = require("../../../lib/rules/toggle"),
 
 RuleTester.setDefaultConfig({
   settings: {
-    opticks: { experiments: { foo: "a", bar: undefined, baz: "b" } },
-  },
-});
-const ruleTester = new RuleTester();
+    opticks: {experiments: {foo: 'a', bar: undefined, baz: 'b'}}
+  }
+})
+const ruleTester = new RuleTester()
 
-ruleTester.run("toggle", rule, {
+ruleTester.run('toggle', rule, {
   valid: [
-    { code: "toggle('bar', 'a', 'b')" },
-    { code: "toggle('nonexistent', 'a', 'b')" },
+    {code: "toggle('bar', 'a', 'b')"},
+    {code: "toggle('nonexistent', 'a', 'b')"}
   ],
   invalid: [
     {
@@ -33,48 +33,48 @@ ruleTester.run("toggle", rule, {
       errors: [
         {
           message:
-            "Looks like this experiment concluded, and can be cleaned. The winning variant is a.",
-          type: "CallExpression",
-        },
+            'Looks like this experiment concluded, and can be cleaned. The winning variant is a.',
+          type: 'CallExpression'
+        }
       ],
-      output: "'a'",
+      output: "'a'"
     },
     {
       code: "toggle('baz', 'a', 'b')",
       errors: [
         {
-          messageId: "ExperimentConcluded",
-          type: "CallExpression",
-        },
+          messageId: 'ExperimentConcluded',
+          type: 'CallExpression'
+        }
       ],
-      output: "'b'",
+      output: "'b'"
     },
     {
       // TODO: make tests work with const too
       code: "var intermediateVariable = toggle('bar', 'a', 'b')",
       errors: [
         {
-          messageId: "VariableAssignment",
-          type: "CallExpression",
-        },
+          messageId: 'VariableAssignment',
+          type: 'CallExpression'
+        }
       ],
-      output: null,
+      output: null
     },
     {
       code: "toggle('bar', 'a')",
       errors: [
         {
-          messageId: "InvalidNrOfVariants",
-          type: "CallExpression",
+          messageId: 'InvalidNrOfVariants',
+          type: 'CallExpression',
           suggestions: [
             {
-              messageId: "AddNullBVariant",
-              output: "toggle('bar', 'a', null)",
-            },
-          ],
-        },
+              messageId: 'AddNullBVariant',
+              output: "toggle('bar', 'a', null)"
+            }
+          ]
+        }
       ],
-      output: null,
+      output: null
     },
     {
       code: `var Foo = styled('div')\`
@@ -83,9 +83,9 @@ ruleTester.run("toggle", rule, {
         \`
       `,
       errors: [
-        "This toggle is not called from a function, this might not be what you want to do because it might execute before Opticks received the user id. Is this intended?",
+        'This toggle is not called from a function, this might not be what you want to do because it might execute before Opticks received the user id. Is this intended?'
       ],
-      output: null,
-    },
-  ],
-});
+      output: null
+    }
+  ]
+})
