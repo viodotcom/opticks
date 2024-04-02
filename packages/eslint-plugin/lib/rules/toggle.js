@@ -47,7 +47,7 @@ module.exports = {
 
         if (importPath.includes('opticks')) {
           node.specifiers.forEach((specifier) => {
-            if (specifier.imported.name === 'toggle') {
+            if (specifier.imported?.name === 'toggle') {
               settings.isToggleImportedFromOpticks = true
             }
           })
