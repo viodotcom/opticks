@@ -57,8 +57,7 @@ ruleTester.run('toggle', rule, {
       code: "toggle('foo', 'a', 'b')",
       errors: [
         {
-          message:
-            'Looks like this experiment concluded, and can be cleaned up. The winning variant is a.',
+          messageId: 'ExperimentConcluded',
           type: 'CallExpression'
         }
       ],
