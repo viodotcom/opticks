@@ -1,6 +1,6 @@
 # Toggle (`opticks/toggle`)
 
-Detects stale code from expired Opticks experiments, and other common mistakes related to toggles.
+Detects stale code from expired [Opticks](https://www.npmjs.com/package/opticks) experiments, and other common mistakes related to toggles.
 
 ## Rule Details
 
