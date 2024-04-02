@@ -27,8 +27,6 @@ module.exports = {
         'Looks like this experiment is not configured. Please make sure the experiment is added to the experiments config file.',
       ExperimentConcluded:
         'Looks like this experiment concluded, and can be cleaned up. The winning variant is {{winningVariant}}.',
-      AddWinningVariant:
-        'If the experiment is concluded, add the winning variant.',
       VariableAssignment:
         'It is okay to assign the result of a toggle to a variable, but you might be better off calling the toggle inline for automatic clean up.',
       InvalidNrOfVariants:
@@ -89,25 +87,14 @@ module.exports = {
             })
           }
 
-          // TODO: Support unlimited amount of arguments
-          // TODO: Support arrow function replacement
-          const winningVariantIndex = winningVariant === 'a' ? 1 : 2
-          const winningVariantContent = node.arguments[winningVariantIndex].raw
-
           // Check if the experiment concluded
+          // TODO: Support unlimited amount of arguments
+          // TODO: Support replacement, including arrow functions
           if (typeof winningVariant === 'string') {
             return context.report({
               messageId: 'ExperimentConcluded',
               data: {winningVariant},
-              node,
-              suggest: [
-                {
-                  messageId: 'AddWinningVariant',
-                  fix: (fixer) => {
-                    return fixer.replaceText(node, winningVariantContent)
-                  }
-                }
-              ]
+              node
             })
           }
 

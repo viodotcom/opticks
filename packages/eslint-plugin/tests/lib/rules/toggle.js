@@ -59,13 +59,7 @@ ruleTester.run('toggle', rule, {
         {
           message:
             'Looks like this experiment concluded, and can be cleaned up. The winning variant is a.',
-          type: 'CallExpression',
-          suggestions: [
-            {
-              messageId: 'AddWinningVariant',
-              output: "'a'"
-            }
-          ]
+          type: 'CallExpression'
         }
       ],
       output: null
@@ -75,13 +69,7 @@ ruleTester.run('toggle', rule, {
       errors: [
         {
           messageId: 'ExperimentConcluded',
-          type: 'CallExpression',
-          suggestions: [
-            {
-              messageId: 'AddWinningVariant',
-              output: "'b'"
-            }
-          ]
+          type: 'CallExpression'
         }
       ],
       output: null
