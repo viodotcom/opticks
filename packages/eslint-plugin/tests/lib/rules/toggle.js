@@ -1,8 +1,6 @@
 /**
  * @fileoverview Opticks
- * @author Gerrit
- * @warning These test do not work with the isToggleImportedFromOpticks logic in the rules.
- * To run the test, set isToggleImportedFromOpticks to "true" in the rule.
+ * @author Gerrit Burger
  */
 'use strict'
 
@@ -19,7 +17,9 @@ const rule = require('../../../lib/rules/toggle'),
 
 RuleTester.setDefaultConfig({
   settings: {
-    opticks: {experiments: {foo: 'a', bar: null, baz: 'b'}}
+    opticks: {experiments: {foo: 'a', bar: null, baz: 'b'}},
+    // Mock the import of the toggle function from the opticks package
+    isToggleImportedFromOpticks: true
   }
 })
 const ruleTester = new RuleTester()

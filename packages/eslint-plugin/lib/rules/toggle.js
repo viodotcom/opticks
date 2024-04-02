@@ -39,12 +39,9 @@ module.exports = {
   },
 
   create(context) {
-    // QUESTION it seems the test runner reads from `context.settings`
-    // while .eslintrc.js reads from `settings`
+    // The test runner reads from `context.settings`, while .eslintrc.js reads from `settings`
     const settings = context.settings || settings
     const {opticks} = settings
-
-    let isToggleImportedFromOpticks = false
 
     return {
       ImportDeclaration: (node) => {
@@ -53,7 +50,7 @@ module.exports = {
         if (importPath === 'opticks') {
           node.specifiers.forEach((specifier) => {
             if (specifier.imported.name === 'toggle') {
-              isToggleImportedFromOpticks = true
+              settings.isToggleImportedFromOpticks = true
             }
           })
         }
@@ -63,7 +60,7 @@ module.exports = {
           callee: {name}
         } = node
 
-        if (name === 'toggle' && isToggleImportedFromOpticks) {
+        if (name === 'toggle' && settings.isToggleImportedFromOpticks) {
           // Check for invalid number of variants
           if (node.arguments.length === 2) {
             return context.report({
