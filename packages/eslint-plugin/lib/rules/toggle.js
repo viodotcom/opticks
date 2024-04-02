@@ -26,7 +26,7 @@ module.exports = {
       ExperimentNotConfigured:
         'Looks like this experiment is not configured. Please make sure the experiment is added to the experiments config file.',
       ExperimentConcluded:
-        'Looks like this experiment concluded, and can be cleaned up. The winning variant is {{winningVariant}}.',
+        'Looks like this experiment has concluded, and can be cleaned up. The winning variant is {{winningVariant}}.',
       VariableAssignment:
         'It is okay to assign the result of a toggle to a variable, but you might be better off calling the toggle inline for automatic clean up.',
       InvalidNrOfVariants:
