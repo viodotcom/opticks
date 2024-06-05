@@ -1,6 +1,5 @@
 /** @deprecated */
 import type {BooleanToggleType, ToggleIdType, VariantType} from '../types'
-import {booleanToggle as baseBooleanToggle} from '../core/booleanToggle'
 import {toggle as baseToggle} from '../core/toggle'
 
 // This implementation expects you to populate a list of boolean toggles in
@@ -35,8 +34,6 @@ export const getBooleanToggle = (toggleId: ToggleIdType) => {
     ? booleanToggleList[lowerCaseToggleId]
     : false
 }
-
-export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
 export const getToggle = (toggleId: ToggleIdType): VariantType => {
   const toggle = toggleList[toggleId && toggleId.toLowerCase()]

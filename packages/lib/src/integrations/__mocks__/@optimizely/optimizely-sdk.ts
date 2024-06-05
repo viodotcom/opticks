@@ -10,8 +10,17 @@ export const createInstanceMock = jest.fn(() => ({
   notificationCenter: {
     addNotificationListener: addNotificationListenerMock
   },
-  activate: activateMock
+  activate: activateMock,
+  createUserContext: optimizelyUserContextMock
 }))
+
+export const decideMock = jest.fn((toggleKey) => ({
+  enabled: toggleKey === "foo"
+}))
+export const optimizelyUserContextMock = jest.fn((userId, attributes) => ({
+  decide: decideMock
+}))
+    
 
 export const isFeatureEnabledMock = jest.fn((toggleId) => toggleId === 'foo')
 
@@ -38,8 +47,12 @@ export const activateMock = jest.fn((toggleId, userId) => {
   return shouldReturnB && 'b'
 })
 
+const originalModule = jest.requireActual('@optimizely/optimizely-sdk')
+
 const mock = {
+  ...originalModule,
   createInstance: createInstanceMock
 }
+
 
 export default mock

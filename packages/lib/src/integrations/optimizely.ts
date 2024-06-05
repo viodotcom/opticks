@@ -1,6 +1,5 @@
-import OptimizelyLib, {EventDispatcher} from '@optimizely/optimizely-sdk'
+import OptimizelyLib, {EventDispatcher, Client, OptimizelyUserContext, NotificationListener, ListenerPayload} from '@optimizely/optimizely-sdk'
 import {ToggleFuncReturnType, ToggleIdType, VariantType} from '../types'
-import {booleanToggle as baseBooleanToggle} from '../core/booleanToggle'
 import {toggle as baseToggle} from '../core/toggle'
 
 type UserIdType = string
@@ -22,9 +21,10 @@ export const NOTIFICATION_TYPES = {
 }
 
 let optimizely = OptimizelyLib // reference to injected Optimizely library
-let optimizelyClient: OptimizelyLib.Client | null // reference to active Optimizely instance
+let optimizelyClient: Client | null // reference to active Optimizely instance
 let userId: UserIdType
 let audienceSegmentationAttributes: AudienceSegmentationAttributesType = {}
+let userContext: OptimizelyUserContext
 
 type FeatureEnabledCacheType = {
   [key in ToggleIdType]: BooleanToggleValueType
@@ -120,7 +120,7 @@ const voidEventDispatcher = {
 }
 
 export enum ExperimentType {
-  flag = 'feature',
+  flag = 'flag',
   mvt = 'feature-test'
 }
 
@@ -131,7 +131,7 @@ export enum ExperimentType {
  *
  * It would be best if Opticks abstracts this difference from the client in future versions.
  */
-interface ActivateMVTNotificationPayload extends OptimizelyLib.ListenerPayload {
+interface ActivateMVTNotificationPayload extends ListenerPayload {
   type: ExperimentType.mvt
   decisionInfo: {
     experimentKey: ToggleIdType
@@ -139,7 +139,7 @@ interface ActivateMVTNotificationPayload extends OptimizelyLib.ListenerPayload {
   }
 }
 interface ActivateFlagNotificationPayload
-  extends OptimizelyLib.ListenerPayload {
+  extends ListenerPayload {
   type: ExperimentType.flag
   decisionInfo: {
     featureKey: ToggleIdType
@@ -163,9 +163,9 @@ export type ActivateNotificationPayload =
  */
 export const initialize = (
   datafile: OptimizelyDatafileType,
-  onExperimentDecision: OptimizelyLib.NotificationListener<ActivateNotificationPayload> = voidActivateHandler,
+  onExperimentDecision: NotificationListener<ActivateNotificationPayload> = voidActivateHandler,
   eventDispatcher: EventDispatcher = voidEventDispatcher
-): OptimizelyLib.Client => {
+): Client => {
   optimizelyClient = optimizely.createInstance({
     datafile,
     eventDispatcher: eventDispatcher
@@ -182,10 +182,10 @@ export const initialize = (
  * @returns void
  */
 export const addActivateListener = (
-  listener: OptimizelyLib.NotificationListener<ActivateNotificationPayload>
+  listener: NotificationListener<ActivateNotificationPayload>
 ) =>
   optimizelyClient.notificationCenter.addNotificationListener(
-    NOTIFICATION_TYPES.DECISION,
+    OptimizelyLib.enums.NOTIFICATION_TYPES.DECISION,
     listener
   )
 
@@ -207,7 +207,7 @@ const validateUserId = (id) => {
   if (!id) throw new Error('Opticks: Fatal error: user id is not set')
 }
 
-const getOrSetCachedFeatureEnabled = (
+const getToggleDecisionStatus = (
   toggleId: ToggleIdType
 ): BooleanToggleValueType => {
   validateUserId(userId)
@@ -219,11 +219,10 @@ const getOrSetCachedFeatureEnabled = (
     return typeof value === 'boolean' ? value : DEFAULT
   }
 
-  return (featureEnabledCache[toggleId] = optimizelyClient.isFeatureEnabled(
-    toggleId,
-    userId,
-    audienceSegmentationAttributes
-  ))
+  userContext = optimizelyClient.createUserContext(userId, audienceSegmentationAttributes)
+  const decision = userContext.decide(toggleId)
+
+  return (featureEnabledCache[toggleId] = decision.enabled)
 }
 
 /**
@@ -244,33 +243,26 @@ export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
   let index: number
   let isInAnyAudience = false
 
-  for (index = 0; index < endIndex; index++) {
-    const rolloutRule = config.experimentKeyMap[rollout.experiments[index].key]
+  for (index = 0; index <= endIndex; index++) {
+    const rolloutRule = rollout.experiments[index]
 
-    // The method `__checkIfUserIsInAudience()` will return `{result, reasons}` for versions > 4.5.0
-    // For versions < 4.5.0 it will return `result` only.
-    //
-    // Reference: https://github.com/optimizely/javascript-sdk/blob/v4.4.3/packages/optimizely-sdk/lib/core/decision_service/index.js#L230
+    // Reference: https://github.com/optimizely/javascript-sdk/blob/851b06622fa6a0239500b3b65e2d3937334960de/lib/core/decision_service/index.ts#L403
     const decisionIfUserIsInAudience =
       // @ts-expect-error we're being naughty here and using internals
-      optimizelyClient.decisionService.__checkIfUserIsInAudience(
+      optimizelyClient.decisionService.checkIfUserIsInAudience(
         config,
-        rolloutRule.key,
+        rolloutRule,
         'rule',
-        userId,
+        userContext,
         audienceSegmentationAttributes,
         ''
       )
 
-    if (decisionIfUserIsInAudience && !isPausedBooleanToggle(rolloutRule))
+    if (decisionIfUserIsInAudience.result && !isPausedBooleanToggle(rolloutRule))
       isInAnyAudience = true
   }
 
-  const isEveryoneElseRulePaused = isPausedBooleanToggle(
-    config.experimentKeyMap[rollout.experiments[endIndex].key]
-  )
-
-  return isInAnyAudience || !isEveryoneElseRulePaused
+  return isInAnyAudience
 }
 
 /**
@@ -291,13 +283,6 @@ const isPausedBooleanToggle = (rolloutRule: {
     trafficAllocationVariation.endOfRange === 10000
   )
 }
-
-const getBooleanToggle = getOrSetCachedFeatureEnabled
-
-/**
- * @deprecated Since the `toggle` function supports both flags and MVT experiments
- */
-export const booleanToggle = baseBooleanToggle(getBooleanToggle)
 
 const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
   validateUserId(userId)
@@ -320,7 +305,7 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
 }
 
 const convertBooleanToggleToFeatureVariant = (toggleId: ToggleIdType) => {
-  const isFeatureEnabled = getBooleanToggle(toggleId)
+  const isFeatureEnabled = getToggleDecisionStatus(toggleId)
   return isFeatureEnabled ? 'b' : 'a'
 }
 
