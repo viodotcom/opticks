@@ -16,9 +16,7 @@ type ToggleValueType = ExperimentToggleValueType | BooleanToggleValueType
 
 export type OptimizelyDatafileType = object
 
-export const NOTIFICATION_TYPES = {
-  DECISION: 'DECISION:type, userId, attributes, decisionInfo'
-}
+export const NOTIFICATION_TYPES = OptimizelyLib.enums.NOTIFICATION_TYPES
 
 let optimizely = OptimizelyLib // reference to injected Optimizely library
 let optimizelyClient: Client | null // reference to active Optimizely instance
@@ -185,7 +183,7 @@ export const addActivateListener = (
   listener: NotificationListener<ActivateNotificationPayload>
 ) =>
   optimizelyClient.notificationCenter.addNotificationListener(
-    OptimizelyLib.enums.NOTIFICATION_TYPES.DECISION,
+    NOTIFICATION_TYPES.DECISION,
     listener
   )
 
@@ -333,20 +331,6 @@ export function toggle(toggleId: ToggleIdType, ...variants) {
       ...variants
     )
   }
-}
-
-/**
- * Get all enabled features for the user
- *
- * @deprecated
- */
-export const getEnabledFeatures = () => {
-  validateUserId(userId)
-
-  return optimizelyClient.getEnabledFeatures(
-    userId,
-    audienceSegmentationAttributes
-  )
 }
 
 /**

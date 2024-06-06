@@ -6,8 +6,7 @@ import {
   setAudienceSegmentationAttributes,
   resetAudienceSegmentationAttributes,
   toggle,
-  forceToggles,
-  getEnabledFeatures
+  forceToggles
 } from './optimizely'
 
 // During the tests:
@@ -21,8 +20,6 @@ import Optimizely, {
   createInstanceMock,
   // @ts-expect-error
   isFeatureEnabledMock,
-  // @ts-expect-error
-  getEnabledFeaturesMock,
   // @ts-expect-error
   activateMock,
   // @ts-expect-error
@@ -273,42 +270,6 @@ describe('Optimizely Integration', () => {
           expect(toggle('nonexistent', 'a', 'b', 'c')).toEqual('a')
         })
       })
-    })
-  })
-
-  describe('getEnabledFeatures', () => {
-    beforeEach(() => {
-      setUserId('chewbacca')
-      setAudienceSegmentationAttributes({
-        deviceType: 'desktop'
-      })
-    })
-
-    it('should return enabled features for R2-D2 user', () => {
-      setUserId('R2-D2')
-      expect(getEnabledFeatures()).toEqual([
-        'R2-D2-desktop-test-1',
-        'R2-D2-desktop-test-2'
-      ])
-    })
-
-    it('should return enabled features for C-3PO user', () => {
-      setUserId('C-3PO')
-      expect(getEnabledFeatures()).toEqual([
-        'C-3PO-desktop-test-1',
-        'C-3PO-desktop-test-2'
-      ])
-    })
-
-    it('should return enabled features for C-3PO user for mobile', () => {
-      setUserId('C-3PO')
-      setAudienceSegmentationAttributes({
-        deviceType: 'mobile'
-      })
-      expect(getEnabledFeatures()).toEqual([
-        'C-3PO-mobile-test-1',
-        'C-3PO-mobile-test-2'
-      ])
     })
   })
 })
