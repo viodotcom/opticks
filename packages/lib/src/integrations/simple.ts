@@ -1,13 +1,6 @@
 /** @deprecated */
-import type {BooleanToggleType, ToggleIdType, VariantType} from '../types'
+import type {ToggleIdType, VariantType} from '../types'
 import {toggle as baseToggle} from '../core/toggle'
-
-// This implementation expects you to populate a list of boolean toggles in
-// advance, in the following format:
-// { foo: true, bar: false }
-export type BooleanToggleListType = {
-  [key in ToggleIdType]?: BooleanToggleType
-}
 
 // This implementation expects you to populate a list of multi toggle objects in
 // advance, in the following format:
@@ -16,23 +9,11 @@ export type toggleListType = {
   [key in ToggleIdType]?: {variant: VariantType}
 }
 
-let booleanToggleList: BooleanToggleListType = {}
 let toggleList: toggleListType = {}
-
-export const setBooleanToggles = (toggles: BooleanToggleListType) => {
-  booleanToggleList = toggles
-}
 
 // FIXME: FlowType
 export const setToggles = (toggles: any) => {
   toggleList = toggles
-}
-
-export const getBooleanToggle = (toggleId: ToggleIdType) => {
-  const lowerCaseToggleId = toggleId && toggleId.toLowerCase()
-  return booleanToggleList.hasOwnProperty(lowerCaseToggleId)
-    ? booleanToggleList[lowerCaseToggleId]
-    : false
 }
 
 export const getToggle = (toggleId: ToggleIdType): VariantType => {
@@ -43,13 +24,6 @@ export const getToggle = (toggleId: ToggleIdType): VariantType => {
 
 export const toggle = baseToggle(getToggle)
 
-export const initialize = ({
-  booleanToggles,
-  toggles
-}: {
-  booleanToggles?: BooleanToggleListType
-  toggles?: toggleListType
-}) => {
-  booleanToggles && setBooleanToggles(booleanToggles)
+export const initialize = ({toggles}: {toggles?: toggleListType}) => {
   toggles && setToggles(toggles)
 }

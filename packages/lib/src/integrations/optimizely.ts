@@ -1,4 +1,10 @@
-import OptimizelyLib, {EventDispatcher, Client, OptimizelyUserContext, NotificationListener, ListenerPayload} from '@optimizely/optimizely-sdk'
+import OptimizelyLib, {
+  EventDispatcher,
+  Client,
+  OptimizelyUserContext,
+  NotificationListener,
+  ListenerPayload
+} from '@optimizely/optimizely-sdk'
 import {ToggleFuncReturnType, ToggleIdType, VariantType} from '../types'
 import {toggle as baseToggle} from '../core/toggle'
 
@@ -10,9 +16,8 @@ type AudienceSegmentationAttributesType = {
   [key in AudienceSegmentationAttributeKeyType]?: AudienceSegmentationAttributeValueType
 }
 
-type BooleanToggleValueType = boolean
-type ExperimentToggleValueType = string
-type ToggleValueType = ExperimentToggleValueType | BooleanToggleValueType
+type ExperimentToggleValueType = boolean | string
+type ToggleValueType = ExperimentToggleValueType
 
 export type OptimizelyDatafileType = object
 
@@ -25,7 +30,7 @@ let audienceSegmentationAttributes: AudienceSegmentationAttributesType = {}
 let userContext: OptimizelyUserContext
 
 type FeatureEnabledCacheType = {
-  [key in ToggleIdType]: BooleanToggleValueType
+  [key in ToggleIdType]: ExperimentToggleValueType
 }
 type ExperimentCacheType = {[key in ToggleIdType]: ExperimentToggleValueType}
 type CacheType = FeatureEnabledCacheType | ExperimentCacheType
@@ -136,12 +141,11 @@ interface ActivateMVTNotificationPayload extends ListenerPayload {
     variationKey: VariantType
   }
 }
-interface ActivateFlagNotificationPayload
-  extends ListenerPayload {
+interface ActivateFlagNotificationPayload extends ListenerPayload {
   type: ExperimentType.flag
   decisionInfo: {
-    featureKey: ToggleIdType
-    featureEnabled: boolean
+    flagKey: ToggleIdType
+    enabled: boolean
   }
 }
 
@@ -207,7 +211,7 @@ const validateUserId = (id) => {
 
 const getToggleDecisionStatus = (
   toggleId: ToggleIdType
-): BooleanToggleValueType => {
+): ExperimentToggleValueType => {
   validateUserId(userId)
 
   const DEFAULT = false
@@ -217,7 +221,10 @@ const getToggleDecisionStatus = (
     return typeof value === 'boolean' ? value : DEFAULT
   }
 
-  userContext = optimizelyClient.createUserContext(userId, audienceSegmentationAttributes)
+  userContext = optimizelyClient.createUserContext(
+    userId,
+    audienceSegmentationAttributes
+  )
   const decision = userContext.decide(toggleId)
 
   return (featureEnabledCache[toggleId] = decision.enabled)
@@ -256,7 +263,10 @@ export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
         ''
       )
 
-    if (decisionIfUserIsInAudience.result && !isPausedBooleanToggle(rolloutRule))
+    if (
+      decisionIfUserIsInAudience.result &&
+      !isPausedBooleanToggle(rolloutRule)
+    )
       isInAnyAudience = true
   }
 
@@ -320,7 +330,10 @@ const convertBooleanToggleToFeatureVariant = (toggleId: ToggleIdType) => {
  * @param variants
  */
 
-export function toggle<A extends any[]>(toggleId: ToggleIdType, ...variants: A): ToggleFuncReturnType<A>;
+export function toggle<A extends any[]>(
+  toggleId: ToggleIdType,
+  ...variants: A
+): ToggleFuncReturnType<A>
 export function toggle(toggleId: ToggleIdType, ...variants) {
   // An A/B/C... test
   if (variants.length > 2) {

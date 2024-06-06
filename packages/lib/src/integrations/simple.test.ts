@@ -1,29 +1,7 @@
-import {initialize, getBooleanToggle, getToggle} from './simple'
+import {initialize, getToggle} from './simple'
 
 describe('Simple Integration', () => {
-  describe('Boolean Toggles', () => {
-    beforeEach(() => {
-      initialize({
-        booleanToggles: {
-          foo: true,
-          bar: false
-        }
-      })
-    })
-
-    it('Gets boolean toggles by id', () => {
-      expect(getBooleanToggle('foo')).toBeTruthy()
-      expect(getBooleanToggle('bar')).toBeFalsy()
-    })
-
-    it('defaults to false when toggle cannot be found', () => {
-      expect(getBooleanToggle('baz')).toEqual(false)
-      // @ts-expect-error invalid API call for testing purpose
-      expect(getBooleanToggle()).toEqual(false)
-    })
-  })
-
-  describe('Multi Toggles', () => {
+  describe('Toggles', () => {
     beforeEach(() => {
       initialize({
         toggles: {
