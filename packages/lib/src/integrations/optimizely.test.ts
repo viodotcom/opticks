@@ -213,7 +213,7 @@ describe('Optimizely Integration', () => {
 
       testAudienceSegmentationCacheBusting(toggle, activateMock)
 
-      it("Returns Optimizely's value when no arguments supplied using", () => {
+      it("Returns Optimizely's value when no arguments supplied", () => {
         // maps to a, b, c
         expect(toggle('foo')).toEqual('b')
         expect(toggle('bar')).toEqual('a')
