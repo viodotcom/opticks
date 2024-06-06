@@ -58,8 +58,8 @@ See the [Optimizely integration documentation](docs/optimizely-integration.md).
 
 ## Toggles
 
-Toggles can be used to implement a/b/c style testing and on/off values as well.
-We specify multiple variants of which one is active at any time.
+Toggles can be used to implement a/b/c style MVT testing and on/off feature flags as well.
+We specify multiple variants of which only one is active at any time.
 By convention the variants are named `a` (control), `b`, `c` etc.
 
 ### Reading values

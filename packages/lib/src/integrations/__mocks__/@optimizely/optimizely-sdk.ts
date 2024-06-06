@@ -14,12 +14,11 @@ export const createInstanceMock = jest.fn(() => ({
 }))
 
 export const decideMock = jest.fn((toggleKey) => ({
-  enabled: toggleKey === "foo"
+  enabled: toggleKey === 'foo'
 }))
 export const optimizelyUserContextMock = jest.fn(() => ({
   decide: decideMock
 }))
-    
 
 export const isFeatureEnabledMock = jest.fn((toggleId) => toggleId === 'foo')
 
@@ -37,6 +36,5 @@ const mock = {
   ...originalModule,
   createInstance: createInstanceMock
 }
-
 
 export default mock
