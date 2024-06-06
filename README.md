@@ -14,7 +14,7 @@ The library consists of two related concepts:
 
 At the heart of our experimentation framework is the `toggle` function.
 
-A toggle allow you to switch between multiple experiment variants (a/b/c/...)
+A toggle allows you to switch between multiple experiment variants (a/b/c/...)
 and also turn functionality on or off (feature flags)
 
 It can be used in a variety of ways:
