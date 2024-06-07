@@ -33,10 +33,10 @@
   "author": "Jop de Klein",
   "license": "ISC",
   "peerDependencies": {
-    "@optimizely/optimizely-sdk": "~4.4.3"
+    "@optimizely/optimizely-sdk": "5.3.2"
   },
   "devDependencies": {
-    "@optimizely/optimizely-sdk": "~4.4.3",
+    "@optimizely/optimizely-sdk": "5.3.2",
     "@types/jest": "^29.4.0",
     "jest": "^29.4.0",
     "ts-jest": "^29.0.5",

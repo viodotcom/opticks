@@ -7,9 +7,6 @@ export type ToggleType = {
   variant: VariantType
 }
 
-// Boolean Toggle
-export type BooleanToggleType = boolean
-
 export type TogglerGetterType = (ToggleIdType) => any
 
 // Return type of `toggle` function

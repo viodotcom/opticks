@@ -14,7 +14,7 @@ winners:
 - winning values are kept
 - for functions, the function body is kept
 
-For the losing boolean toggles and losing multi toggle variants:
+For the losing multi toggle variants:
 
 - losing toggles are pruned
 - if the losing side is a JSXExpression, we clean it up including the variables
@@ -36,15 +36,13 @@ information.
 
 ## Running the codemods
 
-There two codemods supplied with Opticks, one for Boolean Toggles, one for
-Toggles, they can be found in the `src/transform` directory.
+There is a codemod supplied with Opticks, that can be found in the `src/transform` directory.
 
 In order to clean all "losing" branches of the code, the codemods need to know
-which toggle you're modifying, whether the toggle (for Boolean Toggles) or which
-variation (for Multi Toggles) "won".
+which toggle you're modifying, and which variation "won".
 
 Assuming you're running the codemods directly from the Opticks directory in your
-`node_modules`, to declare the `b` side of the `foo` Multi Toggle the winner and
+`node_modules`, to declare the `b` side of the `foo` Toggle the winner and
 prune all losing code in the `src` directory, run the script as follows:
 
 ```shell
@@ -74,28 +72,17 @@ npm run clean:toggle -- --toggle=foo --winner=b
 
 The codemods are designed to work with TypeScript and they expect the `tsx` parser to be used. You can override the parser option from the consuming project to parse code other than TypeScript, but not all patterns might be cleaned up as intended.
 
-### Boolean Toggles
-
-Boolean Toggle clean up works in a similar way, noting the winner accepts a
-string value `'true'` or `'false'`:
-
-```shell
-npm run clean:booleanToggle -- --toggle=foo --winner='true'
-```
-
 ### Overriding the library import settings
 
 By default the codemods make assumptions on the name of the imports to clean,
 namely:
 
 ```typescript
-import {booleanToggle} from 'opticks'
-// or
 import {toggle} from 'opticks'
 ```
 
 You can override these values via:
-`--functionName=myLocalNameForMultiOrBooleanToggle` and
+`--functionName=myLocalNameToggle` and
 `--packageName=myNameForOpticks`
 
 ## Cleaning Examples and Recipes
@@ -132,7 +119,7 @@ const result = toggle('toggleFoo') // 'b'
 ```
 
 A more interesting experiment would execute conditional code based on a multi
-toggle. The trick here is that like Boolean Toggles, toggles accepts
+toggle. The trick here is that toggles accept
 functions that will be executed only for a particular experiment branch.
 
 For example:
@@ -225,8 +212,7 @@ of business logic.
 ### Conditional rendering
 
 The simplest way to render something conditionally is to assign a boolean to a
-variable. Though this is probably better done with a boolean toggle, it's
-possible with a toggle as well:
+variable.
 
 ```typescript
 const shouldRenderIcon = toggle('SomethingWithIcon', false, true)

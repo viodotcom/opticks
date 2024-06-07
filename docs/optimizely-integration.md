@@ -93,11 +93,9 @@ forwarded to Optimizely with each call.
 ### The DataFile
 
 The Opticks Optimizely integration makes some assumptions on how the experiments
-are set up. Optimizely supports two types of flags, "Feature Flags" (Boolean
-Toggles in Opticks) and Experiments (Multi Toggles in Opticks).
+are set up. Optimizely supports two types of flags, "Feature Flags" and Experiments .
 The Opticks library uses certain conventions to wrap both concepts in a
-predictable API, where experiment variations are in the `a`, `b`, `c` format and
-Boolean Toggles return only `true` or `false`.
+predictable API, where experiment variations are in the `a`, `b`, `c` format.
 
 The following is subject to change, but right now Opticks uses both Feature
 Flags and the Experiments concepts of the Optimizely SDK which means you'll need

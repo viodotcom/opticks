@@ -14,8 +14,8 @@ The library consists of two related concepts:
 
 At the heart of our experimentation framework is the `toggle` function.
 
-- `toggle` toggles that switch between multiple experiment variants (a/b/c/...)
-- `booleanToggle` toggles that turn functionality on or off (feature flags)
+A toggle allows you to switch between multiple experiment variants (a/b/c/...)
+and also turn functionality on or off (feature flags)
 
 It can be used in a variety of ways:
 
@@ -23,14 +23,8 @@ It can be used in a variety of ways:
 1.  Execute code or for a variant of a multi toggle
 1.  Execute code when a boolean toggle is on
 
-We use React at FindHotel and some of the code examples use JSX, but the code
+We use React at vio.com and some of the code examples use JSX, but the code
 and concept is compatible with any front-end framework or architecture.
-
-The `booleanToggle` is the simplest toggle type to use for feature flagging, but
-it's also the least flexible. As of version 2.0 `toggle` is the default and
-recommended for both a/b/c experiments and feature flags. If you're only ever
-interested in feature flags, read more about [Boolean
-Toggles](docs/booleanToggles.md).
 
 ### Opticks vs other experimentation frameworks
 
@@ -64,9 +58,9 @@ See the [Optimizely integration documentation](docs/optimizely-integration.md).
 
 ## Toggles
 
-Toggles can be used to implement a/b/c style testing, instead of on/off values
-as with `booleanToggle`, we specify multiple variants of which one is active at
-any time. By convention the variants are named `a` (control), `b`, `c` etc.
+Toggles can be used to implement a/b/c style MVT testing and on/off feature flags as well.
+We specify multiple variants of which only one is active at any time.
+By convention the variants are named `a` (control), `b`, `c` etc.
 
 ### Reading values
 
@@ -133,7 +127,7 @@ experimentId, then the values for `a`, `b`, etc.
 For instance:
 
 ```
-// simple boolean switch: (you could use a BooleanToggle as well)
+// simple boolean switch
 const shouldDoSomething = toggle('foo', false, true)
 
 // multiple variants as strings
