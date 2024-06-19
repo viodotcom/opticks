@@ -151,10 +151,10 @@ export enum ExperimentType {
  *
  * It would be best if Opticks abstracts this difference from the client in future versions.
  */
-interface ActivateNotificationPayload extends ListenerPayload {
+export interface ActivateNotificationPayload extends ListenerPayload {
   type: ExperimentType
   decisionInfo: {
-    experimentKey: ToggleIdType
+    flagKey: ToggleIdType
     variationKey: VariantType
   }
 }
