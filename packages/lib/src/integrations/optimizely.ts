@@ -16,7 +16,7 @@ type AudienceSegmentationAttributesType = {
   [key in AudienceSegmentationAttributeKeyType]?: AudienceSegmentationAttributeValueType
 }
 
-type ExperimentToggleValueType = boolean | string
+type ExperimentToggleValueType = string | boolean
 type ToggleValueType = ExperimentToggleValueType
 
 export type OptimizelyDatafileType = object
@@ -53,7 +53,9 @@ export const registerLibrary = (lib) => {
   optimizely = lib
 }
 
-const clearExperimentCache = () => (experimentCache = {})
+const clearExperimentCache = () => {
+  experimentCache = {}
+}
 
 /**
  * Adds / removes Toggles to force from the forcedToggles list
@@ -65,6 +67,15 @@ export const forceToggles = (toggleKeyValues: {
 }) => {
   Object.keys(toggleKeyValues).forEach((toggleId) => {
     const value = toggleKeyValues[toggleId]
+
+    /**
+     * Keeping the old behaviour of using boolean values for toggles to represent `a` and `b` versions
+     */
+    const isBoolean = typeof value === 'boolean'
+    if (isBoolean) {
+      forcedToggles[toggleId] = value ? 'b' : 'a'
+      return
+    }
 
     if (value === null) {
       delete forcedToggles[toggleId]
@@ -85,7 +96,7 @@ const invalidateCaches = () => {
  * @param id
  */
 export const setUserId = (id: UserIdType) => {
-  invalidateCaches()
+  if (userId !== id) invalidateCaches()
   userId = id
 }
 
@@ -98,11 +109,20 @@ export const setUserId = (id: UserIdType) => {
 export const setAudienceSegmentationAttributes = (
   attributes: AudienceSegmentationAttributesType = {}
 ) => {
-  invalidateCaches()
-  audienceSegmentationAttributes = {
+  const newSegmentationAttributes = {
     ...audienceSegmentationAttributes,
     ...attributes
   }
+
+  const shouldInvalidateCache =
+    JSON.stringify(newSegmentationAttributes) !==
+    JSON.stringify(audienceSegmentationAttributes || {})
+
+  if (shouldInvalidateCache) {
+    invalidateCaches()
+  }
+
+  audienceSegmentationAttributes = newSegmentationAttributes
 }
 
 /**
@@ -132,7 +152,7 @@ export enum ExperimentType {
  * It would be best if Opticks abstracts this difference from the client in future versions.
  */
 interface ActivateNotificationPayload extends ListenerPayload {
-  type: ExperimentType.mvt
+  type: ExperimentType
   decisionInfo: {
     experimentKey: ToggleIdType
     variationKey: VariantType
@@ -316,7 +336,8 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
 
   // Assuming the variation keys follow a, b, c, etc. convention
   // TODO: Enforce ^ ?
-  return (experimentCache[toggleId] = decision || DEFAULT)
+  experimentCache[toggleId] = decision || DEFAULT
+  return decision || DEFAULT
 }
 
 /**
