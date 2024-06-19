@@ -16,7 +16,7 @@ type AudienceSegmentationAttributesType = {
   [key in AudienceSegmentationAttributeKeyType]?: AudienceSegmentationAttributeValueType
 }
 
-type ExperimentToggleValueType = boolean | string
+type ExperimentToggleValueType = string | boolean
 type ToggleValueType = ExperimentToggleValueType
 
 export type OptimizelyDatafileType = object
@@ -36,7 +36,6 @@ type ExperimentCacheType = {[key in ToggleIdType]: ExperimentToggleValueType}
 type CacheType = FeatureEnabledCacheType | ExperimentCacheType
 type ForcedTogglesType = {[Tkey in ToggleIdType]: ToggleValueType}
 
-let featureEnabledCache: FeatureEnabledCacheType = {}
 let experimentCache: ExperimentCacheType = {}
 const forcedToggles: ForcedTogglesType = {}
 
@@ -54,8 +53,9 @@ export const registerLibrary = (lib) => {
   optimizely = lib
 }
 
-const clearFeatureEnabledCache = () => (featureEnabledCache = {})
-const clearExperimentCache = () => (experimentCache = {})
+const clearExperimentCache = () => {
+  experimentCache = {}
+}
 
 /**
  * Adds / removes Toggles to force from the forcedToggles list
@@ -68,6 +68,15 @@ export const forceToggles = (toggleKeyValues: {
   Object.keys(toggleKeyValues).forEach((toggleId) => {
     const value = toggleKeyValues[toggleId]
 
+    /**
+     * Keeping the old behaviour of using boolean values for toggles to represent `a` and `b` versions
+     */
+    const isBoolean = typeof value === 'boolean'
+    if (isBoolean) {
+      forcedToggles[toggleId] = value ? 'b' : 'a'
+      return
+    }
+
     if (value === null) {
       delete forcedToggles[toggleId]
     } else {
@@ -77,7 +86,6 @@ export const forceToggles = (toggleKeyValues: {
 }
 
 const invalidateCaches = () => {
-  clearFeatureEnabledCache()
   clearExperimentCache()
 }
 
@@ -88,7 +96,7 @@ const invalidateCaches = () => {
  * @param id
  */
 export const setUserId = (id: UserIdType) => {
-  invalidateCaches()
+  if (userId !== id) invalidateCaches()
   userId = id
 }
 
@@ -101,11 +109,20 @@ export const setUserId = (id: UserIdType) => {
 export const setAudienceSegmentationAttributes = (
   attributes: AudienceSegmentationAttributesType = {}
 ) => {
-  invalidateCaches()
-  audienceSegmentationAttributes = {
+  const newSegmentationAttributes = {
     ...audienceSegmentationAttributes,
     ...attributes
   }
+
+  const shouldInvalidateCache =
+    JSON.stringify(newSegmentationAttributes) !==
+    JSON.stringify(audienceSegmentationAttributes || {})
+
+  if (shouldInvalidateCache) {
+    invalidateCaches()
+  }
+
+  audienceSegmentationAttributes = newSegmentationAttributes
 }
 
 /**
@@ -134,24 +151,13 @@ export enum ExperimentType {
  *
  * It would be best if Opticks abstracts this difference from the client in future versions.
  */
-interface ActivateMVTNotificationPayload extends ListenerPayload {
-  type: ExperimentType.mvt
+interface ActivateNotificationPayload extends ListenerPayload {
+  type: ExperimentType
   decisionInfo: {
     experimentKey: ToggleIdType
     variationKey: VariantType
   }
 }
-interface ActivateFlagNotificationPayload extends ListenerPayload {
-  type: ExperimentType.flag
-  decisionInfo: {
-    flagKey: ToggleIdType
-    enabled: boolean
-  }
-}
-
-export type ActivateNotificationPayload =
-  | ActivateMVTNotificationPayload
-  | ActivateFlagNotificationPayload
 
 /**
  * Initializes Opticks with the supplied Optimizely datafile,
@@ -185,11 +191,32 @@ export const initialize = (
  */
 export const addActivateListener = (
   listener: NotificationListener<ActivateNotificationPayload>
-) =>
-  optimizelyClient.notificationCenter.addNotificationListener(
+) => {
+  const decisionListener = (payload: ActivateNotificationPayload) => {
+    const {variationKey} = payload.decisionInfo
+    const decision =
+      variationKey === 'on' ? 'b' : variationKey === 'off' ? 'a' : variationKey
+
+    const updatedPayload = {
+      ...payload,
+      decisionInfo: {...payload.decisionInfo, variationKey: decision}
+    }
+
+    return listener(updatedPayload)
+  }
+
+  /**
+   * This is a temporary support for the initial convention defined during the migration that "on" === "b" and "off" === "a"
+   * With the latest SDK version, A/B tests and target deliveries return a string key for the variation
+   * We will migrate the current experiments to the new convention and remove this temporary support.
+   * In the new convention we will always use the variation key as the decision.
+   */
+  // TODO (@vlacerda) [2024-06-30]: By this time we should ping @vlacerda to evaluate again if the fix is still needed and remove it if not.
+  return optimizelyClient.notificationCenter.addNotificationListener(
     NOTIFICATION_TYPES.DECISION,
-    listener
+    decisionListener
   )
+}
 
 const isForcedOrCached = (toggleId: ToggleIdType, cache: CacheType): boolean =>
   forcedToggles.hasOwnProperty(toggleId) || cache.hasOwnProperty(toggleId)
@@ -209,27 +236,6 @@ const validateUserId = (id) => {
   if (!id) throw new Error('Opticks: Fatal error: user id is not set')
 }
 
-const getToggleDecisionStatus = (
-  toggleId: ToggleIdType
-): ExperimentToggleValueType => {
-  validateUserId(userId)
-
-  const DEFAULT = false
-
-  if (isForcedOrCached(toggleId, featureEnabledCache)) {
-    const value = getForcedOrCached(toggleId, featureEnabledCache)
-    return typeof value === 'boolean' ? value : DEFAULT
-  }
-
-  userContext = optimizelyClient.createUserContext(
-    userId,
-    audienceSegmentationAttributes
-  )
-  const decision = userContext.decide(toggleId)
-
-  return (featureEnabledCache[toggleId] = decision.enabled)
-}
-
 /**
  * Determines whether a user satisfies the audience requirements for a toggle.
 
@@ -241,34 +247,43 @@ const getToggleDecisionStatus = (
 export const isUserInRolloutAudience = (toggleId: ToggleIdType) => {
   // @ts-expect-error we're being naughty here and using internals
   const config = optimizelyClient.projectConfigManager.getConfig()
+  // feature in the config object represents an a/b test
   const feature = config.featureKeyMap[toggleId]
+  // rollout is a targeted delivery
   const rollout = config.rolloutIdMap[feature.rolloutId]
+  // both a/b tests and targeted deliveries can have audiences
+  const allRules = [...rollout.experiments]
 
-  const endIndex = rollout.experiments.length - 1
-  let index: number
-  let isInAnyAudience = false
+  /**
+   * The feature object supplies ids through experimentIds.
+   * We find the rules for each experiment and add them to the allRules array.
+   */
+  if (feature.experimentIds.length > 0) {
+    const {experimentIds} = feature
+    const experimentRules = experimentIds.map(
+      (experimentId) => config.experimentIdMap[experimentId]
+    )
+    allRules.push(...experimentRules)
+  }
 
-  for (index = 0; index <= endIndex; index++) {
-    const rolloutRule = rollout.experiments[index]
-
+  const isInAnyAudience = allRules.reduce((acc, rule) => {
     // Reference: https://github.com/optimizely/javascript-sdk/blob/851b06622fa6a0239500b3b65e2d3937334960de/lib/core/decision_service/index.ts#L403
     const decisionIfUserIsInAudience =
       // @ts-expect-error we're being naughty here and using internals
       optimizelyClient.decisionService.checkIfUserIsInAudience(
         config,
-        rolloutRule,
+        rule,
         'rule',
         userContext,
         audienceSegmentationAttributes,
         ''
       )
 
-    if (
-      decisionIfUserIsInAudience.result &&
-      !isPausedBooleanToggle(rolloutRule)
-    )
-      isInAnyAudience = true
-  }
+    if (decisionIfUserIsInAudience.result && !isPausedBooleanToggle(rule))
+      return true
+
+    return acc
+  }, false)
 
   return isInAnyAudience
 }
@@ -302,19 +317,27 @@ const getToggle = (toggleId: ToggleIdType): ExperimentToggleValueType => {
     return typeof value === 'string' ? value : DEFAULT
   }
 
+  userContext = optimizelyClient.createUserContext(
+    userId,
+    audienceSegmentationAttributes
+  )
+
+  const variationKey = userContext.decide(toggleId).variationKey
+
+  /**
+   * This is a temporary support for the initial convention defined during the migration that "on" === "b" and "off" === "a"
+   * With the latest SDK version, A/B tests and target deliveries return a string key for the variation
+   * We will migrate the current experiments to the new convention and remove this temporary support.
+   * In the new convention we will always use the variation key as the decision.
+   */
+  // TODO (@vlacerda) [2024-06-30]: By this time we should ping @vlacerda to evaluate again if the fix is still needed and remove it if not.
+  const decision =
+    variationKey === 'on' ? 'b' : variationKey === 'off' ? 'a' : variationKey
+
   // Assuming the variation keys follow a, b, c, etc. convention
   // TODO: Enforce ^ ?
-  return (experimentCache[toggleId] =
-    optimizelyClient.activate(
-      toggleId,
-      userId,
-      audienceSegmentationAttributes
-    ) || DEFAULT)
-}
-
-const convertBooleanToggleToFeatureVariant = (toggleId: ToggleIdType) => {
-  const isFeatureEnabled = getToggleDecisionStatus(toggleId)
-  return isFeatureEnabled ? 'b' : 'a'
+  experimentCache[toggleId] = decision || DEFAULT
+  return decision || DEFAULT
 }
 
 /**
@@ -335,15 +358,7 @@ export function toggle<A extends any[]>(
   ...variants: A
 ): ToggleFuncReturnType<A>
 export function toggle(toggleId: ToggleIdType, ...variants) {
-  // An A/B/C... test
-  if (variants.length > 2) {
-    return baseToggle(getToggle)(toggleId, ...variants)
-  } else {
-    return baseToggle(convertBooleanToggleToFeatureVariant)(
-      toggleId,
-      ...variants
-    )
-  }
+  return baseToggle(getToggle)(toggleId, ...variants)
 }
 
 /**

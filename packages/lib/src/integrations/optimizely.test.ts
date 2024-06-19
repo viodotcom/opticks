@@ -21,8 +21,6 @@ import Optimizely, {
   // @ts-expect-error
   isFeatureEnabledMock,
   // @ts-expect-error
-  activateMock,
-  // @ts-expect-error
   decideMock,
   // @ts-expect-error
   optimizelyUserContextMock
@@ -44,16 +42,12 @@ const testAudienceSegmentationCacheBusting = (toggleFn, fn) => {
 
     toggleFn('foo', 'a', 'b', 'c') // call 1
     expect(fn).toHaveBeenCalledTimes(1)
-    expect(fn).toHaveBeenCalledWith('foo', 'fooBSide', {
-      foo: 'baz'
-    })
+    expect(fn).toHaveBeenCalledWith('foo')
     toggleFn('foo', 'a', 'b', 'c') // cached
     toggleFn('bar', 'a', 'b', 'c') // call 2
     toggleFn('bar', 'a', 'b', 'c') // cached
     expect(fn).toHaveBeenCalledTimes(2)
-    expect(fn).toHaveBeenCalledWith('bar', 'fooBSide', {
-      foo: 'baz'
-    })
+    expect(fn).toHaveBeenCalledWith('bar')
   })
 }
 
@@ -82,7 +76,7 @@ describe('Optimizely Integration', () => {
         expect(addNotificationListenerMock).toHaveBeenCalledWith(
           NOTIFICATION_TYPES.DECISION,
           // 'DECISION:type, userId, attributes, decisionInfo',
-          activateHandler
+          expect.any(Function)
         )
       })
     })
@@ -141,14 +135,9 @@ describe('Optimizely Integration', () => {
 
         it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
           toggle('foo', 'a', 'b', 'c')
-          expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {})
           toggle('foo')
-          expect(decideMock).toHaveBeenCalledWith(
-            'foo'
-          )
-          expect(optimizelyUserContextMock).toHaveBeenCalledWith(
-            'fooBSide', {}
-          )
+          expect(decideMock).toHaveBeenCalledWith('foo')
+          expect(optimizelyUserContextMock).toHaveBeenCalledWith('fooBSide', {})
         })
       })
 
@@ -166,15 +155,6 @@ describe('Optimizely Integration', () => {
 
         it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
           toggle('foo', 'a', 'b', 'c')
-          expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {
-            thisWillNotBeOverwritten: 'foo',
-            deviceType: 'mobile',
-            isLoggedIn: false
-          })
-        })
-
-        it('Forwards toggle reading and audienceSegmentationAttributes to Optimizely', () => {
-          toggle('foo')
           expect(optimizelyUserContextMock).toHaveBeenCalledWith('fooBSide', {
             thisWillNotBeOverwritten: 'foo',
             deviceType: 'mobile',
@@ -192,7 +172,8 @@ describe('Optimizely Integration', () => {
 
         it('Forwards correct audience segmentation attributes', () => {
           toggle('foo', 'a', 'b', 'c')
-          expect(activateMock).toHaveBeenCalledWith('foo', 'fooBSide', {
+
+          expect(optimizelyUserContextMock).toHaveBeenCalledWith('fooBSide', {
             valueAfterReset: true
           })
 
@@ -208,7 +189,7 @@ describe('Optimizely Integration', () => {
         })
       })
 
-      testAudienceSegmentationCacheBusting(toggle, activateMock)
+      testAudienceSegmentationCacheBusting(toggle, decideMock)
 
       it("Returns Optimizely's value when no arguments supplied", () => {
         // maps to a, b, c
@@ -252,7 +233,7 @@ describe('Optimizely Integration', () => {
       })
 
       it('makes sure Toggles return defaults if forced values are of wrong type', () => {
-        expect(toggle('baz', 'a', 'b', 'c')).toEqual('a')
+        expect(toggle('boz', 'a', 'b', 'c')).toEqual('a')
       })
 
       describe('Clearing forced toggles', () => {
