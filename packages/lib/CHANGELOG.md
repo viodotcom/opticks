@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.0
+
+### Minor Changes
+
+- 5e7f8ae: Adds support to MVT tests and simplify the code in the Optimizely integration to abstract the difference between rollouts and MVT/AB
+
 ## 5.0.0
 
 ### Major Changes
