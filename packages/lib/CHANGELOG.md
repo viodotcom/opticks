@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.1.2
+
+### Patch Changes
+
+- e8eb0db: fix: Exports ts type ActivateNotificationPayload
+
 ## 5.1.0
 
 ### Minor Changes
