@@ -22,14 +22,8 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Build lib package
-        run: yarn workspace opticks build
+      - name: Build all packages
+        run: yarn workspaces foreach -A run build
 
-      - name: Test lib package
-        run: yarn workspace opticks test
-
-      - name: Build cli package
-        run: yarn workspace opticks-cli build
-
-      - name: Test cli package
-        run: yarn workspace opticks-cli test
+      - name: Test all packages
+        run: yarn workspaces foreach -A run test
