@@ -27,12 +27,17 @@ jobs:
           corepack --version
           yarn --version
 
-      - run: yarn install
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build all packages
+        run: yarn workspaces foreach -A run build
+
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: yarn workspace opticks release
+          publish: npx changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
